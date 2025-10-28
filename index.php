@@ -1,13 +1,24 @@
 <?php
 
-require_once './configs/config.php';
-require_once './configs/database.php';
-require_once './app/Models/CoreModel.php';
-require_once './app/Models/Users.php';
-require_once './app/Models/Groups.php';
+// Require PHP files from folder Configs
+foreach (glob(__DIR__ . '/configs/*.php') as $filename) {
+    require_once $filename;
+}
 
-require_once './app/Controllers/BaseController.php';
-require_once './app/Controllers/UsersController.php';
+// Require PHP files from folder core
+foreach (glob(__DIR__ . '/core/*.php') as $filename) {
+    require_once $filename;
+}
+
+// Require PHP files from folder Models
+foreach (glob(__DIR__ . '/app/Models/*.php') as $filename) {
+    require_once $filename;
+}
+
+// Require PHP files from folder Controllers
+foreach (glob(__DIR__ . '/app/Controllers/*.php') as $filename) {
+    require_once $filename;
+}
 
 $controller = new UsersController();
 
