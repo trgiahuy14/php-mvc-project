@@ -20,6 +20,18 @@ foreach (glob(__DIR__ . '/app/Controllers/*.php') as $filename) {
     require_once $filename;
 }
 
-$controller = new UsersController();
+// Router
+$router = new Router();
+// Require PHP files from folder Routers
+foreach (glob(__DIR__ . '/routers/*.php') as $filename) {
+    require_once $filename;
+}
+$projectName = '/php-mvc-project';
+// Delete project name from URL
+$requestUrl = str_replace($projectName, '', parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
+$methodRes = $_SERVER['REQUEST_METHOD'];
 
-$controller->index();
+$router->xulyPath($methodRes, $requestUrl);
+
+// $controller = new UsersController();
+// $controller->index();
