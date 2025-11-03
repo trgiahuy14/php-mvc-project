@@ -1,29 +1,39 @@
 <?php
 session_start();
+// Load file .env
+$env = parse_ini_file(__DIR__ . '/.env');
+foreach ($env as $key => $value) {
+    putenv("$key=$value");
+}
 
-// Require PHP files from folder Configs
+// Require Configs
 foreach (glob(__DIR__ . '/configs/*.php') as $filename) {
     require_once $filename;
 }
 
-// Require PHP files from folder core
+// Require Core
 foreach (glob(__DIR__ . '/core/*.php') as $filename) {
     require_once $filename;
 }
 
-// Require PHP files from folder Models
+// Require PHPmailer
+foreach (glob(__DIR__ . '/core/mailer/*.php') as $filename) {
+    require_once $filename;
+}
+
+// Require Models
 foreach (glob(__DIR__ . '/app/Models/*.php') as $filename) {
     require_once $filename;
 }
 
-// Require PHP files from folder Controllers
+// Require Controllers
 foreach (glob(__DIR__ . '/app/Controllers/*.php') as $filename) {
     require_once $filename;
 }
 
-// Router
+// Require Routers
 $router = new Router();
-// Require PHP files from folder Routers
+
 foreach (glob(__DIR__ . '/routers/*.php') as $filename) {
     require_once $filename;
 }
