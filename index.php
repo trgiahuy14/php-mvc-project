@@ -1,4 +1,5 @@
 <?php
+session_start();
 
 // Require PHP files from folder Configs
 foreach (glob(__DIR__ . '/configs/*.php') as $filename) {

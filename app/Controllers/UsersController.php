@@ -4,23 +4,23 @@ class UsersController extends BaseController
 {
     public function index()
     {
-        $user = new Users();
+        // $user = new Users();
 
-        $userDetail = $user->getAllUsers();
+        // $userDetail = $user->getAllUsers();
 
-        ob_start();
-        $this->renderView('layouts-part/users', $userDetail);
+        // ob_start();
+        // $this->renderView('layouts-part/users', $userDetail);
 
-        $data = ['content' => ob_get_clean()];
+        // $data = ['content' => ob_get_clean()];
 
-        $this->renderView('layouts/main-layout', $data);
+        // $this->renderView('layouts/main-layout');
     }
 
-    public function index2()
+    public function dashboard()
     {
         // $user = new Users();
 
-        $data = ["content" => "Index 2 content"];
-        $this->renderView('layouts/main-layout', $data);
+        $data = ["content" => "Dashboard"];
+        $this->renderView('layouts-part/dashboard', $data);
     }
 }
