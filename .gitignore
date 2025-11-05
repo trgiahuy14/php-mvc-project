@@ -1,1 +1,5 @@
 .env
+
+# Ignore PhpStorm settings
+.idea/
+*.iml
