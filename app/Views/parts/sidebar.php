@@ -12,12 +12,12 @@ if (!defined('_TRGIAHUY')) {
         <a href="<?php echo _HOST_URL ?>" class="brand-link">
             <!--begin::Brand Image-->
             <img
-                src="<?php echo _HOST_URL_PUBLIC; ?>/assets/image/logo.png"
+                src="<?php echo _HOST_URL_PUBLIC; ?>/assets/image/logo.png?v=<?php echo time(); ?>"
                 alt="Courses Manager Logo"
                 class="brand-image opacity-75 shadow" />
             <!--end::Brand Image-->
             <!--begin::Brand Text-->
-            <span class="brand-text fw-light">COURSES MANAGER</span>
+            <span class="brand-text fw-light">VietNews CMS</span>
             <!--end::Brand Text-->
         </a>
         <!--end::Brand Link-->
@@ -37,7 +37,6 @@ if (!defined('_TRGIAHUY')) {
                         <i class="nav-icon bi bi-speedometer"></i>
                         <p>
                             Dashboard
-
                         </p>
                     </a>
 
@@ -47,7 +46,7 @@ if (!defined('_TRGIAHUY')) {
                     <a href="#" class="nav-link">
                         <i class="nav-icon bi bi-box-seam-fill"></i>
                         <p>
-                            Khóa học
+                            Bài viết
                             <i class="nav-arrow bi bi-chevron-right"></i>
                         </p>
                     </a>
@@ -61,13 +60,7 @@ if (!defined('_TRGIAHUY')) {
                         <li class="nav-item">
                             <a href="?module=course&action=add" class="nav-link">
                                 <i class="nav-icon bi bi-circle"></i>
-                                <p>Thêm khóa học mới</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="?module=course_category&action=list" class="nav-link">
-                                <i class="nav-icon bi bi-circle"></i>
-                                <p>Lĩnh vực</p>
+                                <p>Thêm mới bài viết</p>
                             </a>
                         </li>
                     </ul>
@@ -93,8 +86,6 @@ if (!defined('_TRGIAHUY')) {
                                 <p>Tạo mới tài khoản</p>
                             </a>
                         </li>
-
-
                     </ul>
                 </li>
 
@@ -102,7 +93,7 @@ if (!defined('_TRGIAHUY')) {
                     <a href="#" class="nav-link">
                         <i class="nav-icon bi bi-pencil-square"></i>
                         <p>
-                            Học viên
+                            Bình luận
                             <i class="nav-arrow bi bi-chevron-right"></i>
                         </p>
                     </a>
@@ -110,7 +101,7 @@ if (!defined('_TRGIAHUY')) {
                         <li class="nav-item">
                             <a href="?module=students" class="nav-link">
                                 <i class="nav-icon bi bi-circle"></i>
-                                <p>Danh sách học viên</p>
+                                <p>Danh sách bình luận</p>
                             </a>
                         </li>
                     </ul>

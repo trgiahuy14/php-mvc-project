@@ -9,7 +9,7 @@
 
 <?php
 #HEADER
-$this->renderView('parts/header');
+$this->renderView('parts/header', $getInfo);
 ?>
 
 <?php

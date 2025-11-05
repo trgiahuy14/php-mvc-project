@@ -16,6 +16,13 @@ foreach (glob(__DIR__ . '/core/*.php') as $filename) {
     require_once $filename;
 }
 
+$cor = new CoreModel();
+
+$getInfo = $cor->getUserInfo();
+
+setSession('getInfo', $getInfo);
+
+
 // Require PHPmailer
 foreach (glob(__DIR__ . '/core/mailer/*.php') as $filename) {
     require_once $filename;
@@ -43,6 +50,3 @@ $requestUrl = str_replace($projectName, '', parse_url($_SERVER['REQUEST_URI'], P
 $methodRes = $_SERVER['REQUEST_METHOD'];
 
 $router->xulyPath($methodRes, $requestUrl);
-
-// $controller = new UsersController();
-// $controller->index();

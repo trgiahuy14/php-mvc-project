@@ -8,6 +8,23 @@ class CoreModel
         $this->conn = Database::connectDPO();
     }
 
+    public function getUserInfo()
+    {
+        $token = getSession('token_login');
+        if (!empty($token)) {
+            $checkTokenLogin = $this->getOne("SELECT * FROM token_login WHERE token = '$token'");
+            if (!empty($checkTokenLogin)) {
+                $user_id = $checkTokenLogin['user_id'];
+                $getUserDetail = $this->getOne("SELECT fullname, avatar FROM users WHERE id = '$user_id'");
+
+                if (!empty($getUserDetail)) {
+                    return $getUserDetail;
+                }
+            }
+        }
+        return false;
+    }
+
     // Truy vấn nhiều dòng dữ liệu
     function getAll($sql)
     {
