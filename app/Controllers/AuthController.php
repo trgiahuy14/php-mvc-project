@@ -169,7 +169,7 @@ class AuthController extends BaseController
                     'fullname' => $filter['fullname'],
                     'email' => $filter['email'],
                     'phone' => $filter['phone'],
-                    'avatar' => "./public/assets/image/user-avt-default.jpg",
+                    'avatar' => "/public/assets/image/user-avt-default.jpg",
                     'password' => password_hash($filter['password'], PASSWORD_DEFAULT),
                     'active_token' => $activeToken,
                     'created_at' => date('Y:m:d H:i:s')
@@ -458,9 +458,3 @@ class AuthController extends BaseController
 }
 
 // Need: add invalid page if token doesn't exist
-
-
-
-
-
-
