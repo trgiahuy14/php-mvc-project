@@ -343,7 +343,6 @@ class AuthController extends BaseController
         if (!empty($filterGet['token'])) {
             $tokenReset = $filterGet['token'];
         }
-
         if (!empty($tokenReset)) {
             // Check token
             $checkToken = $this->coreModel->getOne("SELECT * FROM users WHERE forget_token = '$tokenReset'");
@@ -375,7 +374,7 @@ class AuthController extends BaseController
                         $dataUpdate = [
                             'password' => $password,
                             'forget_token' => null,
-                            'updated_at' => date('Y:m;d H:i:s')
+                            'updated_at' => date('Y-m-d H:i:s')
                         ];
 
                         $condition = "id=" . $checkToken['id'];
@@ -454,9 +453,11 @@ class AuthController extends BaseController
         } else {
             getMsg('Liên kết đã hết hạn hoặc không tồn tại', 'danger');
         }
-        redirect('/reset');
+        redirect('/reset?token=' . $tokenReset);
     }
 }
+
+// Need: add invalid page if token doesn't exist
 
 
 
