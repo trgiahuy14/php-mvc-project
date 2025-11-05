@@ -16,6 +16,14 @@ $router->post('/login', 'AuthController@login');
 $router->get('/register', 'AuthController@showRegister');
 $router->post('/register', 'AuthController@register');
 
+$router->get('/forgot', 'AuthController@showForgot');
+$router->post('/forgot', 'AuthController@forgot');
+
+$router->get('/active', 'AuthController@active');
+
+$router->get('/reset', 'AuthController@showReset');
+$router->post('/reset', 'AuthController@reset');
+
 
 // echo '<pre>';
 // print_r($router->getRoute());
