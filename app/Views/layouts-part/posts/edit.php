@@ -26,6 +26,7 @@ if (empty($oldData) && !empty($postData)) {
         getMsg($msg, $msg_type);
     }
     ?>
+    <!-- Post editing form -->
     <form action="" method="post" enctype="multipart/form-data">
         <input type="hidden" name="idPost" value="<?= $idPost ?>">
         <div class="row">
@@ -51,10 +52,8 @@ if (empty($oldData) && !empty($postData)) {
                     name="content"
                     class="form-control"
                     placeholder="Nội dung"><?= (!empty($oldData)) ? oldData($oldData, 'content') : null ?></textarea>
-                <?php
-                if (!empty($errorsArr)) {
-                    echo formError($errorsArr, 'content');
-                } ?>
+                <!-- Error -->
+                <?= (!empty($errorsArr)) ? formError($errorsArr, 'title') : null ?>
             </div>
 
             <!-- Post tags-->
@@ -117,7 +116,28 @@ if (empty($oldData) && !empty($postData)) {
             </div>
         </div>
         <button type="submit" class="btn btn-success">Xác nhận</button>
+        <button type="button" class="btn btn-secondary" id="btnBack">Quay lại</button>
     </form>
 </div>
 
 <?php layout('footer') ?>
+
+<script>
+    const form = document.querySelector("form");
+    const backBtn = document.getElementById("btnBack");
+
+    let formChanged = false;
+
+    // Theo dõi form, nếu người dùng nhập thì gán flag = true
+    form.addEventListener("input", () => {
+        formChanged = true;
+    });
+
+    backBtn.addEventListener("click", () => {
+        if (formChanged) {
+            const confirmLeave = confirm("Bạn có chắc muốn quay lại không? Dữ liệu chưa lưu sẽ bị mất.");
+            if (!confirmLeave) return;
+        }
+        history.back(); // Quay lại trang trước đó
+    });
+</script>

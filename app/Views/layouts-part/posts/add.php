@@ -109,7 +109,28 @@ $errorsArr = getSessionFlash('errors');
             </div>
         </div>
         <button type="submit" class="btn btn-success">Xác nhận</button>
+        <button type="button" class="btn btn-secondary" id="btnBack">Quay lại</button>
     </form>
 </div>
 
 <?php layout('footer') ?>
+
+<script>
+    const form = document.querySelector("form");
+    const backBtn = document.getElementById("btnBack");
+
+    let formChanged = false;
+
+    // Theo dõi form, nếu người dùng nhập thì gán flag = true
+    form.addEventListener("input", () => {
+        formChanged = true;
+    });
+
+    backBtn.addEventListener("click", () => {
+        if (formChanged) {
+            const confirmLeave = confirm("Bạn có chắc muốn quay lại không? Dữ liệu chưa lưu sẽ bị mất.");
+            if (!confirmLeave) return;
+        }
+        history.back(); // Quay lại trang trước đó
+    });
+</script>
