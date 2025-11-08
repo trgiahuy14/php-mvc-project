@@ -52,7 +52,7 @@ if (!defined('_TRGIAHUY')) {
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="?module=course&action=list" class="nav-link">
+                            <a href="<?php echo _HOST_URL ?>/posts" class="nav-link">
                                 <i class="nav-icon bi bi-circle"></i>
                                 <p>Danh sách</p>
                             </a>

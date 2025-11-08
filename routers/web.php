@@ -10,6 +10,7 @@ $router->post('/group', 'GroupController@index');
 
 $router->get('/product', 'ProductController@index');
 
+// Authentication
 $router->get('/login', 'AuthController@showLogin');
 $router->post('/login', 'AuthController@login');
 
@@ -24,6 +25,9 @@ $router->get('/active', 'AuthController@active');
 $router->get('/reset', 'AuthController@showReset');
 $router->post('/reset', 'AuthController@reset');
 
+// Post
+$router->get('/posts', 'PostsController@list');
+// $router->get('/posts/add', 'PostsController@add');
 
 // echo '<pre>';
 // print_r($router->getRoute());
