@@ -42,6 +42,14 @@ class CoreModel
         return $stm->rowCount();
     }
 
+    // Scalar
+    public function getScalar($sql)
+    {
+        $stm = $this->conn->prepare($sql);
+        $stm->execute();
+        return (int)$stm->fetchColumn();
+    }
+
     // Truy vấn 1 dòng dữ liệu
     function getOne($sql)
     {

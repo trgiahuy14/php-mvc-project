@@ -7,9 +7,9 @@ class Posts extends CoreModel
         parent::__construct();
     }
 
-    public function getAllPosts()
+    public function getAllPosts($condition = "")
     {
-        return $this->getAll("SELECT * FROM posts");
+        return $this->getAll("SELECT * FROM posts $condition");
     }
 
     public function getOnePost($condition)
@@ -20,6 +20,12 @@ class Posts extends CoreModel
     public function getRowPosts()
     {
         return $this->getRows("SELECT * FROM posts");
+    }
+
+    public function getScalarPosts($condition = "")
+    {
+        $sql = "SELECT COUNT(id) FROM posts $condition";
+        return $this->getScalar($sql);
     }
 
     public function insertPost($data)

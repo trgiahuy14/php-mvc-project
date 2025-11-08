@@ -6,8 +6,6 @@ $data = ['title' => 'Danh sách bài viết'];
 layout('header', $data);
 layout('sidebar');
 
-
-
 $msg = getSessionFlash('msg');
 $msg_type = getSessionFlash('msg_type');
 
@@ -25,19 +23,21 @@ $msg_type = getSessionFlash('msg_type');
             getMsg($msg, $msg_type);
         }
         ?>
-        <form class="mb-3" action=" " method="get">
-            <input type="hidden" name="module" value="course">
-            <input type="hidden" name="action" value="list">
+        <!-- Posts search form -->
+        <form class="mb-3" method="get">
             <div class="row">
                 <div class="col-7">
                     <input class="form-control" type="text" value="<?php echo (!empty($keyword)) ? $keyword : false ?>"
                         name="keyword" placeholder="Nhập thông tin tìm kiếm...">
                 </div>
-
-                <div class="col-2"><button class="btn btn-primary" type="submit">Tìm kiếm</button></div>
+                <!-- Search button -->
+                <div class="col-2">
+                    <button class="btn btn-primary" type="submit">Tìm kiếm</button>
+                </div>
             </div>
-
         </form>
+
+        <!-- Posts listing table -->
         <table class="table table-bordered text-center">
             <thead>
                 <tr>
@@ -50,9 +50,10 @@ $msg_type = getSessionFlash('msg_type');
                 </tr>
             </thead>
             <tbody>
+                <?php $count = $offset + 1; ?>
                 <?php foreach ($postDetail as $key => $item): ?>
                     <tr>
-                        <th scope="row"><?php echo $key + 1 ?></th>
+                        <th scope="row"><?= $count++  ?></th>
                         <td><?php echo $item['title']; ?></td>
                         <td><?php echo $item['content']; ?></td>
                         <td><?php echo $item['created_at']; ?></td>
@@ -67,12 +68,12 @@ $msg_type = getSessionFlash('msg_type');
         <nav aria-label="Page navigation example">
             <ul class="pagination">
 
-                <!--  Xử lý nút Trước -->
+                <!-- Pagination: Previous button -->
                 <?php if ($page > 1): ?>
                     <li class="page-item"><a class="page-link" href="?<?php echo $queryString; ?>&page=<?php echo $page - 1 ?>">Trước</a></li>
                 <?php endif; ?>
 
-                <!--  Xử lý nút ... trước -->
+                <!-- Pagination: left side ellipsis-->
                 <?php
                 $start = $page - 1; // Tính vị trí bắt đầu 
                 if ($start < 1) {
@@ -88,19 +89,19 @@ $msg_type = getSessionFlash('msg_type');
                 }
                 ?>
 
-                <!-- Hiện số trang -->
+                <!-- Pagination: Page display -->
                 <?php for ($i = $start; $i <= $end; $i++): ?>
                     <li class="page-item <?php echo ($page == $i) ? 'active' : false;  ?>"><a class="page-link"
                             href="?<?php echo $queryString; ?>&page=<?php echo $i ?>"><?php echo $i; ?></a></li>
                 <?php endfor; ?>
 
-                <!--  Xử lý nút ... sau -->
+                <!-- Pagination: right side ellipsis -->
                 <?php if ($end < $maxPage): ?>
                     <li class="page-item"><a class="page-link" href="?<?php echo $queryString; ?>&page=<?php echo $page + 1 ?>">...</a></li>
                 <?php endif;
                 ?>
 
-                <!-- Xử lý nút sau -->
+                <!-- Pagination: After button -->
                 <?php if ($page < $maxPage): ?>
                     <li class="page-item"><a class="page-link" href="?<?php echo $queryString; ?>&page=<?php echo $page + 1 ?>">Sau</a></li>
                 <?php endif; ?>

@@ -13,80 +13,65 @@ class PostsController extends BaseController
     public function list()
     {
         // Get data from GET
-        $filter = filterData();
-        $chuoiWhere = '';
-        $cate = '0';
+        $filter = filterData('get');
+        $whereSql = '';
         $keyword = '';
 
         if (isGet()) {
+            // Search handling
             if (isset($filter['keyword'])) {
-                $keyword = $filter['keyword'];
+                $keyword = trim($filter['keyword']);
+                $keyword = addslashes($keyword);
             }
-            if (isset($filter['cate'])) {
-                $cate = $filter['cate'];
-            }
-
             if (!empty($keyword)) {
-                if (strpos($chuoiWhere, 'WHERE') === false) { //  Phải so sánh chặt (===) vì strpos trả về vị trí đầu tiên 
-                    $chuoiWhere .= ' WHERE ';                  //    tìm thấy chữ Where, tức là vị trí 0, mà 0 thì là false trong PHP
-                } else {
-                    $chuoiWhere .= ' AND ';
-                }
-                $chuoiWhere .= "(a.name LIKE '%$keyword%' OR a.description LIKE '%$keyword%')";
+                $whereSql .= " WHERE title LIKE '%{$keyword}%'";
             }
-            if (!empty($cate)) {
-                if (strpos($chuoiWhere, 'WHERE') === false) {
-                    $chuoiWhere .= ' WHERE ';
-                } else {
-                    $chuoiWhere .= ' AND ';
-                }
 
-                $chuoiWhere .= " a.category_id = $cate";
-            }
-        }
-
-        // Pagination
-        $maxData = $this->postModel->getRowPosts("SELECT id FROM posts"); // Total of data
-        $perPage = 3; // Row per page 
-        $maxPage = ceil($maxData / $perPage); // Calculate max page, ceil giúp làm tròn lên
-        $offset = 0;
-        $page = 1;
-
-        // Get page
-        if (isset($filter['page'])) {
-            $page = $filter['page'];
-        }
-
-        // Over max page or page 0¡¡¡
-        if ($page > $maxPage || $page < 1) {
+            // Pagination
+            $maxData = (int)$this->postModel->getRowPosts("SELECT COUNT(id) FROM posts{$whereSql}"); // Total of data
+            $perPage = 3; // Row per page 
+            $maxPage = max(1, (int)ceil($maxData / $perPage)); // Calculate max page, ceil giúp làm tròn lên
             $page = 1;
+
+            // Get page
+            if (isset($filter['page'])) {
+                $page = (int)$filter['page'];
+            }
+
+            // Over max page or page 0¡¡¡
+            if ($page > $maxPage || $page < 1) {
+                $page = 1;
+            }
+
+            $offset =  ($page - 1) * $perPage;
+
+            $sqlList = "$whereSql LIMIT $offset, $perPage";
+            $postDetail = $this->postModel->getAllPosts($sqlList);
+
+            // Xử lý querry
+            $queryString = $_SERVER['QUERY_STRING'] ?? '';
+            if (!empty($queryString)) {
+                // Cắt chuỗi để không bị &page=1&page=2
+                $queryString = str_replace('&page=' . $page, '', $queryString);
+            }
+
+            // Nếu có thực hiện truy vấn keyword 
+            if (!empty($keyword)) {
+                $maxData2 = $this->postModel->getScalarPosts($whereSql);
+                $maxPage = ceil($maxData2 / $perPage);
+            }
+
+            $data = [
+                'postModel' => $this->postModel,
+                'postDetail' => $postDetail,
+                'page' => $page,
+                'maxPage' => $maxPage,
+                'keyword' => $keyword,
+                'queryString' => $queryString,
+                'offset' => $offset
+            ];
+            $this->renderView('layouts-part/posts/list', $data);
         }
-
-        $offset =  ($page - 1) * $perPage;
-
-        // Get data from posts table
-        $postDetail = $this->postModel->getAllPosts("SELECT * FROM posts 
-        $chuoiWhere 
-        LIMIT $offset, $perPage");
-
-        // Xử lý querry
-        if (!empty($_SERVER['QUERY_STRING'])) {
-            $queryString = $_SERVER['QUERY_STRING'];
-            // Cắt chuỗi để không bị &page=1&page=2
-            $queryString = str_replace('&page=' . $page, '', $queryString);
-        }
-
-        // Nếu có thực hiện truy vấn cate hoặc keyword 
-        if ($cate > 0 || !empty($keyword)) {
-            $maxData2 = $this->postModel->getRowPosts("SELECT id FROM posts a $chuoiWhere");
-            $maxPage = ceil($maxData2 / $perPage);
-        }
-
-        $data = [
-            'postModel' => $this->postModel,
-            'postDetail' => $postDetail
-        ];
-        $this->renderView('layouts-part/posts/list', $data);
     }
 
     public function showAdd()
