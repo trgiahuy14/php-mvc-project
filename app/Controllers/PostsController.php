@@ -57,7 +57,7 @@ class PostsController extends BaseController
             $page = $filter['page'];
         }
 
-        // Over max page or page 0
+        // Over max page or page 0¡¡¡
         if ($page > $maxPage || $page < 1) {
             $page = 1;
         }
@@ -115,7 +115,6 @@ class PostsController extends BaseController
                 $errors['content']['required'] = 'Nội dung bắt buộc phải nhập';
             }
 
-
             if (empty($errors)) {
                 // INSERT DATA
                 $dataInsert = [
@@ -127,7 +126,6 @@ class PostsController extends BaseController
                     'comments' => $filter['comments'],
                     'shares' => $filter['shares'],
                     'created_at' => date('Y-m-d H:i:s')
-
                 ];
 
                 $insertStatus = $this->postModel->insertPost($dataInsert);
@@ -149,5 +147,73 @@ class PostsController extends BaseController
             }
         }
         $this->renderView('layouts-part/posts/add');
+    }
+
+    public function showEdit()
+    {
+        $filter = filterData('get');
+        // Get exist value(s) from post
+        $rel = $this->postModel->getOnePost("id = " . $filter['id']);
+        $data = [
+            'postData' => $rel,
+            'idPost' => $filter['id']
+        ];
+        $this->renderView('layouts-part/posts/edit', $data);
+    }
+
+    public function edit()
+    {
+        if (isPost()) {
+            $filter = filterData();
+            $errors = [];
+
+            // VALIDATE
+
+            // Validate title
+            if (empty(trim($filter['title']))) {
+                $errors['title']['required'] = 'Tiêu đề bắt buộc phải nhập';
+            } else {
+                if (strlen(trim($filter['title'])) < 5) {
+                    $errors['title']['length'] = 'Tiêu đề phải lớn hơn 5 ký tự';
+                }
+            }
+            // Validate content
+            if (empty(trim($filter['content']))) {
+                $errors['content']['required'] = 'Nội dung bắt buộc phải nhập';
+            }
+
+            if (empty($errors)) {
+                // UPDATE DATA
+                $dataUpdate = [
+                    'title' => $filter['title'],
+                    'content' => $filter['content'],
+                    'tags' => $filter['tags'],
+                    'minutes_read' => $filter['minutes_read'],
+                    'views' => $filter['views'],
+                    'comments' => $filter['comments'],
+                    'shares' => $filter['shares'],
+                    'updated_at' => date('Y-m-d H:i:s')
+                ];
+
+                $idPost = $filter['idPost'];
+                $updateStatus = $this->postModel->updatePost($dataUpdate, "id=$idPost");
+
+                if ($updateStatus) {
+                    setSessionFlash('msg', 'Chỉnh sửa bài viết thành công.');
+                    setSessionFlash('msg_type', 'success');
+                    redirect(('/posts'));
+                } else {
+                    setSessionFlash('msg', 'Chỉnh sửa bài viết thất bại');
+                    setSessionFlash('msg_type', 'danger');
+                }
+            } else {
+                setSessionFlash('msg', 'Vui lòng kiểm tra lại dữ liệu nhập vào');
+                setSessionFlash('msg_type', 'danger');
+                setSessionFlash('oldData', $filter);
+                setSessionFlash('errors', $errors);
+                redirect('/posts/edit');
+            }
+        }
+        $this->renderView('layouts-part/posts/edit');
     }
 }

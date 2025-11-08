@@ -1,0 +1,123 @@
+<?php
+if (!defined('_TRGIAHUY')) {
+    die('Truy cập không hợp lệ');
+}
+
+$data = ['title' => 'Chỉnh sửa bài viết'];
+layout('header', $data);
+layout('sidebar');
+
+$msg = getSessionFlash('msg');
+$msg_type = getSessionFlash('msg_type');
+$errorsArr = getSessionFlash('errors');
+
+$oldData = getSessionFlash('oldData');
+if (empty($oldData) && !empty($postData)) {
+    // Get exist value(s) from post
+    $oldData = $postData;
+}
+?>
+
+<div class="container add-user">
+    <h2>Chỉnh sửa bài viết</h2>
+    <hr>
+    <?php
+    if (!empty($msg) && !empty($msg_type)) {
+        getMsg($msg, $msg_type);
+    }
+    ?>
+    <form action="" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="idPost" value="<?= $idPost ?>">
+        <div class="row">
+            <!-- Post title -->
+            <div class="col-12 pb-3">
+                <label for="title">Tiêu đề bài viết</label>
+                <input
+                    id="title"
+                    name="title"
+                    type="text"
+                    class="form-control"
+                    placeholder="Nhập tiêu đề"
+                    value="<?= (!empty($oldData)) ? oldData($oldData, 'title') : null ?>">
+                <!-- Error -->
+                <?= (!empty($errorsArr)) ? formError($errorsArr, 'title') : null ?>
+            </div>
+
+            <!-- Post content -->
+            <div class="col-12 pb-3">
+                <label for="content">Nội dung bài viết</label>
+                <textarea
+                    id="content"
+                    name="content"
+                    class="form-control"
+                    placeholder="Nội dung"><?= (!empty($oldData)) ? oldData($oldData, 'content') : null ?></textarea>
+                <?php
+                if (!empty($errorsArr)) {
+                    echo formError($errorsArr, 'content');
+                } ?>
+            </div>
+
+            <!-- Post tags-->
+            <div class="col-12 pb-3">
+                <label for="tags">Tags</label>
+                <textarea
+                    id="tags"
+                    name="tags"
+                    class="form-control"
+                    placeholder="Nhập thẻ"><?= (!empty($oldData)) ? oldData($oldData, 'minutes_read') : null ?></textarea>
+            </div>
+
+            <!-- Minutes read -->
+            <div class="col-3 pb-3">
+                <label for="minutes_read">Thời gian đọc</label>
+                <input
+                    id="minutes_read"
+                    name="minutes_read"
+                    type="text"
+                    class="form-control"
+                    placeholder="Thời gian đọc"
+                    value="<?= (!empty($oldData)) ? oldData($oldData, 'minutes_read') : null ?>">
+            </div>
+
+
+            <!-- Views -->
+            <div class="col-3 pb-3">
+                <label for="views">Views</label>
+                <input
+                    id="views"
+                    name="views"
+                    type="text"
+                    class="form-control"
+                    placeholder="Nhập số lượt xem"
+                    value="<?= (!empty($oldData)) ? oldData($oldData, 'views') : null ?>">
+            </div>
+
+            <!-- Comments -->
+            <div class="col-3 pb-3">
+                <label for="comments">Bình luận</label>
+                <input
+                    id="comments"
+                    name="comments"
+                    type="text"
+                    class="form-control"
+                    placeholder="Nhập số lượt bình luận"
+                    value="<?= (!empty($oldData)) ? oldData($oldData, 'views') : null ?>">
+            </div>
+
+            <!-- Shares -->
+            <div class="col-3 pb-3">
+                <label for="shares">Lượt chia sẻ</label>
+                <input
+                    id="shares"
+                    name="shares"
+                    type="text"
+                    class="form-control"
+                    placeholder="Nhập số lượt chia sẻ"
+                    value="<?= (!empty($oldData)) ? oldData($oldData, 'views') : null ?>">
+            </div>
+        </div>
+        <button type="submit" class="btn btn-success">Xác nhận</button>
+    </form>
+</div>
+
+<?php layout('footer') ?>

@@ -12,6 +12,11 @@ class Posts extends CoreModel
         return $this->getAll("SELECT * FROM posts");
     }
 
+    public function getOnePost($condition)
+    {
+        return $this->getOne("SELECT * FROM posts WHERE $condition");
+    }
+
     public function getRowPosts()
     {
         return $this->getRows("SELECT * FROM posts");

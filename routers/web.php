@@ -28,11 +28,11 @@ $router->post('/reset', 'AuthController@reset');
 // Post
 $router->get('/posts', 'PostsController@list');
 
-// Add post
 $router->get('/posts/add', 'PostsController@showAdd');
 $router->post('/posts/add', 'PostsController@add');
 
-
+$router->get('/posts/edit', 'PostsController@showEdit');
+$router->post('/posts/edit', 'PostsController@edit');
 
 // echo '<pre>';
 // print_r($router->getRoute());
