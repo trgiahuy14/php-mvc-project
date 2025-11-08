@@ -58,7 +58,7 @@ if (!defined('_TRGIAHUY')) {
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="?module=course&action=add" class="nav-link">
+                            <a href="<?php echo _HOST_URL ?>/posts/add" class="nav-link">
                                 <i class="nav-icon bi bi-circle"></i>
                                 <p>Thêm mới bài viết</p>
                             </a>

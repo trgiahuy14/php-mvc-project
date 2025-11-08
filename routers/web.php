@@ -27,7 +27,12 @@ $router->post('/reset', 'AuthController@reset');
 
 // Post
 $router->get('/posts', 'PostsController@list');
-// $router->get('/posts/add', 'PostsController@add');
+
+// Add post
+$router->get('/posts/add', 'PostsController@showAdd');
+$router->post('/posts/add', 'PostsController@add');
+
+
 
 // echo '<pre>';
 // print_r($router->getRoute());

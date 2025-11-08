@@ -10,11 +10,6 @@ class PostsController extends BaseController
         $this->postModel = new Posts();
     }
 
-    // public function showPost()
-    // {
-
-    // }
-
     public function list()
     {
         // Get data from GET
@@ -94,90 +89,65 @@ class PostsController extends BaseController
         $this->renderView('layouts-part/posts/list', $data);
     }
 
-    // public function add()
-    // {
-    //     if (isPost()) {
+    public function showAdd()
+    {
+        $this->renderView('layouts-part/posts/add');
+    }
 
-    //         $filter = filterData();
-    //         $errors = [];
+    public function add()
+    {
+        if (isPost()) {
+            $filter = filterData();
+            $errors = [];
 
-    //         // Validate name
-    //         if (empty(trim($filter['name']))) {
-    //             $errors['name']['required'] = 'Tên khóa học bắt buộc phải nhập';
-    //         } else {
-    //             if (strlen(trim($filter['name'])) < 5) {
-    //                 $errors['name']['length'] = 'Tên khóa học phải lớn hơn 5 ký tự';
-    //             }
-    //         }
+            // VALIDATE
 
-    //         // Validate slug
-    //         if (empty(trim($filter['slug']))) {
-    //             $errors['slug']['required'] = 'Slug bắt buộc phải nhập';
-    //         }
-
-
-    //         // Validate price
-    //         if (empty($filter['price'])) {
-    //             $errors['price']['required'] = 'Giá bắt buộc phải nhập';
-    //         }
-
-    //         // Validate description
-    //         if (empty($filter['description'])) {
-    //             $errors['description']['required'] = 'Mô tả bắt buộc phải nhập';
-    //         }
+            // Validate title
+            if (empty(trim($filter['title']))) {
+                $errors['title']['required'] = 'Tiêu đề bắt buộc phải nhập';
+            } else {
+                if (strlen(trim($filter['title'])) < 5) {
+                    $errors['title']['length'] = 'Tiêu đề phải lớn hơn 5 ký tự';
+                }
+            }
+            // Validate content
+            if (empty(trim($filter['content']))) {
+                $errors['content']['required'] = 'Nội dung bắt buộc phải nhập';
+            }
 
 
-    //         if (empty($errors)) {
+            if (empty($errors)) {
+                // INSERT DATA
+                $dataInsert = [
+                    'title' => $filter['title'],
+                    'content' => $filter['content'],
+                    'tags' => $filter['tags'],
+                    'minutes_read' => $filter['minutes_read'],
+                    'views' => $filter['views'],
+                    'comments' => $filter['comments'],
+                    'shares' => $filter['shares'],
+                    'created_at' => date('Y-m-d H:i:s')
 
-    //             // Xử lý thumbnail upload
-    //             $uploadDir = './templates/uploads/';
+                ];
 
-    //             if (!file_exists($uploadDir)) {
-    //                 mkdir($uploadDir, 0777, true); // Create new upload folder if it doesn't exist
-    //             }
+                $insertStatus = $this->postModel->insertPost($dataInsert);
 
-    //             $fileName = basename($_FILES['thumbnail']['name']);
-
-    //             $targetFile = $uploadDir . time() . '-' . $fileName;
-
-    //             $thumb = '';
-    //             $checkMove = move_uploaded_file($_FILES['thumbnail']['tmp_name'], $targetFile);
-
-    //             if ($checkMove) {
-    //                 $thumb = $targetFile;
-    //             }
-
-    //             $dataInsert = [
-    //                 'name' => $filter['name'],
-    //                 'slug' => $filter['slug'],
-    //                 'price' => $filter['price'],
-    //                 'description' => $filter['description'],
-    //                 'thumbnail' => $thumb,
-    //                 'category_id' => $filter['category_id'],
-    //                 'created_at' => date('Y:m:d H:i:s')
-    //             ];
-
-    //             $insertStatus = insert('course', $dataInsert);
-
-    //             if ($insertStatus) {
-    //                 setSessionFlash('msg', 'Thêm khóa học thành công.');
-    //                 setSessionFlash('msg_type', 'success');
-    //                 redirect(('?module=course&action=list'));
-    //             } else {
-    //                 setSessionFlash('msg', 'Thêm khóa học thất bại');
-    //                 setSessionFlash('msg_type', 'danger');
-    //             }
-    //         } else {
-    //             setSessionFlash('msg', 'Vui lòng kiểm tra lại dữ liệu nhập vào');
-    //             setSessionFlash('msg_type', 'danger');
-    //             setSessionFlash('oldData', $filter);
-    //             setSessionFlash('errors', $errors);
-    //         }
-    //         $msg = getSessionFlash('msg');
-    //         $msg_type = getSessionFlash('msg_type');
-    //         $oldData = getSessionFlash('oldData');
-    //         $errorsArr = getSessionFlash('errors');
-    //     }
-    //     $this->renderView('layouts-part/posts/add');
-    // }
+                if ($insertStatus) {
+                    setSessionFlash('msg', 'Thêm bài viết thành công.');
+                    setSessionFlash('msg_type', 'success');
+                    redirect(('/posts'));
+                } else {
+                    setSessionFlash('msg', 'Thêm bài viết thất bại');
+                    setSessionFlash('msg_type', 'danger');
+                }
+            } else {
+                setSessionFlash('msg', 'Vui lòng kiểm tra lại dữ liệu nhập vào');
+                setSessionFlash('msg_type', 'danger');
+                setSessionFlash('oldData', $filter);
+                setSessionFlash('errors', $errors);
+                redirect('/posts/add');
+            }
+        }
+        $this->renderView('layouts-part/posts/add');
+    }
 }

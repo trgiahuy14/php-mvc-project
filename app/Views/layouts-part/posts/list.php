@@ -19,7 +19,7 @@ $msg_type = getSessionFlash('msg_type');
 
 <div class="container grid-user">
     <div class="container-fluid">
-        <a href="?module=course&action=add" class="btn btn-success mb-3"><i class="fa-solid fa-plus"></i>Thêm mới khóa học</a>
+        <a href="<?php echo _HOST_URL ?>/posts/add" class="btn btn-success mb-3"><i class="fa-solid fa-plus"></i>Thêm mới</a>
         <?php
         if (!empty($msg) && !empty($msg_type)) {
             getMsg($msg, $msg_type);
@@ -45,7 +45,6 @@ $msg_type = getSessionFlash('msg_type');
                     <th scope="col">Tiêu đề</th>
                     <th scope="col">Nội dung</th>
                     <th scope="col">Ngày viết</th>
-
                     <th scope="col">Sửa</th>
                     <th scope="col">Xóa</th>
                 </tr>
