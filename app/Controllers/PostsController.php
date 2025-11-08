@@ -201,4 +201,31 @@ class PostsController extends BaseController
         }
         $this->renderView('layouts-part/posts/edit');
     }
+
+    public function delete()
+    {
+        $filter = filterData('get');
+
+        if (!empty($filter)) {
+            $idPost = $filter['id'];
+            $condition = 'id=' . $idPost;
+            $checkPost = $this->postModel->getOnePost($condition);
+            if (!empty($checkPost)) {
+                $deleteStatus = $this->postModel->deletePost($condition);
+
+                if ($deleteStatus) {
+                    setSessionFlash('msg', 'Xóa bài viết thành công.');
+                    setSessionFlash('msg_type', 'success');
+                    redirect('/posts');
+                }
+            } else {
+                setSessionFlash('msg', 'Bài viết không tồn tại.');
+                setSessionFlash('msg_type', 'danger');
+                redirect('/posts');
+            }
+        } else {
+            setSessionFlash('msg', 'Đã có lỗi xảy ra, vui lòng thử lại sau.');
+            setSessionFlash('msg_type', 'danger');
+        }
+    }
 }

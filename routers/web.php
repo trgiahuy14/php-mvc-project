@@ -34,6 +34,9 @@ $router->post('/posts/add', 'PostsController@add');
 $router->get('/posts/edit', 'PostsController@showEdit');
 $router->post('/posts/edit', 'PostsController@edit');
 
+$router->get('/posts/delete', 'PostsController@delete');
+
+
 // echo '<pre>';
 // print_r($router->getRoute());
 // echo '</pre>';

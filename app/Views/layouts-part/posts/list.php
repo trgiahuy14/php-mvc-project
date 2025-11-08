@@ -58,7 +58,7 @@ $msg_type = getSessionFlash('msg_type');
                         <td><?php echo $item['content']; ?></td>
                         <td><?php echo $item['created_at']; ?></td>
                         <td><a href="<?php echo _HOST_URL; ?>/posts/edit?id=<?php echo $item['id']; ?>" class="btn btn-warning"><i class="fa-solid fa-pencil"></i></a></td>
-                        <td><a href="?module=course&action=delete&id=<?php echo $item['id']; ?>" onclick="return confirm('Bạn có chắc chắn muốn xóa không')" class=" btn btn-danger"><i class="fa-solid fa-trash"></i></a></td>
+                        <td><a href="<?php echo _HOST_URL; ?>/posts/delete?id=<?php echo $item['id']; ?>" onclick="return confirm('Bạn có chắc chắn muốn xóa không')" class=" btn btn-danger"><i class="fa-solid fa-trash"></i></a></td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
