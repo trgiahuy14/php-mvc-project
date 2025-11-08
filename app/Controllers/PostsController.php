@@ -52,7 +52,7 @@ class PostsController extends BaseController
             $queryString = $_SERVER['QUERY_STRING'] ?? '';
             if (!empty($queryString)) {
                 // Cắt chuỗi để không bị &page=1&page=2
-                $queryString = str_replace('&page=' . $page, '', $queryString);
+                $queryString = str_replace('page=' . $page, '', $queryString);
             }
 
             // Nếu có thực hiện truy vấn keyword 

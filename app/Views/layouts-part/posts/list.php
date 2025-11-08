@@ -92,18 +92,18 @@ $msg_type = getSessionFlash('msg_type');
                 <!-- Pagination: Page display -->
                 <?php for ($i = $start; $i <= $end; $i++): ?>
                     <li class="page-item <?php echo ($page == $i) ? 'active' : false;  ?>"><a class="page-link"
-                            href="?<?php echo $queryString; ?>&page=<?php echo $i ?>"><?php echo $i; ?></a></li>
+                            href="?<?php echo $queryString; ?>page=<?php echo $i ?>"><?php echo $i; ?></a></li>
                 <?php endfor; ?>
 
                 <!-- Pagination: right side ellipsis -->
                 <?php if ($end < $maxPage): ?>
-                    <li class="page-item"><a class="page-link" href="?<?php echo $queryString; ?>&page=<?php echo $page + 1 ?>">...</a></li>
+                    <li class="page-item"><a class="page-link" href="<?php echo $queryString; ?>page=<?php echo $page + 1 ?>">...</a></li>
                 <?php endif;
                 ?>
 
                 <!-- Pagination: After button -->
                 <?php if ($page < $maxPage): ?>
-                    <li class="page-item"><a class="page-link" href="?<?php echo $queryString; ?>&page=<?php echo $page + 1 ?>">Sau</a></li>
+                    <li class="page-item"><a class="page-link" href="<?php echo $queryString; ?>page=<?php echo $page + 1 ?>">Sau</a></li>
                 <?php endif; ?>
             </ul>
         </nav>
