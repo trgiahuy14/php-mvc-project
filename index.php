@@ -1,56 +1,33 @@
 <?php
+define("APP_KEY", true); // mark app bootstrap point
+
 session_start();
-// Load file .env
+
+// Load file .env 
 $env = parse_ini_file(__DIR__ . '/.env');
-foreach ($env as $key => $value) {
-    putenv("$key=$value");
-}
+foreach ($env as $key => $value) putenv("$key=$value");
 
-// Require Configs
-foreach (glob(__DIR__ . '/configs/*.php') as $filename) {
-    require_once $filename;
-}
+// Load configs, core, models, controller.
+foreach (glob(__DIR__ . '/configs/*.php') as $f) require_once $f;
+foreach (glob(__DIR__ . '/core/*.php') as $f) require_once $f;
+foreach (glob(__DIR__ . '/core/mailer/*.php') as $f) require_once $f;
+foreach (glob(__DIR__ . '/app/Models/*.php') as $f) require_once $f;
+foreach (glob(__DIR__ . '/app/Controllers/*.php') as $f) require_once $f;
+foreach (glob(__DIR__ . '/app/Controllers/clients/*.php') as $f) require_once $f;
 
-// Require Core
-foreach (glob(__DIR__ . '/core/*.php') as $filename) {
-    require_once $filename;
-}
-
+// Init core
 $cor = new CoreModel();
-
 $getInfo = $cor->getUserInfo();
-
 setSession('getInfo', $getInfo);
 
-
-// Require PHPmailer
-foreach (glob(__DIR__ . '/core/mailer/*.php') as $filename) {
-    require_once $filename;
-}
-
-// Require Models
-foreach (glob(__DIR__ . '/app/Models/*.php') as $filename) {
-    require_once $filename;
-}
-
-// Require Controllers
-foreach (glob(__DIR__ . '/app/Controllers/*.php') as $filename) {
-    require_once $filename;
-}
-
-foreach (glob(__DIR__ . '/app/Controllers/clients/*.php') as $filename) {
-    require_once $filename;
-}
-
-// Require Routers
+// Init router
 $router = new Router();
 
-foreach (glob(__DIR__ . '/routers/*.php') as $filename) {
-    require_once $filename;
-}
-$projectName = '/php-mvc-project';
-// Delete project name from URL
-$requestUrl = str_replace($projectName, '', parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
-$methodRes = $_SERVER['REQUEST_METHOD'];
+// Load routes in web.php
+require_once __DIR__ . '/routers/web.php';
 
-$router->xulyPath($methodRes, $requestUrl);
+// Request handle
+$requestUrl = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$requestUrl = str_replace(APP_BASE_PATH, '', $requestUrl);
+
+$router->xulyPath($_SERVER['REQUEST_METHOD'], $requestUrl);

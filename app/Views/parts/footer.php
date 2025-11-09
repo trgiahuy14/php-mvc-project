@@ -1,16 +1,10 @@
-<?php
-if (!defined('_TRGIAHUY')) {
-    die('Truy cập không hợp lệ');
-}
-?>
-
 <!--begin::Footer-->
 <footer class="app-footer">
     <div class="float-end d-none d-sm-inline">
         VietNews Content Management System
     </div>
     <strong>
-        &copy; <?php echo date('Y'); ?>
+        &copy; <?= date('Y'); ?>
     </strong>
     <a href="https://github.com/trgiahuy14" class="text-decoration-none">TrGiaHuy</a>. All rights reserved.
 </footer>
@@ -34,7 +28,7 @@ if (!defined('_TRGIAHUY')) {
     integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
     crossorigin="anonymous"></script>
 <!--end::Required Plugin(Bootstrap 5)--><!--begin::Required Plugin(AdminLTE)-->
-<script src="<?php echo _HOST_URL_PUBLIC; ?>/assets/js/adminlte.js"></script>
+<script src="<?= PUBLIC_URL ?>/assets/js/adminlte.js"></script>
 <!--end::Required Plugin(AdminLTE)--><!--begin::OverlayScrollbars Configure-->
 <script>
     const SELECTOR_SIDEBAR_WRAPPER = '.sidebar-wrapper';

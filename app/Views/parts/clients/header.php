@@ -18,15 +18,15 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
 
     <!-- Libraries Stylesheet -->
-    <link href="<?= _HOST_URL_PUBLIC ?>/assets/lib/animate/animate.min.css" rel="stylesheet">
-    <link href="<?= _HOST_URL_PUBLIC ?>/assets/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="<?= PUBLIC_URL ?>/assets/lib/animate/animate.min.css" rel="stylesheet">
+    <link href="<?= PUBLIC_URL ?>/assets/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
 
 
     <!-- Customized Bootstrap Stylesheet -->
-    <link href="<?= _HOST_URL_PUBLIC ?>/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="<?= PUBLIC_URL ?>/assets/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Template Stylesheet -->
-    <link href="<?= _HOST_URL_PUBLIC ?>/assets/css/style.css" rel="stylesheet">
+    <link href="<?= PUBLIC_URL ?>/assets/css/style.css" rel="stylesheet">
 </head>
 
 <body>
@@ -52,7 +52,7 @@
                         </div>
                         <div class="overflow-hidden" style="width: 735px;">
                             <div id="note" class="ps-2">
-                                <img src="<?= _HOST_URL_PUBLIC ?>/assets/img/features-fashion.jpg" class="img-fluid rounded-circle border border-3 border-primary me-2" style="width: 30px; height: 30px;" alt="">
+                                <img src="<?= PUBLIC_URL ?>/assets/img/features-fashion.jpg" class="img-fluid rounded-circle border border-3 border-primary me-2" style="width: 30px; height: 30px;" alt="">
                                 <a href="#">
                                     <p class="text-white mb-0 link-hover">Newsan unknown printer took a galley of type andscrambled Newsan.</p>
                                 </a>
@@ -103,7 +103,7 @@
                         </div>
                         <div class="d-flex flex-nowrap border-top pt-3 pt-xl-0">
                             <div class="d-flex">
-                                <img src="<?= _HOST_URL_PUBLIC ?>/assets/img/weather-icon.png" class="img-fluid w-100 me-2" alt="">
+                                <img src="<?= PUBLIC_URL ?>/assets/img/weather-icon.png" class="img-fluid w-100 me-2" alt="">
                                 <div class="d-flex align-items-center">
                                     <strong class="fs-4 text-secondary">31°C</strong>
                                     <div class="d-flex flex-column ms-2" style="width: 150px;">

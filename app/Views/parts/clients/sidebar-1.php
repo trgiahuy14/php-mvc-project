@@ -2,7 +2,7 @@
     <div class="row g-4">
         <div class="col-12">
             <div class="rounded overflow-hidden">
-                <img src="<?= _HOST_URL_PUBLIC ?>/assets/img/news-3.jpg" class="img-fluid rounded img-zoomin w-100" alt="">
+                <img src="<?= PUBLIC_URL ?>/assets/img/news-3.jpg" class="img-fluid rounded img-zoomin w-100" alt="">
             </div>
         </div>
         <div class="col-12">
@@ -16,7 +16,7 @@
             <div class="row g-4 align-items-center">
                 <div class="col-5">
                     <div class="overflow-hidden rounded">
-                        <img src="<?= _HOST_URL_PUBLIC ?>/assets/img/news-3.jpg" class="img-zoomin img-fluid rounded w-100" alt="">
+                        <img src="<?= PUBLIC_URL ?>/assets/img/news-3.jpg" class="img-zoomin img-fluid rounded w-100" alt="">
                     </div>
                 </div>
                 <div class="col-7">
@@ -32,7 +32,7 @@
             <div class="row g-4 align-items-center">
                 <div class="col-5">
                     <div class="overflow-hidden rounded">
-                        <img src="<?= _HOST_URL_PUBLIC ?>/assets/img/news-4.jpg" class="img-zoomin img-fluid rounded w-100" alt="">
+                        <img src="<?= PUBLIC_URL ?>/assets/img/news-4.jpg" class="img-zoomin img-fluid rounded w-100" alt="">
                     </div>
                 </div>
                 <div class="col-7">
@@ -48,7 +48,7 @@
             <div class="row g-4 align-items-center">
                 <div class="col-5">
                     <div class="overflow-hidden rounded">
-                        <img src="<?= _HOST_URL_PUBLIC ?>/assets/img/news-5.jpg" class="img-zoomin img-fluid rounded w-100" alt="">
+                        <img src="<?= PUBLIC_URL ?>/assets/img/news-5.jpg" class="img-zoomin img-fluid rounded w-100" alt="">
                     </div>
                 </div>
                 <div class="col-7">
@@ -64,7 +64,7 @@
             <div class="row g-4 align-items-center">
                 <div class="col-5">
                     <div class="overflow-hidden rounded">
-                        <img src="<?= _HOST_URL_PUBLIC ?>/assets/img/news-6.jpg" class="img-zoomin img-fluid rounded w-100" alt="">
+                        <img src="<?= PUBLIC_URL ?>/assets/img/news-6.jpg" class="img-zoomin img-fluid rounded w-100" alt="">
                     </div>
                 </div>
                 <div class="col-7">
@@ -80,7 +80,7 @@
             <div class="row g-4 align-items-center">
                 <div class="col-5">
                     <div class="overflow-hidden rounded">
-                        <img src="<?= _HOST_URL_PUBLIC ?>/assets/img/news-7.jpg" class="img-zoomin img-fluid rounded w-100" alt="">
+                        <img src="<?= PUBLIC_URL ?>/assets/img/news-7.jpg" class="img-zoomin img-fluid rounded w-100" alt="">
                     </div>
                 </div>
                 <div class="col-7">
@@ -96,7 +96,7 @@
             <div class="row g-4 align-items-center">
                 <div class="col-5">
                     <div class="overflow-hidden rounded">
-                        <img src="<?= _HOST_URL_PUBLIC ?>/assets/img/news-7.jpg" class="img-zoomin img-fluid rounded w-100" alt="">
+                        <img src="<?= PUBLIC_URL ?>/assets/img/news-7.jpg" class="img-zoomin img-fluid rounded w-100" alt="">
                     </div>
                 </div>
                 <div class="col-7">

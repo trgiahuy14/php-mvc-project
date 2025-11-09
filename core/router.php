@@ -1,8 +1,11 @@
 <?php
+if (!defined('APP_KEY')) die('Access denied');
 
 class Router
 {
     protected $routers = [];
+
+    // Register routes
     public function get($url, $action)
     {
         $this->routers['GET'][$url] = $action;
@@ -18,27 +21,59 @@ class Router
         return $this->routers;
     }
 
+    // Dispatch
     public function xulyPath($method, $url)
     {
         $url = $url ?: '/'; // If url is empty, return '/'
+        $method = strtoupper((string)$method); // normalize method
 
-        if (isset($this->routers[$method][$url])) {
-            $action = $this->routers[$method][$url];
-            [$controller, $funcs] = explode('@', $action);
-
-            if ($controller == 'HomeController') {
-                // Client
-                require_once './app/Controllers/clients/' . $controller . '.php';
-                $controllerMot = new $controller();
-                $controllerMot->$funcs();
-            } else {
-                // Admin
-                require_once './app/Controllers/' . $controller . '.php';
-                $controllerMot = new $controller();
-                $controllerMot->$funcs();
-            }
-        } else {
+        if (!isset($this->routers[$method][$url])) {
+            http_response_code(404);
             echo '404 ERROR';
+            return;
         }
+
+        $action = $this->routers[$method][$url];
+
+        // action must be Controller@Method
+        if (strpos($action, '@') === false) {
+            http_response_code(500);
+            echo 'Invalid route action';
+            return;
+        }
+
+        [$controller, $func] = explode('@', $action, 2);
+
+        // choose controller folder
+        $baseDir = ($controller === 'HomeController')
+            ? './app/Controllers/clients/'
+            : './app/Controllers/';
+
+        $file = $baseDir . $controller . '.php';
+
+        if (!is_file($file)) {
+            http_response_code(404);
+            echo 'Controller file not found';
+            return;
+        }
+
+        require_once $file;
+
+        if (!class_exists($controller)) {
+            http_response_code(500);
+            echo 'Controller class not found';
+            return;
+        }
+
+        $instance = new $controller();
+
+        if (!method_exists($instance, $func)) {
+            http_response_code(404);
+            echo 'Action not found';
+            return;
+        }
+
+        // call controller action
+        $instance->$func();
     }
 }

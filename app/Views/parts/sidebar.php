@@ -1,18 +1,12 @@
-<?php
-if (!defined('_TRGIAHUY')) {
-    die('Truy cập không hợp lệ');
-}
-?>
-
 <!--begin::Sidebar-->
 <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
     <!--begin::Sidebar Brand-->
     <div class="sidebar-brand">
         <!--begin::Brand Link-->
-        <a href="<?php echo _HOST_URL ?>" class="brand-link">
+        <a href="<?= BASE_URL ?>" class="brand-link">
             <!--begin::Brand Image-->
             <img
-                src="<?php echo _HOST_URL_PUBLIC; ?>/assets/img/logo.png?v=<?php echo time(); ?>"
+                src="<?= PUBLIC_URL ?>/assets/img/logo.png?v=<?= time(); ?>"
                 alt="Courses Manager Logo"
                 class="brand-image opacity-75 shadow" />
             <!--end::Brand Image-->
@@ -33,7 +27,7 @@ if (!defined('_TRGIAHUY')) {
                 role="menu"
                 data-accordion="false">
                 <li class="nav-item menu-open">
-                    <a href="<?php echo _HOST_URL ?>" class="nav-link active">
+                    <a href="<?= BASE_URL ?>" class="nav-link active">
                         <i class="nav-icon bi bi-speedometer"></i>
                         <p>
                             Dashboard
@@ -52,13 +46,13 @@ if (!defined('_TRGIAHUY')) {
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="<?php echo _HOST_URL ?>/posts" class="nav-link">
+                            <a href="<?= BASE_URL ?>/posts" class="nav-link">
                                 <i class="nav-icon bi bi-circle"></i>
                                 <p>Danh sách</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="<?php echo _HOST_URL ?>/posts/add" class="nav-link">
+                            <a href="<?= BASE_URL ?>/posts/add" class="nav-link">
                                 <i class="nav-icon bi bi-circle"></i>
                                 <p>Thêm mới bài viết</p>
                             </a>

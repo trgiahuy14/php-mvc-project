@@ -1,15 +1,14 @@
 <?php
+if (!defined('APP_KEY')) die('Access denied');
 
-// Khai báo DB
-const _HOST = 'localhost';
-const _DB = 'php_mvc_db';
-const _USER = 'root';
-const _PASS = '';
-const _DRIVER = 'mysql';
+// Database config
+const DB_HOST     = 'localhost';
+const DB_NAME     = 'php_mvc_db';
+const DB_USER     = 'root';
+const DB_PASSWORD = '';
+const DB_DRIVER   = 'mysql';
 
-// Constant key
-define("_TRGIAHUY", true);
-
-// HOST URL
-define("_HOST_URL", "http://" . $_SERVER['HTTP_HOST'] . "/php-mvc-project");
-define("_HOST_URL_PUBLIC", _HOST_URL . "/public");
+// App URL
+define("APP_BASE_PATH", "/php-mvc-project");
+define("BASE_URL", "http://" . $_SERVER['HTTP_HOST'] . APP_BASE_PATH);
+define("PUBLIC_URL", BASE_URL . "/public");

@@ -21,6 +21,7 @@
 
 namespace PHPMailer\PHPMailer;
 
+if (!defined('APP_KEY')) die('Access denied');
 /**
  * PHPMailer exception handler.
  *

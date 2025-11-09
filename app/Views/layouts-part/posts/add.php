@@ -1,8 +1,6 @@
 <?php
-if (!defined('_TRGIAHUY')) {
-    die('Truy cập không hợp lệ');
-}
 $data = ['title' => 'Thêm bài viết'];
+
 layout('header', $data);
 layout('sidebar');
 

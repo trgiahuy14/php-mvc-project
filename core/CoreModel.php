@@ -1,4 +1,5 @@
 <?php
+if (!defined('APP_KEY')) die('Access denied');
 
 class CoreModel
 {

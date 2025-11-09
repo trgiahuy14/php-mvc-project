@@ -1,60 +1,48 @@
 <?php
-if (!defined('_TRGIAHUY')) {
-    die('Truy cập không hợp lệ');
-}
+if (!defined('APP_KEY')) die('Access denied');
 
-// Set sessions
+// Save session value
 function setSession($key, $value)
 {
     if (!empty(session_id())) {
         $_SESSION[$key] = $value;
         return true;
-    } else
-        return false;
+    }
+    return false;
 }
 
-// Lấy dữ liệu từ Session
+// Get session value
 function getSession($key = '')
 {
     if (empty($key)) {
         return $_SESSION;
-    } else {
-        if (isset($_SESSION[$key])) {
-            return $_SESSION[$key];
-        }
     }
-    return false;
+    return $_SESSION[$key] ?? false;
 }
 
-// Xóa dữ liệu từ Session
+// Remove session value or destroy all
 function removeSession($key = '')
 {
     if (empty($key)) {
         session_destroy();
-        return true;
-    } else {
-        if (isset($key)) {
-            unset($_SESSION[$key]);
-        }
-        return true;
     }
-    return false;
+    if (isset($key)) {
+        unset($_SESSION[$key]);
+    }
+    return true;
 }
 
-// Tạo session Flash
+// Set flash session 
 function setSessionFlash($key, $value)
 {
-    $key = $key . 'Flash';
-    $rel = setSession($key, $value);
-    return $rel;
+    return setSession($key . 'Flash', $value);
 }
 
-// Lấy session Flash
+// Flash session - get once and auto remove
 function getSessionFlash($key)
 {
-    $key = $key . 'Flash';
-    $rel = getSession($key);
+    $key .= 'Flash';
+    $value = getSession($key);
     removeSession($key);
-
-    return $rel;
+    return $value;
 }

@@ -192,7 +192,7 @@ class AuthController extends BaseController
                     // Send active email
                     $emailTo = $filter['email'];
                     $subject = 'Kích hoạt tài khoản – Courses Manager';
-                    $activeLink = _HOST_URL . '/active?token=' . $activeToken;
+                    $activeLink = BASE_URL . '/active?token=' . $activeToken;
 
                     $content = '<div style="font-family: Arial, sans-serif; background:#f6f9fc; padding:24px;">';
                     $content .= '  <div style="max-width:600px; margin:auto; background:#ffffff; border-radius:10px; ';
@@ -212,7 +212,7 @@ class AuthController extends BaseController
                     $content .= 'Liên kết sẽ tự động hết hạn sau một khoảng thời gian ngắn để đảm bảo an toàn.</p>';
 
                     $content .= '    <br><p>Trân trọng,</p>';
-                    $content .= '    <p><b>Đội ngũ Courses Manager</b></p>';
+                    $content .= '    <p><b>Đội ngũ VietNews</b></p>';
                     $content .= '  </div>';
 
                     $content .= '  <div style="text-align:center; color:#6b7280; font-size:12px; margin-top:18px;">';
@@ -281,8 +281,8 @@ class AuthController extends BaseController
                         if ($updateStatus) {
                             // Send forgot mail
                             $emailTo = $email;
-                            $subject = 'Yêu cầu đặt lại mật khẩu – Courses Manager';
-                            $resetLink = _HOST_URL . '/reset?token=' . $forget_token;
+                            $subject = 'Yêu cầu đặt lại mật khẩu';
+                            $resetLink = BASE_URL . '/reset?token=' . $forget_token;
 
                             $content = '<div style="font-family: Arial, sans-serif; background:#f6f9fc; padding:24px;">';
                             $content .= '  <div style="max-width:600px; margin:auto; background:#ffffff; border-radius:10px;';
@@ -302,7 +302,7 @@ class AuthController extends BaseController
                             $content .= ' Liên kết sẽ tự động hết hạn sau một khoảng thời gian ngắn để đảm bảo an toàn.</p>';
 
                             $content .= '    <br><p>Trân trọng,</p>';
-                            $content .= '    <p><b>Đội ngũ Courses Manager</b></p>';
+                            $content .= '    <p><b>Đội ngũ VietNews</b></p>';
                             $content .= '  </div>';
 
                             $content .= '  <div style="text-align:center; color:#6b7280; font-size:12px; margin-top:18px;">';
@@ -384,7 +384,7 @@ class AuthController extends BaseController
                         if ($updateStatus) {
                             // Send mail
                             $emailTo = $checkToken['email'];
-                            $subject = 'Mật khẩu của bạn đã được thay đổi – Courses Manager';
+                            $subject = 'Mật khẩu của bạn đã được thay đổi';
 
                             $content = '<div style="font-family: Arial, sans-serif; background:#f6f9fc; padding:24px;">';
                             $content .= '  <div style="max-width:600px; margin:auto; background:#ffffff; border-radius:10px;';
@@ -408,7 +408,7 @@ class AuthController extends BaseController
                             $content .= '    <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" style="margin:30px auto;">';
                             $content .= '      <tr>';
                             $content .= '        <td bgcolor="#2563eb" style="border-radius:8px;">';
-                            $content .= '          <a href="' . _HOST_URL . '/?module=auth&action=login"';
+                            $content .= '          <a href="' . BASE_URL . '/login"';
                             $content .= '             style="display:inline-block; padding:12px 24px; border-radius:8px; ';
                             $content .= '                    background:#2563eb !important; border:1px solid #2563eb !important; ';
                             $content .= '                    color:#ffffff !important; text-decoration:none !important; font-weight:700;">';
@@ -421,7 +421,7 @@ class AuthController extends BaseController
                             $content .= '    <p style="color:#374151 !important; margin:0 0 12px;">Cảm ơn bạn đã sử dụng hệ thống <span style="color:#374151 !important;"><b>Courses Manager</b></span>.</p>';
                             $content .= '    <br>';
                             $content .= '    <p style="color:#374151 !important; margin:0 0 4px;">Trân trọng,</p>';
-                            $content .= '    <p style="color:#374151 !important; margin:0;"><b>Đội ngũ Courses Manager</b></p>';
+                            $content .= '    <p style="color:#374151 !important; margin:0;"><b>Đội ngũ VietNews</b></p>';
 
                             $content .= '  </div>';
 

@@ -38,7 +38,7 @@
                             <div class="col-4">
                                 <div class="rounded-circle position-relative">
                                     <div class="overflow-hidden rounded-circle">
-                                        <img src="<?= _HOST_URL_PUBLIC ?>/assets/img/features-sports-1.jpg" class="img-zoomin img-fluid rounded-circle w-100" alt="">
+                                        <img src="<?= PUBLIC_URL ?>/assets/img/features-sports-1.jpg" class="img-zoomin img-fluid rounded-circle w-100" alt="">
                                     </div>
                                     <span class="rounded-circle border border-2 border-white bg-primary btn-sm-square text-white position-absolute" style="top: 10%; right: -10px;">3</span>
                                 </div>
@@ -59,7 +59,7 @@
                             <div class="col-4">
                                 <div class="rounded-circle position-relative">
                                     <div class="overflow-hidden rounded-circle">
-                                        <img src="<?= _HOST_URL_PUBLIC ?>/assets/img/features-technology.jpg" class="img-zoomin img-fluid rounded-circle w-100" alt="">
+                                        <img src="<?= PUBLIC_URL ?>/assets/img/features-technology.jpg" class="img-zoomin img-fluid rounded-circle w-100" alt="">
                                     </div>
                                     <span class="rounded-circle border border-2 border-white bg-primary btn-sm-square text-white position-absolute" style="top: 10%; right: -10px;">3</span>
                                 </div>
@@ -80,7 +80,7 @@
                             <div class="col-4">
                                 <div class="rounded-circle position-relative">
                                     <div class="overflow-hidden rounded-circle">
-                                        <img src="<?= _HOST_URL_PUBLIC ?>/assets/img/features-fashion.jpg" class="img-zoomin img-fluid rounded-circle w-100" alt="">
+                                        <img src="<?= PUBLIC_URL ?>/assets/img/features-fashion.jpg" class="img-zoomin img-fluid rounded-circle w-100" alt="">
                                     </div>
                                     <span class="rounded-circle border border-2 border-white bg-primary btn-sm-square text-white position-absolute" style="top: 10%; right: -10px;">3</span>
                                 </div>
@@ -101,7 +101,7 @@
                             <div class="col-4">
                                 <div class="rounded-circle position-relative">
                                     <div class="overflow-hidden rounded-circle">
-                                        <img src="<?= _HOST_URL_PUBLIC ?>/assets/img/features-life-style.jpg" class="img-zoomin img-fluid rounded-circle w-100" alt="">
+                                        <img src="<?= PUBLIC_URL ?>/assets/img/features-life-style.jpg" class="img-zoomin img-fluid rounded-circle w-100" alt="">
                                     </div>
                                     <span class="rounded-circle border border-2 border-white bg-primary btn-sm-square text-white position-absolute" style="top: 10%; right: -10px;">3</span>
                                 </div>
@@ -169,7 +169,7 @@
                     </div>
                     <div class="col-lg-12">
                         <div class="position-relative banner-2">
-                            <img src="<?= _HOST_URL_PUBLIC ?>/assets/img/banner-2.jpg" class="img-fluid w-100 rounded" alt="">
+                            <img src="<?= PUBLIC_URL ?>/assets/img/banner-2.jpg" class="img-fluid w-100 rounded" alt="">
                             <div class="text-center banner-content-2">
                                 <h6 class="mb-2">The Most Populer</h6>
                                 <p class="text-white mb-2">News & Magazine WP Theme</p>

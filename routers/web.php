@@ -1,15 +1,5 @@
 <?php
 
-$router->get('/dashboard', 'UsersController@dashboard');
-
-$router->get('/users', 'UsersController@index');
-$router->post('/users', 'UsersController@index');
-
-$router->get('/group', 'GroupController@index');
-$router->post('/group', 'GroupController@index');
-
-$router->get('/product', 'ProductController@index');
-
 // Authentication
 $router->get('/login', 'AuthController@showLogin');
 $router->post('/login', 'AuthController@login');
@@ -25,7 +15,10 @@ $router->get('/active', 'AuthController@active');
 $router->get('/reset', 'AuthController@showReset');
 $router->post('/reset', 'AuthController@reset');
 
-// Post
+// Dashboard 
+$router->get('/dashboard', 'UsersController@dashboard');
+
+// Posts
 $router->get('/posts', 'PostsController@list');
 
 $router->get('/posts/add', 'PostsController@showAdd');
@@ -36,9 +29,11 @@ $router->post('/posts/edit', 'PostsController@edit');
 
 $router->get('/posts/delete', 'PostsController@delete');
 
-// Client
+// Client Home
 $router->get('/', 'HomeController@index');
 
+
+// Debug
 // echo '<pre>';
 // print_r($router->getRoute());
 // echo '</pre>';

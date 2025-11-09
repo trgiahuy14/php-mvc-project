@@ -39,7 +39,7 @@
                          <a href="#">
                              <div class="d-flex align-items-center">
                                  <div class="rounded-circle border border-2 border-primary overflow-hidden">
-                                     <img src="<?= _HOST_URL_PUBLIC ?>/assets/img/footer-1.jpg" class="img-zoomin img-fluid rounded-circle w-100" alt="">
+                                     <img src="<?= PUBLIC_URL ?>/assets/img/footer-1.jpg" class="img-zoomin img-fluid rounded-circle w-100" alt="">
                                  </div>
                                  <div class="d-flex flex-column ps-4">
                                      <p class="text-uppercase text-white mb-3">Life Style</p>
@@ -55,7 +55,7 @@
                          <a href="#">
                              <div class="d-flex align-items-center">
                                  <div class="rounded-circle border border-2 border-primary overflow-hidden">
-                                     <img src="<?= _HOST_URL_PUBLIC ?>/assets/img/footer-2.jpg" class="img-zoominimg-fluid rounded-circle w-100" alt="">
+                                     <img src="<?= PUBLIC_URL ?>/assets/img/footer-2.jpg" class="img-zoominimg-fluid rounded-circle w-100" alt="">
                                  </div>
                                  <div class="d-flex flex-column ps-4">
                                      <p class="text-uppercase text-white mb-3">Sports</p>
@@ -86,32 +86,32 @@
                      <div class="row g-2">
                          <div class="col-4">
                              <div class="rounded overflow-hidden">
-                                 <img src="<?= _HOST_URL_PUBLIC ?>/assets/img/footer-1.jpg" class="img-zoomin img-fluid rounded w-100" alt="">
+                                 <img src="<?= PUBLIC_URL ?>/assets/img/footer-1.jpg" class="img-zoomin img-fluid rounded w-100" alt="">
                              </div>
                          </div>
                          <div class="col-4">
                              <div class="rounded overflow-hidden">
-                                 <img src="<?= _HOST_URL_PUBLIC ?>/assets/img/footer-2.jpg" class="img-zoomin img-fluid rounded w-100" alt="">
+                                 <img src="<?= PUBLIC_URL ?>/assets/img/footer-2.jpg" class="img-zoomin img-fluid rounded w-100" alt="">
                              </div>
                          </div>
                          <div class="col-4">
                              <div class="rounded overflow-hidden">
-                                 <img src="<?= _HOST_URL_PUBLIC ?>/assets/img/footer-3.jpg" class="img-zoomin img-fluid rounded w-100" alt="">
+                                 <img src="<?= PUBLIC_URL ?>/assets/img/footer-3.jpg" class="img-zoomin img-fluid rounded w-100" alt="">
                              </div>
                          </div>
                          <div class="col-4">
                              <div class="rounded overflow-hidden">
-                                 <img src="<?= _HOST_URL_PUBLIC ?>/assets/img/footer-4.jpg" class="img-zoomin img-fluid rounded w-100" alt="">
+                                 <img src="<?= PUBLIC_URL ?>/assets/img/footer-4.jpg" class="img-zoomin img-fluid rounded w-100" alt="">
                              </div>
                          </div>
                          <div class="col-4">
                              <div class="rounded overflow-hidden">
-                                 <img src="<?= _HOST_URL_PUBLIC ?>/assets/img/footer-5.jpg" class="img-zoomin img-fluid rounded w-100" alt="">
+                                 <img src="<?= PUBLIC_URL ?>/assets/img/footer-5.jpg" class="img-zoomin img-fluid rounded w-100" alt="">
                              </div>
                          </div>
                          <div class="col-4">
                              <div class="rounded overflow-hidden">
-                                 <img src="<?= _HOST_URL_PUBLIC ?>/assets/img/footer-6.jpg" class="img-zoomin img-fluid rounded w-100" alt="">
+                                 <img src="<?= PUBLIC_URL ?>/assets/img/footer-6.jpg" class="img-zoomin img-fluid rounded w-100" alt="">
                              </div>
                          </div>
                      </div>
@@ -149,12 +149,12 @@
  <!-- JavaScript Libraries -->
  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
- <script src="<?= _HOST_URL_PUBLIC ?>/assets/lib/easing/easing.min.js"></script>
- <script src="<?= _HOST_URL_PUBLIC ?>/assets/lib/waypoints/waypoints.min.js"></script>
- <script src="<?= _HOST_URL_PUBLIC ?>/assets/lib/owlcarousel/owl.carousel.min.js"></script>
+ <script src="<?= PUBLIC_URL ?>/assets/lib/easing/easing.min.js"></script>
+ <script src="<?= PUBLIC_URL ?>/assets/lib/waypoints/waypoints.min.js"></script>
+ <script src="<?= PUBLIC_URL ?>/assets/lib/owlcarousel/owl.carousel.min.js"></script>
 
  <!-- Template Javascript -->
- <script src="<?= _HOST_URL_PUBLIC ?>/assets/js/main.js"></script>
+ <script src="<?= PUBLIC_URL ?>/assets/js/main.js"></script>
  </body>
 
  </html>
