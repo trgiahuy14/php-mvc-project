@@ -36,6 +36,8 @@ $router->post('/posts/edit', 'PostsController@edit');
 
 $router->get('/posts/delete', 'PostsController@delete');
 
+// Client
+$router->get('/', 'HomeController@index');
 
 // echo '<pre>';
 // print_r($router->getRoute());

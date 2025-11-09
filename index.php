@@ -38,6 +38,10 @@ foreach (glob(__DIR__ . '/app/Controllers/*.php') as $filename) {
     require_once $filename;
 }
 
+foreach (glob(__DIR__ . '/app/Controllers/clients/*.php') as $filename) {
+    require_once $filename;
+}
+
 // Require Routers
 $router = new Router();
 

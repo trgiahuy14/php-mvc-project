@@ -12,7 +12,7 @@ if (!defined('_TRGIAHUY')) {
         <a href="<?php echo _HOST_URL ?>" class="brand-link">
             <!--begin::Brand Image-->
             <img
-                src="<?php echo _HOST_URL_PUBLIC; ?>/assets/image/logo.png?v=<?php echo time(); ?>"
+                src="<?php echo _HOST_URL_PUBLIC; ?>/assets/img/logo.png?v=<?php echo time(); ?>"
                 alt="Courses Manager Logo"
                 class="brand-image opacity-75 shadow" />
             <!--end::Brand Image-->
