@@ -1,12 +1,10 @@
 <!--begin::Footer-->
 <footer class="app-footer">
-    <div class="float-end d-none d-sm-inline">
-        VietNews Content Management System
-    </div>
     <strong>
-        &copy; <?= date('Y'); ?>
+        &copy; <?= date('Y'); ?> VietNews CMS
     </strong>
-    <a href="https://github.com/trgiahuy14" class="text-decoration-none">TrGiaHuy</a>. All rights reserved.
+    - Developed by
+    <a href="https://github.com/trgiahuy14" class="text-decoration-none">TrGiaHuy</a>
 </footer>
 <!--end::Footer-->
 

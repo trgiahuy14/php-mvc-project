@@ -98,12 +98,12 @@ if (!empty($getInfo)) {
                             <!--end::User Image-->
                             <!--begin::Menu Body-->
                             <li class="user-body">
-                                <a href="?module=users&action=profile" style="width:100%" class="btn btn-default btn-flat">Profile</a>
+                                <a href="<?= BASE_URL ?>/profile" style="width:100%" class="btn btn-default btn-flat">Profile</a>
                             </li>
                             <!--end::Menu Body-->
                             <!--begin::Menu Footer-->
                             <li class="user-footer">
-                                <a href="?module=auth&action=logout" style="width:100%" class="btn btn-default btn-flat float-end">Đăng xuất</a>
+                                <a href="<?= BASE_URL ?>/logout" style="width:100%" class="btn btn-default btn-flat float-end">Đăng xuất</a>
                             </li>
                             <!--end::Menu Footer-->
                         </ul>
