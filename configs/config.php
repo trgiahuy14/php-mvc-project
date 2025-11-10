@@ -9,6 +9,6 @@ const DB_PASSWORD = '';
 const DB_DRIVER   = 'mysql';
 
 // App URL
-define("APP_BASE_PATH", "/php-mvc-project");
+define("APP_BASE_PATH", "/vietnews-cms-php");
 define("BASE_URL", "http://" . $_SERVER['HTTP_HOST'] . APP_BASE_PATH);
 define("PUBLIC_URL", BASE_URL . "/public");

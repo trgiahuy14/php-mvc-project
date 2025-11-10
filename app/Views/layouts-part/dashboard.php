@@ -1,8 +1,8 @@
 <?php
 #HEADER
-$this->renderView('parts/header', $getInfo);
+$this->renderView('parts/header');
 ?>
-
+ 
 <?php
 #SIDEBAR
 $this->renderView('parts/sidebar');

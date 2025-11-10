@@ -50,12 +50,12 @@ function sendMail($emailTo, $subject, $content)
 }
 
 // HTTP method helpers
-function isPost()
+function isPost(): bool
 {
     return $_SERVER['REQUEST_METHOD'] == 'POST';
 }
 
-function isGet()
+function isGet(): bool
 {
     return $_SERVER['REQUEST_METHOD'] == 'GET';
 }
@@ -88,7 +88,6 @@ function filterData($method = '')
 
     return $out;
 }
-
 
 // Validators
 function validateEmail($email)
@@ -134,7 +133,6 @@ function getMsg($msg, $type = 'success')
     echo ' </div>';
 }
 
-
 function formError($errors, $fieldName)
 {
     return (!empty($errors[$fieldName]))
@@ -154,17 +152,3 @@ function redirect($path, $isFullUrl = false)
     header("Location: $target");
     exit;
 }
-
-// // Hàm check login
-// function isLogin()
-// {
-//     $checkLogin = false;
-//     $tokenLogin = getSession('token_login');
-//     $checkToken = getOne("SELECT * FROM token_login WHERE token = '$tokenLogin'");
-//     if (!empty($checkToken)) {
-//         $checkLogin = true;
-//     } else {
-//         removeSession('token_login');
-//     }
-//     return $checkLogin;
-// }

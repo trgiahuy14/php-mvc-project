@@ -2,6 +2,12 @@
 
 class UsersController extends BaseController
 {
+
+    public function __construct()
+    {
+        $this->requireLogin();
+    }
+
     public function index()
     {
         $user = new Users();

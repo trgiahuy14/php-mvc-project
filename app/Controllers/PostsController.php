@@ -7,6 +7,7 @@ class PostsController extends BaseController
     // Xử lý đăng nhập
     public function __construct()
     {
+        $this->requireLogin();
         $this->postModel = new Posts();
     }
 
