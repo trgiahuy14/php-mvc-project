@@ -3,12 +3,14 @@
 class PostsController extends BaseController
 {
     private $postModel;
+    protected $userInfo;
 
     // Xử lý đăng nhập
     public function __construct()
     {
         $this->requireLogin();
         $this->postModel = new Posts();
+        $this->userInfo = getSession('getInfo');
     }
 
     public function list()
@@ -30,7 +32,7 @@ class PostsController extends BaseController
 
             // Pagination
             $maxData = (int)$this->postModel->getRowPosts("SELECT COUNT(id) FROM posts{$whereSql}"); // Total of data
-            $perPage = 3; // Row per page 
+            $perPage = 10; // Row per page 
             $maxPage = max(1, (int)ceil($maxData / $perPage)); // Calculate max page, ceil giúp làm tròn lên
             $page = 1;
 
@@ -105,6 +107,7 @@ class PostsController extends BaseController
                 // INSERT DATA
                 $dataInsert = [
                     'title' => $filter['title'],
+                    'author' => $this->userInfo['fullname'],
                     'content' => $filter['content'],
                     'tags' => $filter['tags'],
                     'minutes_read' => $filter['minutes_read'],
@@ -197,7 +200,7 @@ class PostsController extends BaseController
                 setSessionFlash('msg_type', 'danger');
                 setSessionFlash('oldData', $filter);
                 setSessionFlash('errors', $errors);
-                redirect('/posts/edit');
+                redirect('/posts/edit?id=' . $filter['id']);
             }
         }
         $this->renderView('layouts-part/posts/edit');
