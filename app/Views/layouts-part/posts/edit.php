@@ -24,7 +24,7 @@ if (empty($oldData) && !empty($postData)) {
     }
     ?>
     <!-- Post editing form -->
-    <form action="" method="post" enctype="multipart/form-data">
+    <form action="" method="post">
         <input type="hidden" name="idPost" value="<?= $idPost ?>">
         <div class="row">
             <!-- Post title -->
@@ -36,6 +36,7 @@ if (empty($oldData) && !empty($postData)) {
                     type="text"
                     class="form-control"
                     placeholder="Nhập tiêu đề"
+                    maxlength="160"
                     value="<?= (!empty($oldData)) ? oldData($oldData, 'title') : null ?>">
                 <!-- Error -->
                 <?= (!empty($errorsArr)) ? formError($errorsArr, 'title') : null ?>
@@ -48,9 +49,10 @@ if (empty($oldData) && !empty($postData)) {
                     id="content"
                     name="content"
                     class="form-control"
-                    placeholder="Nội dung"><?= (!empty($oldData)) ? oldData($oldData, 'content') : null ?></textarea>
+                    placeholder="Nội dung"
+                    rows="4"><?= (!empty($oldData)) ? oldData($oldData, 'content') : null ?></textarea>
                 <!-- Error -->
-                <?= (!empty($errorsArr)) ? formError($errorsArr, 'title') : null ?>
+                <?= (!empty($errorsArr)) ? formError($errorsArr, 'content') : null ?>
             </div>
 
             <!-- Post tags-->
@@ -60,7 +62,9 @@ if (empty($oldData) && !empty($postData)) {
                     id="tags"
                     name="tags"
                     class="form-control"
-                    placeholder="Nhập thẻ"><?= (!empty($oldData)) ? oldData($oldData, 'minutes_read') : null ?></textarea>
+                    placeholder="VD: php, laravel, performance"
+                    maxlength="200"><?= (!empty($oldData)) ? oldData($oldData, 'tags') : null ?></textarea>
+                <small class="text-muted">Ngăn cách bằng dấu phẩy</small>
             </div>
 
             <!-- Minutes read -->
@@ -97,7 +101,7 @@ if (empty($oldData) && !empty($postData)) {
                     type="text"
                     class="form-control"
                     placeholder="Nhập số lượt bình luận"
-                    value="<?= (!empty($oldData)) ? oldData($oldData, 'views') : null ?>">
+                    value="<?= (!empty($oldData)) ? oldData($oldData, 'comments') : null ?>">
             </div>
 
             <!-- Shares -->
@@ -109,7 +113,7 @@ if (empty($oldData) && !empty($postData)) {
                     type="text"
                     class="form-control"
                     placeholder="Nhập số lượt chia sẻ"
-                    value="<?= (!empty($oldData)) ? oldData($oldData, 'views') : null ?>">
+                    value="<?= (!empty($oldData)) ? oldData($oldData, 'shares') : null ?>">
             </div>
         </div>
         <button type="submit" class="btn btn-success">Xác nhận</button>
