@@ -2,98 +2,102 @@
 
 class AuthController extends BaseController
 {
-    private $coreModel;
+    private $userModel;
 
     // Xử lý đăng nhập
     public function __construct()
     {
-        $this->coreModel = new CoreModel();
+        $this->userModel = new Users();
     }
 
+    /** Render login page */
     public function showLogin()
     {
         $this->renderView('layouts-part/login');
     }
 
+    /** Handle login POST */
     public function login()
     {
-        if (isPost()) {
-            $filter = filterData();
-            $errors = [];
-            // Validate Email
-            if (empty(trim($filter['email']))) {
-                $errors['email']['required'] = 'Email bắt buộc phải nhập';
-            } else {
-                if (!validateEmail(trim($filter['email']))) {
-                    $errors['email']['isEmail'] = 'Email không đúng định dạng';
-                }
+        if (!isPost()) {
+            return;
+        }
+
+        $input = filterData();
+        $errors = [];
+
+        // --- Validate Email ---
+        $emailInput = trim($input['email'] ?? '');
+        if ($emailInput === '') {
+            $errors['email']['required'] = 'Email bắt buộc phải nhập';
+        } elseif (!validateEmail(trim($input['email']))) { {
+                $errors['email']['isEmail'] = 'Email không đúng định dạng';
             }
+        }
 
-            // Validate password
-            if (empty($filter['password'])) {
-                $errors['password']['required'] = 'Mật khẩu bắt buộc phải nhập';
-            } else {
-                if (strlen(trim($filter['password'])) < 6) {
-                    $errors['password']['length'] = 'Mật khẩu phải dài hơn 6 ký tự';
-                }
-            }
+        // --- Validate password ---
+        $passwordInput = (string)($input['password'] ?? '');
+        if ($passwordInput === '') {
+            $errors['password']['required'] = 'Mật khẩu bắt buộc phải nhập';
+        } elseif (strlen(trim($passwordInput)) < 6) {
+            $errors['password']['length'] = 'Mật khẩu phải dài hơn 6 ký tự';
+        }
 
-            if (empty($errors)) {
-                // Kiểm tra dữ liệu
-                $email = $filter['email'];
-                $password = $filter['password'];
-
-                // Kiểm tra email
-                $checkEmail = $this->coreModel->getOne("SELECT * FROM users WHERE email = '$email' ");
-
-                if (!empty($checkEmail)) {
-                    if (!empty($password)) {
-                        $checkStatus = password_verify($password, $checkEmail['password']);
-                        if ($checkStatus) {
-                            // Prevent multiple login
-                            $user_id = $checkEmail['id'];
-                            $checkAlready = $this->coreModel->getRows("SELECT * FROM token_login WHERE user_id = '$user_id'");
-                            if ($checkAlready > 0) {
-                                setSessionFlash('msg', 'Tài khoản đang được đăng nhập ở một nơi khác');
-                                setSessionFlash('msg_type', 'danger');
-                                redirect('/login');
-                            } else {
-                                // Tạo token và insert vào table token_login
-                                $token = sha1(uniqid() . time());
-
-                                // Gán token lên session
-                                setSession('token_login', $token);
-                                $data = [
-                                    'token' => $token,
-                                    'created_at' => date('Y:m:d H:i:s'),
-                                    'user_id' => $checkEmail['id'],
-                                ];
-                                $insertToken = $this->coreModel->insert('token_login', $data);
-                                if ($insertToken) {
-                                    // Điều hướng
-                                    redirect('/dashboard');
-                                } else {
-                                    setSessionFlash('msg', 'Lỗi hệ thống, vui lòng thử lại sau!');
-                                    setSessionFlash('msg_type', 'danger');
-                                }
-                            }
-                        } else {
-                            setSessionFlash('msg', 'Mật khẩu hoặc email không chính xác.');
-                            setSessionFlash('msg_type', 'danger');
-                        }
-                    }
-                } else {
-                    setSessionFlash('msg', 'Email không tồn tại');
-                    setSessionFlash('msg_type', 'danger');
-                }
-            } else {
-                setSessionFlash('msg', 'Vui lòng kiểm tra lại dữ liệu nhập vào');
-                setSessionFlash('msg_type', 'danger');
-                setSessionFlash('oldData', $filter);
-                setSessionFlash('errors', $errors);
-            }
+        if (!empty($errors)) {
+            setSessionFlash('msg', 'Vui lòng kiểm tra lại dữ liệu nhập vào');
+            setSessionFlash('msg_type', 'danger');
+            setSessionFlash('oldData', $input);
+            setSessionFlash('errors', $errors);
             redirect('/login');
         }
+
+
+        // --- Query user by email ---
+        $user = $this->userModel->getOneUser("email = '$emailInput'");
+        if (empty($user)) {
+            setSessionFlash('msg', 'Email không tồn tại');
+            setSessionFlash('msg_type', 'danger');
+            redirect('/login');
+        }
+
+        // --- Verify password ---
+        $isPasswordValid = password_verify($passwordInput, $user['password']);
+        if (!$isPasswordValid) {
+            setSessionFlash('msg', 'Mật khẩu hoặc email không chính xác');
+            setSessionFlash('msg_type', 'danger');
+            redirect('/login');
+        }
+
+        // --- Prevent multi-login for the same user ---
+        $countRow = $this->userModel->getOneToken("id=" . $user['id']);
+        echo $countRow;
+
+        if ($countRow > 0) {
+            setSessionFlash('msg', 'Tài khoản đang được đăng nhập ở một nơi khác');
+            setSessionFlash('msg_type', 'danger');
+            redirect('/login');
+        }
+
+        // --- Issue token & persist ---
+        $token = bin2hex(random_bytes(32));
+        $insertData = [
+            'token' => $token,
+            'created_at' => date('Y-m-d H:i:s'),
+            'user_id' => $user['id'],
+        ];
+
+        $inserted = $this->userModel->insertTokenLogin($insertData);
+
+        if (!$inserted) {
+            setSessionFlash('msg', 'Lỗi hệ thống, vui lòng thử lại sau!');
+            setSessionFlash('msg_type', 'danger');
+            redirect('/login');
+        }
+
+        setSession('token_login', $token);
+
+        // --- Redirect to dashboard ---
+        redirect('/dashboard');
     }
 
     public function showRegister()
