@@ -15,6 +15,8 @@ $router->get('/active', 'AuthController@active');
 $router->get('/reset', 'AuthController@showReset');
 $router->post('/reset', 'AuthController@reset');
 
+$router->get('/logout', 'AuthController@logout');
+
 // Dashboard 
 $router->get('/dashboard', 'UsersController@dashboard');
 
@@ -32,8 +34,7 @@ $router->get('/posts/delete', 'PostsController@delete');
 // Client Home
 $router->get('/', 'HomeController@index');
 
-
-// Debug
+// For debug
 // echo '<pre>';
 // print_r($router->getRoute());
 // echo '</pre>';

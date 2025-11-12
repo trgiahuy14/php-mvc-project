@@ -455,6 +455,19 @@ class AuthController extends BaseController
         }
         redirect('/reset?token=' . $tokenReset);
     }
+
+    public function logout(): void
+    {
+        $token = getSession('token_login');
+
+        if ($token !== false) {
+            $this->coreModel->delete('token_login', "token = '$token'");
+        }
+
+        removeSession('token_login');
+
+        redirect('/login');
+    }
 }
 
 // Need: add invalid page if token doesn't exist
