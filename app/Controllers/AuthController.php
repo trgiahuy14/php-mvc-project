@@ -86,9 +86,9 @@ class AuthController extends BaseController
             'user_id' => $user['id'],
         ];
 
-        $isInserted = $this->userModel->insertTokenLogin($insertData);
+        $inserted = $this->userModel->insertTokenLogin($insertData);
 
-        if (!$isInserted) {
+        if (!$inserted) {
             setSessionFlash('msg', 'Lỗi hệ thống, vui lòng thử lại sau!');
             setSessionFlash('msg_type', 'danger');
             redirect('/login');
@@ -192,15 +192,14 @@ class AuthController extends BaseController
             'created_at' => date('Y-m-d H:i:s')
         ];
 
-        $isInserted = $this->userModel->insertUser($insertData);
+        $inserted = $this->userModel->insertUser($insertData);
 
-        if ($isInserted) {
+        if ($inserted) {
             $activeLink = BASE_URL . '/active?token=' . $activationToken;
 
             // Send active email
             $emailTo = $input['email'];
             $subject = 'Kích hoạt tài khoản';
-
 
             $content = '<div style="font-family: Arial, sans-serif; background:#f6f9fc; padding:24px;">';
             $content .= '  <div style="max-width:600px; margin:auto; background:#ffffff; border-radius:10px; ';
@@ -241,14 +240,47 @@ class AuthController extends BaseController
     }
 
     /** Show activation page */
-    public function active()
+    public function active(): void
     {
-        $data = ['coreModel' => $this->coreModel];
-        $this->renderView('layouts-part/active', $data);
+        // Get token from URL query (?token=xxxx)
+        $query = filterData('get');
+        $token = trim($query['token'] ?? '');
+
+        // Token missing or invalid format
+        if ($token === '') {
+            $this->renderView('layouts-part/active', [
+                'status' => 'invalid'
+            ]);
+            return;
+        }
+
+        // Check user by activation token
+        $user = $this->userModel->getOneUser("active_token='$token'");
+
+        // Token not found in database
+        if (empty($user)) {
+            $this->renderView('layouts-part/active', [
+                'status' => 'invalid'
+            ]);
+            return;
+        }
+
+        // Update user as active
+        $dataUpdate = [
+            'status' => 1,
+            'active_token' => null,
+            'updated_at' => date('Y-m-d H:i:s')
+        ];
+
+        $updated = $this->userModel->updateUser($dataUpdate, 'id=' . (int)$user['id']);
+
+        // Render result
+        $this->renderView('layouts-part/active', [
+            'status' => $updated ? 'success' : 'failed'
+        ]);
     }
 
     /** Show forgot-password page */
-
     public function showForgot()
     {
         $this->renderView('layouts-part/forgot');
@@ -273,7 +305,7 @@ class AuthController extends BaseController
                 if (!empty($filter['email'])) {
                     $email = $filter['email'];
 
-                    $checkEmail = $this->coreModel->getOne("SELECT * FROM users WHERE email ='$email'");
+                    $checkEmail = $this->userModel->getOne("email ='$email'");
                     if (!empty($checkEmail)) {
                         // Update forget_token into user table
                         $forget_token = sha1(uniqid() . time());
@@ -281,7 +313,7 @@ class AuthController extends BaseController
                             'forget_token' => $forget_token
                         ];
                         $condition = "id=" . $checkEmail['id'];
-                        $updateStatus = $this->coreModel->update('users', $data, $condition);
+                        $updateStatus = $this->userModel->update($data, $condition);
                         if ($updateStatus) {
                             // Send forgot mail
                             $emailTo = $email;
@@ -349,7 +381,7 @@ class AuthController extends BaseController
         }
         if (!empty($tokenReset)) {
             // Check token
-            $checkToken = $this->coreModel->getOne("SELECT * FROM users WHERE forget_token = '$tokenReset'");
+            $checkToken = $this->userModel->getOne("forget_token = '$tokenReset'");
             if (!empty($checkToken)) {
                 if (isPost()) {
                     $filter = filterData();
@@ -383,7 +415,7 @@ class AuthController extends BaseController
 
                         $condition = "id=" . $checkToken['id'];
 
-                        $updateStatus = $this->coreModel->update('users', $dataUpdate, $condition);
+                        $updateStatus = $this->userModel->update($dataUpdate, $condition);
 
                         if ($updateStatus) {
                             // Send mail
@@ -465,7 +497,7 @@ class AuthController extends BaseController
         $token = getSession('token_login');
 
         if ($token !== false) {
-            $this->coreModel->delete('token_login', "token = '$token'");
+            $this->userModel->delete('token_login', "token = '$token'");
         }
 
         removeSession('token_login');

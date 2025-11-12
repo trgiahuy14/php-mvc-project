@@ -27,7 +27,7 @@ class CoreModel
     }
 
     // Truy vấn nhiều dòng dữ liệu
-    function getAll($sql)
+    public function getAll($sql)
     {
         $stm = $this->conn->prepare($sql);
         $stm->execute();
@@ -36,7 +36,7 @@ class CoreModel
     }
 
     // Đếm số dòng trả về
-    function getRows($sql)
+    public function getRows($sql)
     {
         $stm = $this->conn->prepare($sql);
         $stm->execute();
@@ -52,7 +52,7 @@ class CoreModel
     }
 
     // Truy vấn 1 dòng dữ liệu
-    function getOne($sql)
+    public function getOne($sql)
     {
         $stm = $this->conn->prepare($sql);
         $stm->execute();
@@ -61,7 +61,7 @@ class CoreModel
     }
 
     // Insert dữ liệu
-    function insert($table, $data)
+    public function insert($table, $data)
     {
         $keys = array_keys($data);
         $column = implode(',', $keys); # phân tách keys
@@ -76,7 +76,7 @@ class CoreModel
     }
 
     // Update  dữ liệu
-    function update($table, $data, $condition = '')
+    public function update($table, $data, $condition = '')
     {
         $update = '';
         foreach ($data as $key => $value) {
@@ -97,7 +97,7 @@ class CoreModel
     }
 
     // Delete dữ liệu
-    function delete($table, $condition = '')
+    public function delete($table, $condition = '')
     {
         if (!empty($condition)) {
             $sql = "DELETE FROM $table WHERE $condition";
@@ -111,7 +111,7 @@ class CoreModel
         return $rel;
     }
 
-    function lastID()
+    public function lastID()
     {
         return $this->conn->lastInsertID();
     }

@@ -17,9 +17,19 @@ class Users extends CoreModel
         return $this->getOne("SELECT * FROM users WHERE $condition");
     }
 
+    public function getRowsUser($condition)
+    {
+        return $this->getRows("SELECT * FROM users WHERE $condition");
+    }
+
     public function insertUser($data)
     {
         return $this->insert('users', $data);
+    }
+
+    public function updateUser($data)
+    {
+        return $this->update('users', $data);
     }
 
     public function getOneToken($condition)
