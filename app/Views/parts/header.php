@@ -1,11 +1,4 @@
-<?php
-$nameLogin = ""; // Phòng trường hợp name rỗng thì không lỗi
-$getInfo = getSession('getInfo');
-if (!empty($getInfo)) {
-    $nameUser = $getInfo['fullname'];
-    $avatarUser = $getInfo['avatar'];
-}
-?>
+<?php $currentUser = $_SESSION['current_user'] ?? null; ?>
 
 <!doctype html>
 <html lang="en">
@@ -77,22 +70,24 @@ if (!empty($getInfo)) {
                     <!--begin::User Menu Dropdown-->
                     <li class="nav-item dropdown user-menu">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                            <img
-                                src="<?= BASE_URL ?><?= isset($avatarUser) ? $avatarUser : false ?>"
-                                class="user-image rounded-circle shadow"
-                                alt="User Image" />
-                            <span class="d-none d-md-inline"><?= isset($nameUser) ? $nameUser : false; ?></span>
+                            <?php if ($currentUser): ?>
+                                <img
+                                    src="<?= BASE_URL . $currentUser['avatar'] ?>"
+                                    class="user-image rounded-circle shadow"
+                                    alt="User Image" />
+                                <span class="d-none d-md-inline"><?= htmlspecialchars($currentUser['fullname']) ?></span>
+                            <?php endif ?>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
                             <!--begin::User Image-->
                             <li class="user-header text-bg-primary">
                                 <img
-                                    src="<?= BASE_URL ?><?= isset($avatarUser) ? $avatarUser : false; ?>"
+                                    src="<?= BASE_URL . $currentUser['avatar'] ?>"
                                     class="rounded-circle shadow"
                                     alt="User Image" />
                                 <p>
-                                    <?= isset($nameUser) ? $nameUser : false ?>
-                                    <small>- <?= isset($userGroup) ? $userGroup : false ?> -</small>
+                                    <?= htmlspecialchars($currentUser['fullname']) ?>
+                                    <small>- Admin -</small>
                                 </p>
                             </li>
                             <!--end::User Image-->

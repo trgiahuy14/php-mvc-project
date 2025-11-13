@@ -15,10 +15,23 @@ foreach (glob(__DIR__ . '/app/Models/*.php') as $f) require_once $f;
 foreach (glob(__DIR__ . '/app/Controllers/*.php') as $f) require_once $f;
 foreach (glob(__DIR__ . '/app/Controllers/clients/*.php') as $f) require_once $f;
 
-// Init core
-$cor = new CoreModel();
-$getInfo = $cor->getUserInfo();
-setSession('getInfo', $getInfo);
+
+// Load current user for header
+$currentUser = null;
+
+$token = getSession('token_login');
+
+if ($token) {
+    $modelToken = new TokenModel();
+    $rowToken   = $modelToken->findByToken($token);
+
+    if ($rowToken) {
+        $modelUser = new UserModel();
+        $currentUser = $modelUser->getUserById((int)$rowToken['user_id']);
+    }
+}
+
+$_SESSION['current_user'] = $currentUser;
 
 // Init router
 $router = new Router();
