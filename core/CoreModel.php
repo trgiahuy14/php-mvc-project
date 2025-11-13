@@ -1,118 +1,121 @@
 <?php
+
+declare(strict_types=1);
+
 if (!defined('APP_KEY')) die('Access denied');
 
 class CoreModel
 {
-    private $conn;
+    /** PDO connection */
+    protected PDO $pdo;
+
     public function __construct()
     {
-        $this->conn = Database::connectDPO();
+        // Reuse existing PDO instance from Database
+        $this->pdo = Database::connectPdo();
     }
 
-    public function getUserInfo()
+    /** Fetch all rows */
+    public function getAll(string $sql, array $params = []): array
     {
-        $token = getSession('token_login');
-        if (!empty($token)) {
-            $checkTokenLogin = $this->getOne("SELECT * FROM token_login WHERE token = '$token'");
-            if (!empty($checkTokenLogin)) {
-                $user_id = $checkTokenLogin['user_id'];
-                $getUserDetail = $this->getOne("SELECT fullname, avatar FROM users WHERE id = '$user_id'");
-
-                if (!empty($getUserDetail)) {
-                    return $getUserDetail;
-                }
-            }
-        }
-        return false;
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+        return (array) $stmt->fetchAll();
     }
 
-    // Truy vấn nhiều dòng dữ liệu
-    public function getAll($sql)
+    /** Fetch one row or null */
+    public function getOne(string $sql, array $params = []): ?array
     {
-        $stm = $this->conn->prepare($sql);
-        $stm->execute();
-        $result = $stm->fetchAll(PDO::FETCH_ASSOC);
-        return $result;
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+        $row = $stmt->fetch();
+        return $row === false ? null : $row;
     }
 
-    // Đếm số dòng trả về
-    public function getRows($sql)
+    /** Fetch scalar value (COUNT(*), SUM, ...) */
+    public function getScalar(string $sql, array $params = []): int
     {
-        $stm = $this->conn->prepare($sql);
-        $stm->execute();
-        return $stm->rowCount();
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+        return (int) $stmt->fetchColumn();
     }
 
-    // Scalar
-    public function getScalar($sql)
+    /** Count rows from SELECT */
+    public function getRowCount(string $sql, array $params = []): int
     {
-        $stm = $this->conn->prepare($sql);
-        $stm->execute();
-        return (int)$stm->fetchColumn();
+        $countSql = 'SELECT COUNT(*) FROM (' . $sql . ') AS _t';
+        $stmt = $this->pdo->prepare($countSql);
+        $stmt->execute($params);
+        return (int) $stmt->fetchColumn();
     }
 
-    // Truy vấn 1 dòng dữ liệu
-    public function getOne($sql)
+    /** Insert record */
+    public function insert(string $table, array $data): bool
     {
-        $stm = $this->conn->prepare($sql);
-        $stm->execute();
-        $result = $stm->fetch(PDO::FETCH_ASSOC);
-        return $result;
-    }
-
-    // Insert dữ liệu
-    public function insert($table, $data)
-    {
-        $keys = array_keys($data);
-        $column = implode(',', $keys); # phân tách keys
-        $placeh = ':' . implode(',:', $keys);
-
-        $sql = "INSERT INTO $table ($column) VALUES ($placeh)";
-
-        $stm = $this->conn->prepare($sql);
-        $rel = $stm->execute($data);
-
-        return $rel;
-    }
-
-    // Update  dữ liệu
-    public function update($table, $data, $condition = '')
-    {
-        $update = '';
-        foreach ($data as $key => $value) {
-            $update .= $key . '=:' . $key . ',';
-        }
-        $update = trim($update, ',');
-
-        if (!empty($condition)) {
-            $sql = "UPDATE $table SET $update WHERE $condition";
-        } else {
-            $sql = "UPDATE $table SET $update";
+        if (empty($data)) {
+            return false;
         }
 
-        $stm = $this->conn->prepare($sql);
-        $rel = $stm->execute($data);
+        $columns = array_keys($data);
+        $placeholder = array_map(fn($c) => ':' . $c, $columns);
+        // e.g. ['name','email'] => [':name',':email']
 
-        return $rel;
+        $sql = sprintf(
+            'INSERT INTO %s (%s) VALUES (%s)',
+            $table,
+            implode(',', $columns),
+            implode(',',  $placeholder)
+        );
+        // e.g. INSERT INTO users (name,email) VALUES (:name,:email)
+
+        $params = [];
+        foreach ($data as $col => $val) {
+            $params[':' . $col] = $val;
+        }
+        // e.g. [':name' => 'Huy', ':email' => 'huy@gmail.com']
+
+        $stmt = $this->pdo->prepare($sql);
+        return $stmt->execute($params);
     }
 
-    // Delete dữ liệu
-    public function delete($table, $condition = '')
+    /** Update record */
+    public function update(string $table, array $data, string $where, array $whereParams = []): bool
     {
-        if (!empty($condition)) {
-            $sql = "DELETE FROM $table WHERE $condition";
-        } else {
-            $sql = "DELETE FROM $table";
+        if (empty($data)) {
+            return false;
         }
 
-        $stm = $this->conn->prepare($sql);
-        $rel = $stm->execute();
+        $sets = [];
+        $params = [];
 
-        return $rel;
+        foreach ($data as $col => $val) {
+            $placeholder = ':' . $col;
+            // $placeholder =[':name',':email']
+
+            $sets[] = "$col = $placeholder";
+            // $sets = [ "name = :name",  "email = :email"]
+
+            $params[$placeholder] = $val;
+            // $params = [ ':name'  => 'Huy', ':email' => 'a@gmail.com']
+        }
+
+        $sql = sprintf(
+            'UPDATE %s SET %s WHERE %s',
+            $table,
+            implode(', ', $sets),
+            $where
+        );
+        // e.g. UPDATE table SET name = :name, email = :email WHERE ...
+
+        $stmt = $this->pdo->prepare($sql);
+        return $stmt->execute($params + $whereParams);
     }
 
-    public function lastID()
+    /** Delete record */
+    public function delete(string $table, string $where, array $whereParams = []): bool
     {
-        return $this->conn->lastInsertID();
+        $sql = sprintf('DELETE FROM %s WHERE %s', $table, $where);
+        $stmt = $this->pdo->prepare($sql);
+        return $stmt->execute($whereParams);
     }
 }
