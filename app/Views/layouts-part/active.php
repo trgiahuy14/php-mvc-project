@@ -1,12 +1,4 @@
 <?php
-
-/** @var string $status */
-$data = ['title' => 'Kích hoạt tài khoản'];
-layout('header-auth', $data);
-?>
-
-<?php
-/** @var string $status */
 $data = ['title' => 'Kích hoạt tài khoản'];
 layout('header-auth', $data);
 ?>
@@ -30,6 +22,16 @@ layout('header-auth', $data);
                         </a>
                     </div>
 
+                <?php elseif ($status === 'error'): ?>
+                    <h2 class="fw-normal mb-5">
+                        Lỗi hệ thống! Không thể kích hoạt tài khoản.
+                    </h2>
+                    <div class="text-center mt-4">
+                        <a href="<?= BASE_URL ?>/login" class="link-danger" style="font-size: 20px">
+                            Quay trở lại
+                        </a>
+                    </div>
+
                 <?php else: ?>
                     <h2 class="fw-normal mb-5">
                         Đường link kích hoạt đã hết hạn hoặc không tồn tại.
@@ -39,6 +41,7 @@ layout('header-auth', $data);
                             Quay trở lại
                         </a>
                     </div>
+
                 <?php endif; ?>
 
             </div>
@@ -47,7 +50,3 @@ layout('header-auth', $data);
 </section>
 
 <?php layout('footer'); ?>
-
-
-layout('footer');
-?>

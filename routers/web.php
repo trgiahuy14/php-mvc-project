@@ -18,18 +18,18 @@ $router->post('/reset', 'AuthController@reset');
 $router->get('/logout', 'AuthController@logout');
 
 // Dashboard 
-$router->get('/dashboard', 'UsersController@dashboard');
+$router->get('/dashboard', 'UserController@dashboard');
 
 // Posts
-$router->get('/posts', 'PostsController@list');
+$router->get('/posts', 'PostController@list');
 
-$router->get('/posts/add', 'PostsController@showAdd');
-$router->post('/posts/add', 'PostsController@add');
+$router->get('/posts/add', 'PostController@showAdd');
+$router->post('/posts/add', 'PostController@add');
 
-$router->get('/posts/edit', 'PostsController@showEdit');
-$router->post('/posts/edit', 'PostsController@edit');
+$router->get('/posts/edit', 'PostController@showEdit');
+$router->post('/posts/edit', 'PostController@edit');
 
-$router->get('/posts/delete', 'PostsController@delete');
+$router->get('/posts/delete', 'PostController@delete');
 
 // Client Home
 $router->get('/', 'HomeController@index');
