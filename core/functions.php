@@ -166,3 +166,11 @@ function shortNumber($number)
 
     return $number;
 }
+
+/** Remove a key from query string params */
+function cleanQuery(string $removeKey): string
+{
+    unset($_GET[$removeKey]);
+    $qs = http_build_query($_GET);
+    return $qs === '' ? '' : '&' . $qs;
+}

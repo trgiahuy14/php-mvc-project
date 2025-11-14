@@ -1,80 +1,62 @@
 <?php
 
-class PostsController extends BaseController
-{
-    private $postModel;
-    protected $userInfo;
+declare(strict_types=1);
 
-    // Xử lý đăng nhập
+final class PostController extends BaseController
+{
+    private PostModel $postModel;
+    protected array $currentUser;
+
     public function __construct()
     {
         $this->requireLogin();
-        $this->postModel = new Posts();
-        $this->userInfo = getSession('getInfo');
+        $this->postModel = new PostModel();
+        $this->currentUser = (array)getSession('current_user');
     }
 
-    public function list()
+    /** List posts with search + pagination */
+    public function list(): void
     {
-        // Get data from GET
-        $filter = filterData('get');
-        $whereSql = '';
-        $keyword = '';
+        $input = filterData('get');
 
-        if (isGet()) {
-            // Search handling
-            if (isset($filter['keyword'])) {
-                $keyword = trim($filter['keyword']);
-                $keyword = addslashes($keyword);
-            }
-            if (!empty($keyword)) {
-                $whereSql .= " WHERE title LIKE '%{$keyword}%'";
-            }
+        // Get keyword
+        $keyword = trim((string)($input['keyword'] ?? ''));
 
-            // Pagination
-            $maxData = (int)$this->postModel->getRowPosts("SELECT COUNT(id) FROM posts{$whereSql}"); // Total of data
-            $perPage = 10; // Row per page 
-            $maxPage = max(1, (int)ceil($maxData / $perPage)); // Calculate max page, ceil giúp làm tròn lên
-            $page = 1;
+        // Pagination config
+        $perPage = 10;
+        $page = isset($input['page']) ? max(1, (int) $input['page']) : 1;
 
-            // Get page
-            if (isset($filter['page'])) {
-                $page = (int)$filter['page'];
-            }
+        // Total rows matching
+        $total = $this->postModel->countPostsByKeyword($keyword);
+        $maxPage = max(1, (int) ceil($total / $perPage));
 
-            // Over max page or page 0¡¡¡
-            if ($page > $maxPage || $page < 1) {
-                $page = 1;
-            }
-
-            $offset =  ($page - 1) * $perPage;
-
-            $sqlList = "$whereSql LIMIT $offset, $perPage";
-            $postDetail = $this->postModel->getAllPosts($sqlList);
-
-            // Xử lý querry
-            $queryString = $_SERVER['QUERY_STRING'] ?? '';
-            if (!empty($queryString)) {
-                // Cắt chuỗi để không bị &page=1&page=2
-                $queryString = str_replace('page=' . $page, '', $queryString);
-            }
-
-            // Nếu có thực hiện truy vấn keyword 
-            if (!empty($keyword)) {
-                $maxData2 = $this->postModel->getScalarPosts($whereSql);
-                $maxPage = ceil($maxData2 / $perPage);
-            }
-
-            $data = [
-                'postModel' => $this->postModel,
-                'postDetail' => $postDetail,
-                'page' => $page,
-                'maxPage' => $maxPage,
-                'keyword' => $keyword,
-                'queryString' => $queryString,
-                'offset' => $offset
-            ];
-            $this->renderView('layouts-part/posts/list', $data);
+        // Clamp page to valid range
+        if ($page > $maxPage) {
+            $page = $maxPage;
         }
+
+        // Offset calculation
+        $offset = ($page - 1) * $perPage;
+
+        // Fetch posts for current page
+        $posts = $this->postModel->getPosts($perPage, $offset, $keyword);
+
+        // Clean query string for pagination links
+        $queryString = cleanQuery('page');
+
+        // Prepare view data
+        $data = [
+            'posts'       => $posts,
+            'page'        => $page,
+            'maxPage'     => $maxPage,
+            'keyword'     => $keyword,
+            'queryString' => $queryString,
+            'offset'      => $offset,
+            'total'       => $total
+        ];
+
+        // Render list view
+        $this->renderView('layouts-part/posts/list', $data);
     }
 
     public function showAdd()
@@ -85,35 +67,35 @@ class PostsController extends BaseController
     public function add()
     {
         if (isPost()) {
-            $filter = filterData();
+            $input = filterData();
             $errors = [];
 
             // VALIDATE
 
             // Validate title
-            if (empty(trim($filter['title']))) {
+            if (empty(trim($input['title']))) {
                 $errors['title']['required'] = 'Tiêu đề bắt buộc phải nhập';
             } else {
-                if (strlen(trim($filter['title'])) < 5) {
+                if (strlen(trim($input['title'])) < 5) {
                     $errors['title']['length'] = 'Tiêu đề phải lớn hơn 5 ký tự';
                 }
             }
             // Validate content
-            if (empty(trim($filter['content']))) {
+            if (empty(trim($input['content']))) {
                 $errors['content']['required'] = 'Nội dung bắt buộc phải nhập';
             }
 
             if (empty($errors)) {
                 // INSERT DATA
                 $dataInsert = [
-                    'title' => $filter['title'],
-                    'author' => $this->userInfo['fullname'],
-                    'content' => $filter['content'],
-                    'tags' => $filter['tags'],
-                    'minutes_read' => $filter['minutes_read'],
-                    'views' => $filter['views'],
-                    'comments' => $filter['comments'],
-                    'shares' => $filter['shares'],
+                    'title' => $input['title'],
+                    // 'author' => getSession('current_user['']'),
+                    'content' => $input['content'],
+                    'tags' => $input['tags'],
+                    'minutes_read' => $input['minutes_read'],
+                    'views' => $input['views'],
+                    'comments' => $input['comments'],
+                    'shares' => $input['shares'],
                     'created_at' => date('Y-m-d H:i:s')
                 ];
 
@@ -130,7 +112,7 @@ class PostsController extends BaseController
             } else {
                 setSessionFlash('msg', 'Vui lòng kiểm tra lại dữ liệu nhập vào');
                 setSessionFlash('msg_type', 'danger');
-                setSessionFlash('oldData', $filter);
+                setSessionFlash('oldData', $input);
                 setSessionFlash('errors', $errors);
                 redirect('/posts/add');
             }
@@ -140,12 +122,12 @@ class PostsController extends BaseController
 
     public function showEdit()
     {
-        $filter = filterData('get');
+        $input = filterData('get');
         // Get exist value(s) from post
-        $rel = $this->postModel->getOnePost("id = " . $filter['id']);
+        $rel = $this->postModel->getOnePost("id = " . $input['id']);
         $data = [
             'postData' => $rel,
-            'idPost' => $filter['id']
+            'idPost' => $input['id']
         ];
         $this->renderView('layouts-part/posts/edit', $data);
     }
@@ -153,38 +135,38 @@ class PostsController extends BaseController
     public function edit()
     {
         if (isPost()) {
-            $filter = filterData();
+            $input = filterData();
             $errors = [];
 
             // VALIDATE
 
             // Validate title
-            if (empty(trim($filter['title']))) {
+            if (empty(trim($input['title']))) {
                 $errors['title']['required'] = 'Tiêu đề bắt buộc phải nhập';
             } else {
-                if (strlen(trim($filter['title'])) < 5) {
+                if (strlen(trim($input['title'])) < 5) {
                     $errors['title']['length'] = 'Tiêu đề phải lớn hơn 5 ký tự';
                 }
             }
             // Validate content
-            if (empty(trim($filter['content']))) {
+            if (empty(trim($input['content']))) {
                 $errors['content']['required'] = 'Nội dung bắt buộc phải nhập';
             }
 
             if (empty($errors)) {
                 // UPDATE DATA
                 $dataUpdate = [
-                    'title' => $filter['title'],
-                    'content' => $filter['content'],
-                    'tags' => $filter['tags'],
-                    'minutes_read' => $filter['minutes_read'],
-                    'views' => $filter['views'],
-                    'comments' => $filter['comments'],
-                    'shares' => $filter['shares'],
+                    'title' => $input['title'],
+                    'content' => $input['content'],
+                    'tags' => $input['tags'],
+                    'minutes_read' => $input['minutes_read'],
+                    'views' => $input['views'],
+                    'comments' => $input['comments'],
+                    'shares' => $input['shares'],
                     'updated_at' => date('Y-m-d H:i:s')
                 ];
 
-                $idPost = $filter['idPost'];
+                $idPost = $input['idPost'];
                 $updateStatus = $this->postModel->updatePost($dataUpdate, "id=$idPost");
 
                 if ($updateStatus) {
@@ -198,9 +180,9 @@ class PostsController extends BaseController
             } else {
                 setSessionFlash('msg', 'Vui lòng kiểm tra lại dữ liệu nhập vào');
                 setSessionFlash('msg_type', 'danger');
-                setSessionFlash('oldData', $filter);
+                setSessionFlash('oldData', $input);
                 setSessionFlash('errors', $errors);
-                redirect('/posts/edit?id=' . $filter['id']);
+                redirect('/posts/edit?id=' . $input['id']);
             }
         }
         $this->renderView('layouts-part/posts/edit');
@@ -208,10 +190,10 @@ class PostsController extends BaseController
 
     public function delete()
     {
-        $filter = filterData('get');
+        $input = filterData('get');
 
-        if (!empty($filter)) {
-            $idPost = $filter['id'];
+        if (!empty($input)) {
+            $idPost = $input['id'];
             $condition = 'id=' . $idPost;
             $checkPost = $this->postModel->getOnePost($condition);
             if (!empty($checkPost)) {
