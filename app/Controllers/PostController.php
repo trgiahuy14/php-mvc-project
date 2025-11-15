@@ -1,7 +1,6 @@
 <?php
 
 declare(strict_types=1);
-
 final class PostController extends BaseController
 {
     private PostModel $postModel;
@@ -17,6 +16,7 @@ final class PostController extends BaseController
     /** List posts with search + pagination */
     public function list(): void
     {
+        // Get search keyword from query string
         $input = filterData('get');
 
         // Get keyword
@@ -59,159 +59,212 @@ final class PostController extends BaseController
         $this->renderView('layouts-part/posts/list', $data);
     }
 
+    /** Show add-post page */
     public function showAdd()
     {
         $this->renderView('layouts-part/posts/add');
     }
 
+    /** Handle add-post POST request */
     public function add()
     {
-        if (isPost()) {
-            $input = filterData();
-            $errors = [];
-
-            // VALIDATE
-
-            // Validate title
-            if (empty(trim($input['title']))) {
-                $errors['title']['required'] = 'Tiêu đề bắt buộc phải nhập';
-            } else {
-                if (strlen(trim($input['title'])) < 5) {
-                    $errors['title']['length'] = 'Tiêu đề phải lớn hơn 5 ký tự';
-                }
-            }
-            // Validate content
-            if (empty(trim($input['content']))) {
-                $errors['content']['required'] = 'Nội dung bắt buộc phải nhập';
-            }
-
-            if (empty($errors)) {
-                // INSERT DATA
-                $dataInsert = [
-                    'title' => $input['title'],
-                    // 'author' => getSession('current_user['']'),
-                    'content' => $input['content'],
-                    'tags' => $input['tags'],
-                    'minutes_read' => $input['minutes_read'],
-                    'views' => $input['views'],
-                    'comments' => $input['comments'],
-                    'shares' => $input['shares'],
-                    'created_at' => date('Y-m-d H:i:s')
-                ];
-
-                $insertStatus = $this->postModel->insertPost($dataInsert);
-
-                if ($insertStatus) {
-                    setSessionFlash('msg', 'Thêm bài viết thành công.');
-                    setSessionFlash('msg_type', 'success');
-                    redirect(('/posts'));
-                } else {
-                    setSessionFlash('msg', 'Thêm bài viết thất bại');
-                    setSessionFlash('msg_type', 'danger');
-                }
-            } else {
-                setSessionFlash('msg', 'Vui lòng kiểm tra lại dữ liệu nhập vào');
-                setSessionFlash('msg_type', 'danger');
-                setSessionFlash('oldData', $input);
-                setSessionFlash('errors', $errors);
-                redirect('/posts/add');
-            }
+        if (!isPost()) {
+            return;
         }
-        $this->renderView('layouts-part/posts/add');
+
+        $input = filterData();
+        $errors = [];
+
+        // Normalize input
+        $title     = trim($input['title'] ?? '');
+        $content   = trim($input['content'] ?? '');
+        $tags      = trim($input['tags'] ?? '');
+        $minutes   = (int)($input['minutes_read'] ?? 0);
+        $views     = (int)($input['views'] ?? 0);
+        $comments  = (int)($input['comments'] ?? 0);
+
+        // --- VALIDATION ---
+
+        // Validate title
+        if ($title === '') {
+            $errors['title']['required'] = 'Tiêu đề bắt buộc phải nhập';
+        } elseif (mb_strlen($title) < 5) {
+            $errors['title']['length'] = 'Tiêu đề phải lớn hơn 5 ký tự';
+        }
+
+        // Validate content
+        if ($content === '') {
+            $errors['content']['required'] = 'Nội dung bắt buộc phải nhập';
+        }
+
+        // If validation fails 
+        if (!empty($errors)) {
+            setSessionFlash('msg', 'Vui lòng kiểm tra lại dữ liệu nhập vào');
+            setSessionFlash('msg_type', 'danger');
+            setSessionFlash('oldData', ['title' => $title, 'content' => $content]);
+            setSessionFlash('errors', $errors);
+            redirect('/posts/add');
+        }
+
+        // --- PREPARE INSERT DATA ---
+        $dataInsert = [
+            'title'        => $title,
+            'author'       => $this->currentUser['fullname'],
+            'content'      => $content,
+            'tags'         => $tags,
+            'minutes_read' => $minutes,
+            'views'        => $views,
+            'comments'     => $comments,
+            'created_at'   => date('Y-m-d H:i:s')
+        ];
+
+        // Insert into DB
+        $inserted = $this->postModel->createPost($dataInsert);
+
+        if (!$inserted) {
+            setSessionFlash('msg', 'Thêm bài viết thất bại');
+            setSessionFlash('msg_type', 'danger');
+            redirect('/posts/add');
+        }
+
+        setSessionFlash('msg', 'Thêm bài viết thành công.');
+        setSessionFlash('msg_type', 'success');
+
+        redirect('/posts');
     }
 
+    /** Show edit page */
     public function showEdit()
     {
+        // Get id from query string
         $input = filterData('get');
-        // Get exist value(s) from post
-        $rel = $this->postModel->getOnePost("id = " . $input['id']);
+        $postId = (int) ($input['id'] ?? 0);
+
+        if ($postId <= 0) {
+            setSessionFlash('msg', 'ID bài viết không hợp lệ');
+            setSessionFlash('msg_type', 'danger');
+            redirect('/posts');
+        }
+        // Fetch existing post
+        $postData = $this->postModel->getPostById($postId);
+
+        if (!$postData) {
+            setSessionFlash('msg', 'Bài viết không tồn tại');
+            setSessionFlash('msg_type', 'danger');
+            return redirect('/posts');
+        }
+
         $data = [
-            'postData' => $rel,
-            'idPost' => $input['id']
+            'postData' => $postData,
+            'postId'   => $postId
         ];
         $this->renderView('layouts-part/posts/edit', $data);
     }
 
+    /** Handle edit POST request */
     public function edit()
     {
-        if (isPost()) {
-            $input = filterData();
-            $errors = [];
-
-            // VALIDATE
-
-            // Validate title
-            if (empty(trim($input['title']))) {
-                $errors['title']['required'] = 'Tiêu đề bắt buộc phải nhập';
-            } else {
-                if (strlen(trim($input['title'])) < 5) {
-                    $errors['title']['length'] = 'Tiêu đề phải lớn hơn 5 ký tự';
-                }
-            }
-            // Validate content
-            if (empty(trim($input['content']))) {
-                $errors['content']['required'] = 'Nội dung bắt buộc phải nhập';
-            }
-
-            if (empty($errors)) {
-                // UPDATE DATA
-                $dataUpdate = [
-                    'title' => $input['title'],
-                    'content' => $input['content'],
-                    'tags' => $input['tags'],
-                    'minutes_read' => $input['minutes_read'],
-                    'views' => $input['views'],
-                    'comments' => $input['comments'],
-                    'shares' => $input['shares'],
-                    'updated_at' => date('Y-m-d H:i:s')
-                ];
-
-                $idPost = $input['idPost'];
-                $updateStatus = $this->postModel->updatePost($dataUpdate, "id=$idPost");
-
-                if ($updateStatus) {
-                    setSessionFlash('msg', 'Chỉnh sửa bài viết thành công.');
-                    setSessionFlash('msg_type', 'success');
-                    redirect(('/posts'));
-                } else {
-                    setSessionFlash('msg', 'Chỉnh sửa bài viết thất bại');
-                    setSessionFlash('msg_type', 'danger');
-                }
-            } else {
-                setSessionFlash('msg', 'Vui lòng kiểm tra lại dữ liệu nhập vào');
-                setSessionFlash('msg_type', 'danger');
-                setSessionFlash('oldData', $input);
-                setSessionFlash('errors', $errors);
-                redirect('/posts/edit?id=' . $input['id']);
-            }
+        if (!isPost()) {
+            return;
         }
-        $this->renderView('layouts-part/posts/edit');
+
+        $input = filterData();
+        $errors = [];
+
+        // --- Normalize input ---
+        $title    = trim($input['title'] ?? '');
+        $content  = trim($input['content'] ?? '');
+        $tags     = trim($input['tags'] ?? '');
+        $minutes  = isset($input['minutes_read']) ? (int)$input['minutes_read'] : 0;
+        $views    = isset($input['views']) ? (int)$input['views'] : 0;
+        $comments = isset($input['comments']) ? (int)$input['comments'] : 0;
+        $shares = isset($input['shares']) ? (int)$input['shares'] : 0;
+
+        // --- VALIDATION ---
+
+        // Validate title
+        if ($title === '') {
+            $errors['title']['required'] = 'Tiêu đề bắt buộc phải nhập';
+        } elseif (mb_strlen($title) < 5) {
+            $errors['title']['length'] = 'Tiêu đề phải lớn hơn 5 ký tự';
+        }
+
+        // Validate content
+        if ($content === '') {
+            $errors['content']['required'] = 'Nội dung bắt buộc phải nhập';
+        }
+
+        // If validation fails
+        if (!empty($errors)) {
+            setSessionFlash('msg', 'Vui lòng kiểm tra lại dữ liệu nhập vào');
+            setSessionFlash('msg_type', 'danger');
+            setSessionFlash('oldData', $input);
+            setSessionFlash('errors', $errors);
+            redirect('/posts/edit?id=' . (int)($input['id'] ?? 0));
+        }
+
+        // --- PREPARE UPDATE DATA  ---
+        $dataUpdate = [
+            'title'        => $title,
+            'content'      => $content,
+            'tags'         => $tags,
+            'minutes_read' => $minutes,
+            'views'        => $views,
+            'comments'     => $comments,
+            'updated_at'   => date('Y-m-d H:i:s')
+        ];
+
+        // Update
+        $postId = (int)($input['id']);
+
+        $updated = $this->postModel->updatePost($postId, $dataUpdate);
+
+        if (!$updated) {
+            setSessionFlash('msg', 'Chỉnh sửa bài viết thất bại');
+            setSessionFlash('msg_type', 'danger');
+            redirect('/posts/edit?id=' . $postId);
+        }
+
+        setSessionFlash('msg', 'Chỉnh sửa bài viết thành công.');
+        setSessionFlash('msg_type', 'success');
+        redirect('/posts');
     }
 
+    /** Handle delete post action */
     public function delete()
     {
+        // Get id from query string
         $input = filterData('get');
+        $postId = (int)($input['id'] ?? 0);
 
-        if (!empty($input)) {
-            $idPost = $input['id'];
-            $condition = 'id=' . $idPost;
-            $checkPost = $this->postModel->getOnePost($condition);
-            if (!empty($checkPost)) {
-                $deleteStatus = $this->postModel->deletePost($condition);
-
-                if ($deleteStatus) {
-                    setSessionFlash('msg', 'Xóa bài viết thành công.');
-                    setSessionFlash('msg_type', 'success');
-                    redirect('/posts');
-                }
-            } else {
-                setSessionFlash('msg', 'Bài viết không tồn tại.');
-                setSessionFlash('msg_type', 'danger');
-                redirect('/posts');
-            }
-        } else {
-            setSessionFlash('msg', 'Đã có lỗi xảy ra, vui lòng thử lại sau.');
+        // Validate post ID 
+        if ($postId <= 0) {
+            setSessionFlash('msg', 'ID bài viết không hợp lệ');
             setSessionFlash('msg_type', 'danger');
+            redirect('/posts');
         }
+
+        // Check if post exists
+        $post = $this->postModel->getPostById($postId);
+
+        if (empty($post)) {
+            setSessionFlash('msg', 'Bài viết không tồn tại.');
+            setSessionFlash('msg_type', 'danger');
+            redirect('/posts');
+        }
+
+        // Delete post
+        $deleted = $this->postModel->deletePost($postId);
+
+        if (!$deleted) {
+            setSessionFlash('msg', 'Xóa bài viết thất bại, vui lòng thử lại.');
+            setSessionFlash('msg_type', 'danger');
+            redirect('/posts');
+        }
+
+        // Delete failed
+        setSessionFlash('msg', 'Xóa bài viết thành công.');
+        setSessionFlash('msg_type', 'success');
+        redirect('/posts');
     }
 }
