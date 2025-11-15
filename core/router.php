@@ -22,7 +22,7 @@ class Router
     }
 
     // Dispatch
-    public function xulyPath($method, $url)
+    public function dispatch($method, $url)
     {
         $url = $url ?: '/'; // If url is empty, return '/'
         $method = strtoupper((string)$method); // normalize method
@@ -46,8 +46,8 @@ class Router
 
         // choose controller folder
         $baseDir = ($controller === 'HomeController')
-            ? './app/Controllers/clients/'
-            : './app/Controllers/';
+            ? './app/Controllers/client/'
+            : './app/Controllers/admin/';
 
         $file = $baseDir . $controller . '.php';
 

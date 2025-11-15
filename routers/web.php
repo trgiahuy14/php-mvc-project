@@ -18,7 +18,7 @@ $router->post('/reset', 'AuthController@reset');
 $router->get('/logout', 'AuthController@logout');
 
 // Dashboard 
-$router->get('/dashboard', 'UserController@dashboard');
+$router->get('/dashboard', 'DashboardController@index');
 
 // Posts
 $router->get('/posts', 'PostController@list');
