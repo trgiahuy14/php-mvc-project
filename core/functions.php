@@ -1,13 +1,25 @@
 <?php
 if (!defined('APP_KEY')) die('Access denied');
 
-// Include a layout part
-function layout($layoutName, $data = [])
+// Inclue layout helpers
+function layout($layoutName, $role = 'client', $data = [])
 {
-    $path = './app/Views/parts/' . $layoutName . '.php';
+    $path = dirname(__DIR__) . "/app/Views/partials/{$role}/" . $layoutName . '.php';
     if (file_exists($path)) {
         require_once $path;
+    } else {
+        die('Layout file not found: ' . $path);
     }
+}
+
+function client($layoutName, $data = [])
+{
+    layout($layoutName, 'client', $data);
+}
+
+function admin($layoutName, $data = [])
+{
+    layout($layoutName, 'admin', $data);
 }
 
 // Send mail
