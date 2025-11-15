@@ -1,9 +1,6 @@
 <?php
 $data = ['title' => 'Danh sách bài viết'];
 
-layout('header', $data);
-layout('sidebar');
-
 $msg = getSessionFlash('msg');
 $msg_type = getSessionFlash('msg_type');
 ?>
@@ -151,6 +148,3 @@ $msg_type = getSessionFlash('msg_type');
         <!-- End Pagination -->
     </div>
 </div>
-
-
-<?php layout('footer') ?>

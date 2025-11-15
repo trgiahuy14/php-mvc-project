@@ -1,19 +1,24 @@
 <?php
 
 declare(strict_types=1);
-final class PostController extends BaseController
+final class PostController extends Controller
 {
     private PostModel $postModel;
     protected array $currentUser;
 
     public function __construct()
     {
-        $this->requireLogin();
+        parent::__construct();
+        // $this->requireLogin();
         $this->postModel = new PostModel();
         $this->currentUser = (array)getSession('current_user');
     }
 
-    /** List posts with search + pagination */
+    /** 
+     * List posts with search + pagination
+     * 
+     * @return void
+     */
     public function list(): void
     {
         // Get search keyword from query string
@@ -46,6 +51,7 @@ final class PostController extends BaseController
 
         // Prepare view data
         $data = [
+            'title' => 'Danh sách bài viết test',
             'posts'       => $posts,
             'page'        => $page,
             'maxPage'     => $maxPage,
@@ -56,13 +62,14 @@ final class PostController extends BaseController
         ];
 
         // Render list view
-        $this->renderView('layouts-part/posts/list', $data);
+        $this->view->render('admin/posts/index', 'admin', $data);
     }
 
     /** Show add-post page */
     public function showAdd()
     {
-        $this->renderView('layouts-part/posts/add');
+        $data = ['title' => 'Thêm bài viết'];
+        $this->view->render('admin/posts/add', 'admin', $data);
     }
 
     /** Handle add-post POST request */
@@ -155,10 +162,11 @@ final class PostController extends BaseController
         }
 
         $data = [
+            'title' => 'Chỉnh sửa bài viết',
             'postData' => $postData,
             'postId'   => $postId
         ];
-        $this->renderView('layouts-part/posts/edit', $data);
+        $this->view->render('admin/posts/edit', 'admin', $data);
     }
 
     /** Handle edit POST request */

@@ -1,31 +1,22 @@
 <?php
-$data = ['title' => 'Chỉnh sửa bài viết'];
-
-layout('header', $data);
-layout('sidebar');
+$data = ['title' => 'Thêm bài viết'];
 
 $msg = getSessionFlash('msg');
 $msg_type = getSessionFlash('msg_type');
-$errorsArr = getSessionFlash('errors');
-
 $oldData = getSessionFlash('oldData');
-if (empty($oldData) && !empty($postData)) {
-    // Get exist value(s) from post
-    $oldData = $postData;
-}
+$errorsArr = getSessionFlash('errors');
 ?>
 
 <div class="container add-user">
-    <h2>Chỉnh sửa bài viết</h2>
+    <h2>Thêm bài viết</h2>
     <hr>
     <?php
     if (!empty($msg) && !empty($msg_type)) {
         getMsg($msg, $msg_type);
     }
     ?>
-    <!-- Post editing form -->
-    <form action="" method="post">
-        <input type="hidden" name="idPost" value="<?= $idPost ?>">
+    <!-- Post creation form -->
+    <form action="" method="post" enctype="multipart/form-data">
         <div class="row">
             <!-- Post title -->
             <div class="col-12 pb-3">
@@ -36,10 +27,9 @@ if (empty($oldData) && !empty($postData)) {
                     type="text"
                     class="form-control"
                     placeholder="Nhập tiêu đề"
-                    maxlength="160"
-                    value="<?= (!empty($oldData)) ? oldData($oldData, 'title') : null ?>">
+                    value="<?= !empty($oldData) ? oldData($oldData, 'title') : null ?>">
                 <!-- Error -->
-                <?= (!empty($errorsArr)) ? formError($errorsArr, 'title') : null ?>
+                <?= !empty($errorsArr) ? formError($errorsArr, 'title') : null ?>
             </div>
 
             <!-- Post content -->
@@ -49,10 +39,9 @@ if (empty($oldData) && !empty($postData)) {
                     id="content"
                     name="content"
                     class="form-control"
-                    placeholder="Nhập nội dung"
-                    rows="4"><?= (!empty($oldData)) ? oldData($oldData, 'content') : null ?></textarea>
+                    placeholder="Nội dung"><?= !empty($oldData) ? oldData($oldData, 'content') : null ?></textarea>
                 <!-- Error -->
-                <?= (!empty($errorsArr)) ? formError($errorsArr, 'content') : null ?>
+                <?= !empty($errorsArr) ? formError($errorsArr, 'content') : null ?>
             </div>
 
             <!-- Post tags-->
@@ -62,9 +51,7 @@ if (empty($oldData) && !empty($postData)) {
                     id="tags"
                     name="tags"
                     class="form-control"
-                    placeholder="VD: php, laravel, performance"
-                    maxlength="200"><?= (!empty($oldData)) ? oldData($oldData, 'tags') : null ?></textarea>
-                <small class="text-muted">Ngăn cách bằng dấu phẩy</small>
+                    placeholder="Nhập thẻ"><?= (!empty($oldData)) ? oldData($oldData, 'minutes_read') : null ?></textarea>
             </div>
 
             <hr>
@@ -77,7 +64,7 @@ if (empty($oldData) && !empty($postData)) {
                     name="minutes_read"
                     type="text"
                     class="form-control"
-                    placeholder="Nhập thời gian đọc"
+                    placeholder="Thời gian đọc"
                     value="<?= (!empty($oldData)) ? oldData($oldData, 'minutes_read') : null ?>">
             </div>
 
@@ -103,7 +90,7 @@ if (empty($oldData) && !empty($postData)) {
                     type="text"
                     class="form-control"
                     placeholder="Nhập số lượt bình luận"
-                    value="<?= (!empty($oldData)) ? oldData($oldData, 'comments') : null ?>">
+                    value="<?= (!empty($oldData)) ? oldData($oldData, 'views') : null ?>">
             </div>
 
             <!-- Shares -->
@@ -115,15 +102,13 @@ if (empty($oldData) && !empty($postData)) {
                     type="text"
                     class="form-control"
                     placeholder="Nhập số lượt chia sẻ"
-                    value="<?= (!empty($oldData)) ? oldData($oldData, 'shares') : null ?>">
+                    value="<?= (!empty($oldData)) ? oldData($oldData, 'views') : null ?>">
             </div>
         </div>
         <button type="submit" class="btn btn-success">Xác nhận</button>
         <button type="button" class="btn btn-secondary" id="btnBack">Quay lại</button>
     </form>
 </div>
-
-<?php layout('footer') ?>
 
 <script>
     const form = document.querySelector("form");

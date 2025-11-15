@@ -1,12 +1,14 @@
 <?php
 
-final class AuthController extends BaseController
+declare(strict_types=1);
+final class AuthController extends Controller
 {
     private UserModel $userModel;
     private TokenModel $tokenModel;
 
     public function __construct()
     {
+        parent::__construct();
         $this->userModel = new UserModel();
         $this->tokenModel = new TokenModel();
     }
@@ -14,7 +16,8 @@ final class AuthController extends BaseController
     /** Render login page */
     public function showLogin(): void
     {
-        $this->renderView('layouts-part/login');
+        $data = ['title' => 'Đăng nhập'];
+        $this->view->render('admin/auth/login', 'auth', $data);
     }
 
     /** Handle login POST */
@@ -104,7 +107,8 @@ final class AuthController extends BaseController
     /** Show register page */
     public function showRegister(): void
     {
-        $this->renderView('layouts-part/register');
+        $data = ['title' => 'Đăng ký tài khoản'];
+        $this->view->render('admin/auth/register', 'auth');
     }
 
     /** Handle register POST */
@@ -246,13 +250,13 @@ final class AuthController extends BaseController
 
         // Token missing or invalid format
         if ($token === '') {
-            $this->renderView('layouts-part/active', ['status' => 'invalid']);
+            $this->view->render('admin/auth/active', 'auth', ['status' => 'invalid']);
             return;
         }
 
         // Validate token format - to prenvent DoS
         if (!preg_match('/^[0-9a-f]{64}$/i', $token)) {
-            $this->renderView('layouts-part/active', ['status' => 'invalid']);
+            $this->view->render('admin/auth/active', 'auth', ['status' => 'invalid']);
             return;
         }
 
@@ -261,7 +265,7 @@ final class AuthController extends BaseController
 
         // Token not found in db
         if (empty($user)) {
-            $this->renderView('layouts-part/active', ['status' => 'invalid']);
+            $this->view->render('admin/auth/active', 'auth', ['status' => 'invalid']);
             return;
         }
 
@@ -276,24 +280,24 @@ final class AuthController extends BaseController
 
         // Update failed
         if (!$updated) {
-            $this->renderView('layouts-part/active', ['status' => 'error']);
+            $this->view->render('admin/auth/active', 'auth', ['status' => 'error']);
             return;
         }
 
         // Update success
-        $this->renderView('layouts-part/active', ['status' => 'success']);
+        $this->view->render('admin/auth/active', 'auth', ['status' => 'success']);
     }
 
     /** Show forgot-password page */
     public function showForgot(): void
     {
-        $this->renderView('layouts-part/forgot');
+        $this->view->render('admin/auth/forgot', 'auth');
     }
 
     /** Handle forgot-password POST */
     public function forgot(): void
     {
-        if (isPost()) {
+        if (!isPost()) {
             return;
         }
 
@@ -389,7 +393,7 @@ final class AuthController extends BaseController
     /** Show reset-password page */
     public function showReset(): void
     {
-        $this->renderView('layouts-part/reset');
+        $this->view->render('admin/auth/reset', 'auth');
     }
 
     /** Handle reset-password POST */
@@ -424,7 +428,7 @@ final class AuthController extends BaseController
 
         // If form not submitted, just render reset page
         if (!isPost()) {
-            $this->renderView('layouts-part/reset', ['token' => $token]);
+            $this->view->render('admin/auth/reset', 'auth', ['token' => $token]);
             return;
         }
 

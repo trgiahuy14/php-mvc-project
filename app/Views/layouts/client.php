@@ -1,4 +1,4 @@
-<?php layout('clients/header'); ?>
+<?php client('header'); ?>
 
 <!-- Modal Search Start -->
 <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -154,7 +154,7 @@
                 </div>
             </div>
             <div class="col-lg-5 col-xl-4">
-                <?php layout('clients/sidebar-1') ?>
+                <?php client('sidebar-1') ?>
             </div>
         </div>
     </div>
@@ -912,11 +912,11 @@
                         </div>
                     </div>
                 </div>
-                <?php layout('clients/sidebar-2') ?>
+                <?php client('sidebar-2') ?>
             </div>
         </div>
     </div>
 </div>
 <!-- Most Populer News End -->
 
-<?php layout('clients/footer') ?>
+<?php client('footer'); ?>
