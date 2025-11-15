@@ -49,7 +49,7 @@ if (empty($oldData) && !empty($postData)) {
                     id="content"
                     name="content"
                     class="form-control"
-                    placeholder="Nội dung"
+                    placeholder="Nhập nội dung"
                     rows="4"><?= (!empty($oldData)) ? oldData($oldData, 'content') : null ?></textarea>
                 <!-- Error -->
                 <?= (!empty($errorsArr)) ? formError($errorsArr, 'content') : null ?>
@@ -67,6 +67,8 @@ if (empty($oldData) && !empty($postData)) {
                 <small class="text-muted">Ngăn cách bằng dấu phẩy</small>
             </div>
 
+            <hr>
+
             <!-- Minutes read -->
             <div class="col-3 pb-3">
                 <label for="minutes_read">Thời gian đọc</label>
@@ -75,7 +77,7 @@ if (empty($oldData) && !empty($postData)) {
                     name="minutes_read"
                     type="text"
                     class="form-control"
-                    placeholder="Thời gian đọc"
+                    placeholder="Nhập thời gian đọc"
                     value="<?= (!empty($oldData)) ? oldData($oldData, 'minutes_read') : null ?>">
             </div>
 

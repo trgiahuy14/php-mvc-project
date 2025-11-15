@@ -30,9 +30,9 @@ $errorsArr = getSessionFlash('errors');
                     type="text"
                     class="form-control"
                     placeholder="Nhập tiêu đề"
-                    value="<?= (!empty($oldData)) ? oldData($oldData, 'title') : null ?>">
+                    value="<?= !empty($oldData) ? oldData($oldData, 'title') : null ?>">
                 <!-- Error -->
-                <?= (!empty($errorsArr)) ? formError($errorsArr, 'title') : null ?>
+                <?= !empty($errorsArr) ? formError($errorsArr, 'title') : null ?>
             </div>
 
             <!-- Post content -->
@@ -42,9 +42,9 @@ $errorsArr = getSessionFlash('errors');
                     id="content"
                     name="content"
                     class="form-control"
-                    placeholder="Nội dung"><?= (!empty($oldData)) ? oldData($oldData, 'content') : null ?></textarea>
+                    placeholder="Nội dung"><?= !empty($oldData) ? oldData($oldData, 'content') : null ?></textarea>
                 <!-- Error -->
-                <?= (!empty($errorsArr)) ? formError($errorsArr, 'title') : null ?>
+                <?= !empty($errorsArr) ? formError($errorsArr, 'content') : null ?>
             </div>
 
             <!-- Post tags-->
@@ -56,6 +56,8 @@ $errorsArr = getSessionFlash('errors');
                     class="form-control"
                     placeholder="Nhập thẻ"><?= (!empty($oldData)) ? oldData($oldData, 'minutes_read') : null ?></textarea>
             </div>
+
+            <hr>
 
             <!-- Minutes read -->
             <div class="col-3 pb-3">
