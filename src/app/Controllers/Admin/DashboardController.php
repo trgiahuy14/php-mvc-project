@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Controllers;
+namespace App\Controllers\Admin;
 
 use Core\Controller;
+
 
 final class DashboardController extends Controller
 {
