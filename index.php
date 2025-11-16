@@ -1,19 +1,18 @@
 <?php
 
-/**
- * VietNews CMS - Front Controller
- */
-
-// Load Composer Autoloader
+// Load composer autoloader
 require_once __DIR__ . '/vendor/autoload.php';
 
 use Core\Router;
 
-// Load Environment Variables
+// Load environment variables
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
-// Error Reporting (based on environment)
+// Load configs
+require_once __DIR__ . '/src/configs/app.php';
+
+// error reporting (based on .env)
 if ($_ENV['APP_DEBUG'] === 'true') {
     error_reporting(E_ALL);
     ini_set('display_errors', 1);
@@ -22,35 +21,34 @@ if ($_ENV['APP_DEBUG'] === 'true') {
     ini_set('display_errors', 0);
 }
 
-// Set Timezone
-date_default_timezone_set('Asia/Ho_Chi_Minh');
-
-/** Load file .env  */
+// Load file .env
 $env = parse_ini_file(__DIR__ . '/.env');
 foreach ($env as $key => $value) putenv("$key=$value");
 
-// Session Configuration
-ini_set('session.cookie_httponly', 1);
-ini_set('session.use_only_cookies', 1);
-ini_set('session.cookie_secure', 0); // Set to 1 if using HTTPS
-session_start();
+// Session
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
-// Load Configurations
-require_once __DIR__ . '/src/configs/app.php';
-
-/** Init router */
+// Init router  
 $router = new Router();
 
 // Load Routes
 require_once __DIR__ . '/routes/web.php';
 
-/**  Request handle */
-$requestUrl = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-$requestUrl = str_replace(APP_BASE_PATH, '', $requestUrl);
+// Parse request
+$requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
-// Run Application
+// Normalize URL
+$basePath = APP_BASE_PATH ?? '';
+if ($basePath && strpos($requestUri, $basePath) === 0) {
+    $requestUri = substr($requestUri, strlen($basePath));
+}
+$requestUri = '/' . ltrim($requestUri, '/');
+
+// Dispatch
 try {
-    $router->dispatch($_SERVER['REQUEST_METHOD'], $requestUrl);
+    $router->dispatch($_SERVER['REQUEST_METHOD'], $requestUri);
 } catch (Exception $e) {
     // Log error
     error_log($e->getMessage());
@@ -62,19 +60,3 @@ try {
         echo "Something went wrong. Please try again later.";
     }
 }
-
-// /** Load current user for header */
-// $currentUser = null;
-// $token = getSession('token_login');
-
-// if ($token) {
-//     $modelToken = new TokenModel();
-//     $rowToken   = $modelToken->findByToken($token);
-
-//     if ($rowToken) {
-//         $modelUser = new UserModel();
-//         $currentUser = $modelUser->getUserById((int)$rowToken['user_id']);
-//     }
-// }
-
-// setSession('current_user', $currentUser);
