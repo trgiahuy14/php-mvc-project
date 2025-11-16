@@ -1,5 +1,36 @@
-.env
+# Composer
+/vendor/
+composer.phar
 
-# Ignore PhpStorm settings
+# Environment
+.env
+.env.backup
+
+# IDE
+.vscode/
 .idea/
-*.iml
+*.sublime-project
+*.sublime-workspace
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Storage
+storage/logs/*
+!storage/logs/.gitkeep
+storage/cache/*
+!storage/cache/.gitkeep
+storage/uploads/*
+!storage/uploads/.gitkeep
+
+# Node (if using)
+node_modules/
+package-lock.json
+
+# Other
+*.log
+*.cache
