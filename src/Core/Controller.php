@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Core;
 
+use App\Middlewares\AuthMiddleware;
+
 class Controller
 {
 
@@ -14,11 +16,11 @@ class Controller
         $this->view = new View();
     }
 
+    /**
+     * Require user to be logged in
+     */
     protected function requireLogin(): void
     {
-        if (!Auth::isLogin()) {
-            redirect('/login');
-            exit;
-        }
+        AuthMiddleware::requireAuth();
     }
 }
