@@ -17,20 +17,20 @@ final class Token extends Model
         );
     }
 
+    // Find token record
+    public function findToken(string $token): ?array
+    {
+        return $this->getOne('SELECT * FROM token_login WHERE token = :token LIMIT 1', [':token' => $token]);
+    }
+
     // Insert token record
     public function createToken(array $data): bool
     {
         return $this->insert('token_login', $data);
     }
 
-    // Find token record
-    public function findByToken(string $token): ?array
-    {
-        return $this->getOne('SELECT * FROM token_login WHERE token = :token LIMIT 1', [':token' => $token]);
-    }
-
     // Delete token record
-    public function deleteByToken(string $token): bool
+    public function deleteToken(string $token): bool
     {
         return $this->delete('token_login', 'token = :token', [':token' => $token]);
     }

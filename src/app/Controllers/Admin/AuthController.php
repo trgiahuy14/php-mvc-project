@@ -8,6 +8,10 @@ use Core\Controller;
 use App\Models\User;
 use App\Models\Token;
 use App\Services\MailService;
+use Core\Session;
+use App\Middlewares\AuthMiddleware;
+use Exception;
+
 
 final class AuthController extends Controller
 {
@@ -26,7 +30,9 @@ final class AuthController extends Controller
     /** Render login page */
     public function showLogin(): void
     {
-        $data = ['title' => 'Đăng nhập'];
+        $data = [
+            'title' => 'Đăng nhập'
+        ];
         $this->view->render('admin/auth/login', 'auth', $data);
     }
 
@@ -40,7 +46,7 @@ final class AuthController extends Controller
         $input = filterData();
         $errors = [];
 
-        // Normalize input
+        // Get anh normalize input
         $email   = trim($input['email'] ?? '');
         $password = (string)($input['password'] ?? '');
 
@@ -60,35 +66,27 @@ final class AuthController extends Controller
         }
 
         if (!empty($errors)) {
-            setSessionFlash('msg', 'Email hoặc mật khẩu không đúng');
-            setSessionFlash('msg_type', 'danger');
-            setSessionFlash('oldData', ['email' => $email]);
-            setSessionFlash('errors', $errors);
+            Session::Flash('msg', 'Vui lòng kiểm tra thông tin nhập vào');
+            Session::Flash('msg_type', 'danger');
+            Session::Flash('oldData', ['email' => $email]);
+            Session::Flash('errors', $errors);
             redirect('/login');
         }
 
-        // Query user by email
+        // Find user by email
         $user = $this->userModel->getUserByEmail($email);
-        if (empty($user)) {
-            setSessionFlash('msg', 'Email không tồn tại');
-            setSessionFlash('msg_type', 'danger');
+
+        // Check user exists and password correct
+        if (!$user || !password_verify($password, $user['password'])) {
+            Session::Flash('msg', 'Mật khẩu hoặc email không chính xác');
+            Session::Flash('msg_type', 'danger');
             redirect('/login');
         }
 
-        // Verify password
-        $isPasswordValid = password_verify($password, $user['password']);
-        if (!$isPasswordValid) {
-            setSessionFlash('msg', 'Mật khẩu hoặc email không chính xác');
-            setSessionFlash('msg_type', 'danger');
-            redirect('/login');
-        }
-
-        // Prevent multi-login for the same user
-        $countRow = $this->tokenModel->countByUserId((int)$user['id']);
-
-        if ($countRow > 0) {
-            setSessionFlash('msg', 'Tài khoản đang được đăng nhập ở một nơi khác');
-            setSessionFlash('msg_type', 'danger');
+        // Check if user is active
+        if (!isset($user['is_active']) || $user['is_active'] === 0) {
+            Session::Flash('msg', 'Tài khoản chưa được kích hoạt');
+            Session::Flash('msg_type', 'danger');
             redirect('/login');
         }
 
@@ -98,19 +96,21 @@ final class AuthController extends Controller
             'token' => $token,
             'created_at' => date('Y-m-d H:i:s'),
             'user_id' => $user['id'],
+            'expires_at' =>  date('Y-m-d H:i:s', strtotime('+1 day')),
         ];
 
         $inserted = $this->tokenModel->createToken($insertData);
 
+        // Insert failed
         if (!$inserted) {
-            setSessionFlash('msg', 'Lỗi hệ thống, vui lòng thử lại sau!');
-            setSessionFlash('msg_type', 'danger');
+            Session::flash('msg', 'Lỗi hệ thống, vui lòng thử lại sau!');
+            Session::flash('msg_type', 'danger');
             redirect('/login');
         }
 
-        setSession('token_login', $token);
+        // Success
+        Session::set('token_login', $token);
 
-        // Redirect to dashboard
         redirect('/dashboard');
     }
 
@@ -181,14 +181,20 @@ final class AuthController extends Controller
 
         // If validation failed
         if (!empty($errors)) {
-            setSessionFlash('msg', 'Vui lòng kiểm tra lại dữ liệu nhập vào');
-            setSessionFlash('msg_type', 'danger');
+            Session::Flash('msg', 'Vui lòng kiểm tra lại dữ liệu nhập vào');
+            Session::Flash('msg_type', 'danger');
 
-            $oldData = ['fullname' => $fullname, 'email' => $email, 'phone' => $phone];
-            setSessionFlash('oldData', $oldData);
-            setSessionFlash('errors', $errors);
+            $oldData = [
+                'fullname' => $fullname,
+                'email' => $email,
+                'phone' => $phone
+            ];
+
+            Session::Flash('oldData', $oldData);
+            Session::Flash('errors', $errors);
             redirect('/register');
         }
+
 
         // Generate activation token
         $activationToken = bin2hex(random_bytes(32));
@@ -200,24 +206,31 @@ final class AuthController extends Controller
             'avatar' => "/public/assets/img/user-avt-default.jpg",
             'password' => password_hash($input['password'], PASSWORD_DEFAULT),
             'active_token' => $activationToken,
-            'created_at' => date('Y-m-d H:i:s')
+            'created_at' => date('Y-m-d H:i:s'),
         ];
 
         $inserted = $this->userModel->createUser($insertData);
 
         if (!$inserted) {
-            setSessionFlash('msg', 'Đăng ký không thành công, vui lòng thử lại sau.');
-            setSessionFlash('msg_type', 'danger');
+            Session::flash('msg', 'Đăng ký không thành công, vui lòng thử lại sau.');
+            Session::flash('msg_type', 'danger');
             redirect('/register');
         }
 
-        // Prepare active mail
+        // Send verification email
         $activeLink = BASE_URL . '/active?token=' . $activationToken;
 
-        $sent = $this->mailService->sendVerificationEmail($email, $fullname, $activeLink);
+        try {
+            $this->mailService->sendVerificationEmail($email, $fullname, $activeLink);
 
-        setSessionFlash('msg', 'Đăng ký thành công, vui lòng kiểm tra email để kích hoạt tài khoản.');
-        setSessionFlash('msg_type', 'success');
+            Session::Flash('msg', 'Đăng ký thành công! Vui lòng kiểm tra email để kích hoạt tài khoản.');
+            Session::Flash('msg_type', 'success');
+        } catch (Exception $e) {
+            error_log("Failed to send verification email: " . $e->getMessage());
+
+            Session::Flash('msg', 'Đăng ký thành công! Nhưng không thể gửi email kích hoạt. Vui lòng liên hệ admin.');
+            Session::Flash('msg_type', 'warning');
+        }
 
         redirect('/register');
     }
@@ -252,7 +265,7 @@ final class AuthController extends Controller
 
         // Update user (by ID)
         $dataUpdate = [
-            'status' => 1,
+            'is_active' => 1,
             'active_token' => null,
             'updated_at' => date('Y-m-d H:i:s')
         ];
@@ -297,10 +310,10 @@ final class AuthController extends Controller
 
         // If validation failed
         if (!empty($errors)) {
-            setSessionFlash('msg', 'Vui lòng kiểm tra lại dữ liệu nhập vào');
-            setSessionFlash('msg_type', 'danger');
-            setSessionFlash('oldData', ['email' => $email]);
-            setSessionFlash('errors', $errors);
+            Session::Flash('msg', 'Vui lòng kiểm tra lại dữ liệu nhập vào');
+            Session::Flash('msg_type', 'danger');
+            Session::Flash('oldData', ['email' => $email]);
+            Session::Flash('errors', $errors);
             redirect('/forgot');
         }
 
@@ -309,8 +322,8 @@ final class AuthController extends Controller
 
         if ($user === null) {
             // Do not reveal whether email exists
-            setSessionFlash('msg', 'Nếu email tồn tại, chúng tôi đã gửi hướng dẫn đặt lại mật khẩu.');
-            setSessionFlash('msg_type', 'success');
+            Session::Flash('msg', 'Nếu email tồn tại, chúng tôi đã gửi hướng dẫn đặt lại mật khẩu.');
+            Session::Flash('msg_type', 'success');
             redirect('/forgot');
         }
 
@@ -326,8 +339,8 @@ final class AuthController extends Controller
         $updated = $this->userModel->updateUser((int)$user['id'], $updateData);
 
         if (!$updated) {
-            setSessionFlash('msg', 'Đã có lỗi xảy ra, vui lòng thử lại sau.');
-            setSessionFlash('msg_type', 'danger');
+            Session::Flash('msg', 'Đã có lỗi xảy ra, vui lòng thử lại sau.');
+            Session::Flash('msg_type', 'danger');
             redirect('/forgot');
         }
 
@@ -335,8 +348,8 @@ final class AuthController extends Controller
         $resetLink = BASE_URL . '/reset?token=' . $resetToken;
         $sent = $this->mailService->sendPasswordResetEmail($email, $user['fullname'], $resetLink);
 
-        setSessionFlash('msg', 'Nếu email tồn tại, chúng tôi đã gửi hướng dẫn đặt lại mật khẩu.');
-        setSessionFlash('msg_type', 'success');
+        Session::Flash('msg', 'Nếu email tồn tại, chúng tôi đã gửi hướng dẫn đặt lại mật khẩu.');
+        Session::Flash('msg_type', 'success');
 
         redirect('/forgot');
     }
@@ -356,15 +369,15 @@ final class AuthController extends Controller
 
         // If no token
         if ($token === '') {
-            setSessionFlash('msg', 'Liên kết đã hết hạn hoặc không tồn tại');
-            setSessionFlash('msg_type', 'danger');
+            Session::Flash('msg', 'Liên kết đã hết hạn hoặc không tồn tại');
+            Session::Flash('msg_type', 'danger');
             redirect('/forgot');
         }
 
         // Token format check
         if (!preg_match('/^[0-9a-f]{64}$/i', $token)) {
-            setSessionFlash('msg', 'Liên kết không hợp lệ');
-            setSessionFlash('msg_type', 'danger');
+            Session::Flash('msg', 'Liên kết không hợp lệ');
+            Session::Flash('msg_type', 'danger');
             redirect('/forgot');
         }
 
@@ -372,8 +385,8 @@ final class AuthController extends Controller
         $user = $this->userModel->getUserByForgetToken($token);
 
         if ($user === null) {
-            setSessionFlash('msg', 'Liên kết đã hết hạn hoặc không tồn tại');
-            setSessionFlash('msg_type', 'danger');
+            Session::Flash('msg', 'Liên kết đã hết hạn hoặc không tồn tại');
+            Session::Flash('msg_type', 'danger');
             redirect('/forgot');
         }
 
@@ -406,10 +419,10 @@ final class AuthController extends Controller
 
         // If validation failed
         if (!empty($errors)) {
-            setSessionFlash('msg', 'Vui lòng kiểm tra lại dữ liệu nhập vào');
-            setSessionFlash('msg_type', 'danger');
-            setSessionFlash('oldData', ['token' => $token]);
-            setSessionFlash('errors', $errors);
+            Session::Flash('msg', 'Vui lòng kiểm tra lại dữ liệu nhập vào');
+            Session::Flash('msg_type', 'danger');
+            Session::Flash('oldData', ['token' => $token]);
+            Session::Flash('errors', $errors);
 
             redirect('/reset?token=' . urlencode($token));
         }
@@ -427,16 +440,16 @@ final class AuthController extends Controller
 
         // Update failed
         if (!$updated) {
-            setSessionFlash('msg', 'Đã có lỗi xảy ra, vui lòng thử lại sau');
-            setSessionFlash('msg_type', 'danger');
+            Session::Flash('msg', 'Đã có lỗi xảy ra, vui lòng thử lại sau');
+            Session::Flash('msg_type', 'danger');
             redirect('/reset?token=' . urlencode($token));
         }
 
         // Send confirmation mail
         $sendMail = $this->mailService->sendPasswordChangedEmail($user['email'], $user['fullname']);
 
-        setSessionFlash('msg', 'Cập nhật mật khẩu thành công.');
-        setSessionFlash('msg_type', 'success');
+        Session::Flash('msg', 'Cập nhật mật khẩu thành công.');
+        Session::Flash('msg_type', 'success');
 
         redirect('/login');
     }
@@ -444,17 +457,16 @@ final class AuthController extends Controller
     /** Handle user logout */
     public function logout(): void
     {
-        $token = getSession('token_login');
+        if (AuthMiddleware::isAuthenticated()) {
+            AuthMiddleware::logout();
 
-        // Remove token record in database
-        if ($token !== false) {
-            $this->tokenModel->deleteByToken($token);
+            Session::Flash('msg', 'Đăng xuất thành công');
+            Session::Flash('msg_type', 'success');
+
+            // Redirect to login page
+            redirect('/login');
+        } else {
+            redirect('/login');
         }
-
-        // Clear session token
-        removeSession('token_login');
-
-        // Redirect to login page
-        redirect('/login');
     }
 }

@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Controllers\Admin;
 
 use Core\Controller;
+use App\Middlewares\AuthMiddleware;
 use App\Models\Post;
+use Core\Session;
 
 final class PostController extends Controller
 {
@@ -15,9 +17,9 @@ final class PostController extends Controller
     public function __construct()
     {
         parent::__construct();
-        $this->requireLogin();
+        AuthMiddleware::requireAuth();
         $this->postModel = new Post();
-        $this->currentUser = (array)getSession('current_user');
+        $this->currentUser = Session::get('current_user');
     }
 
     /** 
@@ -112,10 +114,10 @@ final class PostController extends Controller
 
         // If validation fails 
         if (!empty($errors)) {
-            setSessionFlash('msg', 'Vui lòng kiểm tra lại dữ liệu nhập vào');
-            setSessionFlash('msg_type', 'danger');
-            setSessionFlash('oldData', ['title' => $title, 'content' => $content]);
-            setSessionFlash('errors', $errors);
+            Session::flash('msg', 'Vui lòng kiểm tra lại dữ liệu nhập vào');
+            Session::flash('msg_type', 'danger');
+            Session::flash('oldData', ['title' => $title, 'content' => $content]);
+            Session::flash('errors', $errors);
             redirect('/posts/add');
         }
 
@@ -135,13 +137,13 @@ final class PostController extends Controller
         $inserted = $this->postModel->createPost($dataInsert);
 
         if (!$inserted) {
-            setSessionFlash('msg', 'Thêm bài viết thất bại');
-            setSessionFlash('msg_type', 'danger');
+            Session::flash('msg', 'Thêm bài viết thất bại');
+            Session::flash('msg_type', 'danger');
             redirect('/posts/add');
         }
 
-        setSessionFlash('msg', 'Thêm bài viết thành công.');
-        setSessionFlash('msg_type', 'success');
+        Session::flash('msg', 'Thêm bài viết thành công.');
+        Session::flash('msg_type', 'success');
 
         redirect('/posts');
     }
@@ -154,16 +156,16 @@ final class PostController extends Controller
         $postId = (int) ($input['id'] ?? 0);
 
         if ($postId <= 0) {
-            setSessionFlash('msg', 'ID bài viết không hợp lệ');
-            setSessionFlash('msg_type', 'danger');
+            Session::flash('msg', 'ID bài viết không hợp lệ');
+            Session::flash('msg_type', 'danger');
             redirect('/posts');
         }
         // Fetch existing post
         $postData = $this->postModel->getPostById($postId);
 
         if (!$postData) {
-            setSessionFlash('msg', 'Bài viết không tồn tại');
-            setSessionFlash('msg_type', 'danger');
+            Session::flash('msg', 'Bài viết không tồn tại');
+            Session::flash('msg_type', 'danger');
             return redirect('/posts');
         }
 
@@ -210,10 +212,10 @@ final class PostController extends Controller
 
         // If validation fails
         if (!empty($errors)) {
-            setSessionFlash('msg', 'Vui lòng kiểm tra lại dữ liệu nhập vào');
-            setSessionFlash('msg_type', 'danger');
-            setSessionFlash('oldData', $input);
-            setSessionFlash('errors', $errors);
+            Session::flash('msg', 'Vui lòng kiểm tra lại dữ liệu nhập vào');
+            Session::flash('msg_type', 'danger');
+            Session::flash('oldData', $input);
+            Session::flash('errors', $errors);
             redirect('/posts/edit?id=' . (int)($input['id'] ?? 0));
         }
 
@@ -234,13 +236,13 @@ final class PostController extends Controller
         $updated = $this->postModel->updatePost($postId, $dataUpdate);
 
         if (!$updated) {
-            setSessionFlash('msg', 'Chỉnh sửa bài viết thất bại');
-            setSessionFlash('msg_type', 'danger');
+            Session::flash('msg', 'Chỉnh sửa bài viết thất bại');
+            Session::flash('msg_type', 'danger');
             redirect('/posts/edit?id=' . $postId);
         }
 
-        setSessionFlash('msg', 'Chỉnh sửa bài viết thành công.');
-        setSessionFlash('msg_type', 'success');
+        Session::flash('msg', 'Chỉnh sửa bài viết thành công.');
+        Session::flash('msg_type', 'success');
         redirect('/posts');
     }
 
@@ -253,8 +255,8 @@ final class PostController extends Controller
 
         // Validate post ID 
         if ($postId <= 0) {
-            setSessionFlash('msg', 'ID bài viết không hợp lệ');
-            setSessionFlash('msg_type', 'danger');
+            Session::flash('msg', 'ID bài viết không hợp lệ');
+            Session::flash('msg_type', 'danger');
             redirect('/posts');
         }
 
@@ -262,8 +264,8 @@ final class PostController extends Controller
         $post = $this->postModel->getPostById($postId);
 
         if (empty($post)) {
-            setSessionFlash('msg', 'Bài viết không tồn tại.');
-            setSessionFlash('msg_type', 'danger');
+            Session::flash('msg', 'Bài viết không tồn tại.');
+            Session::flash('msg_type', 'danger');
             redirect('/posts');
         }
 
@@ -271,14 +273,14 @@ final class PostController extends Controller
         $deleted = $this->postModel->deletePost($postId);
 
         if (!$deleted) {
-            setSessionFlash('msg', 'Xóa bài viết thất bại, vui lòng thử lại.');
-            setSessionFlash('msg_type', 'danger');
+            Session::flash('msg', 'Xóa bài viết thất bại, vui lòng thử lại.');
+            Session::flash('msg_type', 'danger');
             redirect('/posts');
         }
 
         // Delete failed
-        setSessionFlash('msg', 'Xóa bài viết thành công.');
-        setSessionFlash('msg_type', 'success');
+        Session::flash('msg', 'Xóa bài viết thành công.');
+        Session::flash('msg_type', 'success');
         redirect('/posts');
     }
 }

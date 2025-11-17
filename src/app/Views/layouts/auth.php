@@ -1,6 +1,9 @@
 <?php
-$msg = getSessionFlash('msg');
-$msg_type = getSessionFlash('msg_type');
+
+use Core\Session;
+
+$msg = Session::getFlash('msg');
+$msg_type = Session::getFlash('msg_type');
 
 admin('header-auth');
 ?>

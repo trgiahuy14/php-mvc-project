@@ -1,6 +1,9 @@
 <?php
-$oldData = getSessionFlash('oldData');
-$errorsArr = getSessionFlash('errors');
+
+use Core\Session;
+
+$oldData = Session::getFlash('oldData');
+$errorsArr = Session::getFlash('errors');
 ?>
 
 <form method="POST" action="" enctype="multipart/form-data">
