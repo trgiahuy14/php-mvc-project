@@ -9,8 +9,7 @@
             "Core\\": "src/Core/"
         },
         "files": [
-            "src/helpers/functions.php",
-            "src/Core/session.php"
+            "src/helpers/functions.php"
         ]
     },
     "minimum-stability": "stable",

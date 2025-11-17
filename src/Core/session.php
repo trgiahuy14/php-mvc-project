@@ -1,47 +1,60 @@
 <?php
 
-// Save session value
-function setSession($key, $value)
+declare(strict_types=1);
+
+namespace Core;
+
+class Session
 {
-    if (!empty(session_id())) {
+    /** Set normal session */
+    public static function set(string $key, $value): void
+    {
         $_SESSION[$key] = $value;
-        return true;
     }
-    return false;
-}
 
-// Get session value
-function getSession($key = '')
-{
-    if (empty($key)) {
-        return $_SESSION;
+    /** Get normal session */
+    public static function get(string $key, $default = null)
+    {
+        return $_SESSION[$key] ?? $default;
     }
-    return $_SESSION[$key] ?? false;
-}
 
-// Remove session value or destroy all
-function removeSession($key = '')
-{
-    if (empty($key)) {
-        session_destroy();
-    }
-    if (isset($key)) {
+    /** Remove a session key */
+    public static function delete(string $key): void
+    {
         unset($_SESSION[$key]);
     }
-    return true;
-}
 
-// Set flash session 
-function setSessionFlash($key, $value)
-{
-    return setSession($key . 'Flash', $value);
-}
+    /** Check exists */
+    public static function has(string $key): bool
+    {
+        return isset($_SESSION[$key]);
+    }
 
-// Flash session - get once and auto remove
-function getSessionFlash($key)
-{
-    $key .= 'Flash';
-    $value = getSession($key);
-    removeSession($key);
-    return $value;
+    /** Destroy all sessions */
+    public static function destroy(): void
+    {
+        session_destroy();
+    }
+
+     // FLASH SESSION
+    /** Set flash message (auto remove after read) */
+    public static function flash(string $key, $value): void
+    {
+        $_SESSION['_flash'][$key] = $value;
+    }
+
+    /** Get and remove flash */
+    public static function getFlash(string $key)
+    {
+        if (!isset($_SESSION['_flash'][$key])) {
+            return null;
+        }
+
+        $value = $_SESSION['_flash'][$key];
+
+        // delete after reading
+        unset($_SESSION['_flash'][$key]);
+
+        return $value;
+    }
 }
