@@ -1,10 +1,12 @@
 <?php
 
-$msg = getSessionFlash('msg');
-$msg_type = getSessionFlash('msg_type');
-$errorsArr = getSessionFlash('errors');
+use Core\Session;
 
-$oldData = getSessionFlash('oldData');
+$msg = Session::getFlash('msg');
+$msg_type = Session::getFlash('msg_type');
+$errorsArr = Session::getFlash('errors');
+$oldData = Session::getFlash('oldData');
+
 if (empty($oldData) && !empty($postData)) {
     // Get exist value(s) from post
     $oldData = $postData;

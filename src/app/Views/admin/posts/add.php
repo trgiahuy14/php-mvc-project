@@ -1,10 +1,13 @@
 <?php
+
+use Core\Session;
+
 $data = ['title' => 'Thêm bài viết'];
 
-$msg = getSessionFlash('msg');
-$msg_type = getSessionFlash('msg_type');
-$oldData = getSessionFlash('oldData');
-$errorsArr = getSessionFlash('errors');
+$msg = Session::getFlash('msg');
+$msg_type = Session::getFlash('msg_type');
+$oldData = Session::getFlash('oldData');
+$errorsArr = Session::getFlash('errors');
 ?>
 
 <div class="container add-user">

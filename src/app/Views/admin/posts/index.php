@@ -1,8 +1,11 @@
 <?php
+
+use Core\Session;
+
 $data = ['title' => 'Danh sách bài viết'];
 
-$msg = getSessionFlash('msg');
-$msg_type = getSessionFlash('msg_type');
+$msg = Session::getFlash('msg');
+$msg_type = Session::getFlash('msg_type');
 ?>
 
 <div class="container grid-user">
