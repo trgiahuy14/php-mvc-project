@@ -16,16 +16,17 @@ define('APP_NAME', $_ENV['APP_NAME'] ?? 'VietNews CMS');
 define('APP_DEBUG', filter_var($_ENV['APP_DEBUG'] ?? false, FILTER_VALIDATE_BOOLEAN));
 
 // URLs
-define('BASE_URL', $_ENV['BASE_URL']);          // e.g http://localhost/vietnews-cms-php
-define('PUBLIC_URL', BASE_URL . '/public');     // e.g. http://localhost/vietnews-cms-php/public
-define('APP_BASE_PATH', $_ENV['APP_BASE_PATH']); // e.g. /vietnews-cms-php
+define('BASE_URL', $_ENV['BASE_URL']);          // http://localhost/vietnews-cms-php
+define('PUBLIC_URL', BASE_URL);                 //  /public
+define('APP_BASE_PATH', $_ENV['APP_BASE_PATH']); //  /vietnews-cms-php
 
 // Path configuration
-define('ROOT_PATH', dirname(__DIR__, 2));  // Project root
+// define('ROOT_PATH', dirname(__DIR__, 2));  // Project root
 define('APP_PATH', ROOT_PATH . '/src/app');
 define('CORE_PATH', ROOT_PATH . '/src/Core');
 define('STORAGE_PATH', ROOT_PATH . '/storage');
 define('VIEW_PATH', APP_PATH . '/Views');
+define('PUBLIC_PATH', ROOT_PATH . '/public');
 
 // Set timezone
 date_default_timezone_set($_ENV['APP_TIMEZONE'] ?? 'Asia/Ho_Chi_Minh');

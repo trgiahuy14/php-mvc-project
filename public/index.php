@@ -1,18 +1,21 @@
 <?php
 
-// Load composer autoloader
-require_once __DIR__ . '/vendor/autoload.php';
-
 use Core\Router;
 
+// Define ROOT_PATH
+define('ROOT_PATH', dirname(__DIR__)); // Project root
+
+// Load Composer autoload
+require_once ROOT_PATH . '/vendor/autoload.php';
+
 // Load environment variables
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv = Dotenv\Dotenv::createImmutable(ROOT_PATH);
 $dotenv->load();
 
 // Load configs
-require_once __DIR__ . '/src/configs/app.php';
+require_once ROOT_PATH . '/src/configs/app.php';
 
-// error reporting (based on .env)
+// Error reporting (based on .env)
 if ($_ENV['APP_DEBUG'] === 'true') {
     error_reporting(E_ALL);
     ini_set('display_errors', 1);
@@ -21,20 +24,14 @@ if ($_ENV['APP_DEBUG'] === 'true') {
     ini_set('display_errors', 0);
 }
 
-// Load file .env
-$env = parse_ini_file(__DIR__ . '/.env');
-foreach ($env as $key => $value) putenv("$key=$value");
-
-// Session
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+// Start session
+session_start();
 
 // Init router  
 $router = new Router();
 
 // Load Routes
-require_once __DIR__ . '/routes/web.php';
+require_once ROOT_PATH . '/routes/web.php';
 
 // Parse request
 $requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
