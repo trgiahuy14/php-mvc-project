@@ -13,14 +13,14 @@ final class Token extends Model
     {
         return $this->getScalar(
             'SELECT COUNT(*) FROM token_login WHERE user_id = :user_id',
-            [':user_id' => $userId]
+            ['user_id' => $userId]
         );
     }
 
     // Find token record
     public function findToken(string $token): ?array
     {
-        return $this->getOne('SELECT * FROM token_login WHERE token = :token LIMIT 1', [':token' => $token]);
+        return $this->getOne('SELECT * FROM token_login WHERE token = :token LIMIT 1', ['token' => $token]);
     }
 
     // Insert token record
@@ -32,6 +32,12 @@ final class Token extends Model
     // Delete token record
     public function deleteToken(string $token): bool
     {
-        return $this->delete('token_login', 'token = :token', [':token' => $token]);
+        return $this->delete('token_login', 'token = :token', ['token' => $token]);
+    }
+
+    // Delete token by user id
+    public function deleteTokensByUserId(int $userId): bool
+    {
+        return $this->delete('token_login', 'user_id = :user_id', ['user_id' => $userId]);
     }
 }
