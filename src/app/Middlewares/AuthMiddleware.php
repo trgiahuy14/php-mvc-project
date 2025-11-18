@@ -21,7 +21,7 @@ class AuthMiddleware
             return;
         }
 
-        $token = Session::get('current_user');
+        $token = Session::get('token_login');
         $currentUser = null;
 
         if ($token) {

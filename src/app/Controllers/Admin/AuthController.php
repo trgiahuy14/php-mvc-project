@@ -53,9 +53,8 @@ final class AuthController extends Controller
         // Validate Email
         if ($email === '') {
             $errors['email']['required'] = 'Email bắt buộc phải nhập';
-        } elseif (!validateEmail(trim($input['email']))) { {
-                $errors['email']['isEmail'] = 'Email không đúng định dạng';
-            }
+        } elseif (!validateEmail(trim($input['email']))) {
+            $errors['email']['isEmail'] = 'Email không đúng định dạng';
         }
 
         // Validate password
@@ -110,7 +109,6 @@ final class AuthController extends Controller
 
         // Success
         Session::set('token_login', $token);
-
         redirect('/dashboard');
     }
 
