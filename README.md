@@ -82,40 +82,23 @@ MAIL_PASS=your-app-password
 ### 4. Import database
 
 ```bash
-mysql -u root -p < database/migrations/php_mvc_db.sql
+mysql -u root -p < database/php_mvc_db.sql
 ```
 
 Or import via phpMyAdmin:
 
 1. Open phpMyAdmin
 2. Create database `php_mvc_db`
-3. Import file `database/migrations/php_mvc_db.sql`
+3. Import file `database/php_mvc_db.sql`
 
 ### 5. Configure web server
 
-#### Apache (with `.htaccess`)
+### Quick Start (No Configuration Needed)
 
-Point your document root to `public/` directory:
+1. Make sure Apache is running in XAMPP
+2. Access: `http://localhost/vietnews-cms-php/`
 
-```apache
-<VirtualHost *:80>
-    ServerName vietnews.local
-    DocumentRoot "/path/to/vietnews-cms-php/public"
-
-    <Directory "/path/to/vietnews-cms-php/public">
-        AllowOverride All
-        Require all granted
-    </Directory>
-</VirtualHost>
-```
-
-#### PHP Built-in Server (for development)
-
-```bash
-php -S localhost:8000 -t public/
-```
-
-Then open: http://localhost:8000
+That's it! The `.htaccess` files handle everything automatically.
 
 ## ⚙️ Configuration
 
