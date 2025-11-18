@@ -89,6 +89,9 @@ final class AuthController extends Controller
             redirect('/login');
         }
 
+        // Delete old token
+        $this->tokenModel->deleteTokensByUserId($user['id']);
+
         // Issue token & persist
         $token = bin2hex(random_bytes(32));
         $insertData = [
