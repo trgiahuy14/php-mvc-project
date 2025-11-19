@@ -8,10 +8,50 @@ use Core\Model;
 
 final class User extends Model
 {
-    // Get all users
+    // Get all posts (no paging)
     public function getAllUsers(): array
     {
-        return $this->getAll("SELECT * FROM users");
+        return $this->getAll('SELECT * FROM users ORDER BY id DESC');
+    }
+
+    // Get posts (paging + keyword)
+    public function getUsers(int $limit, int $offset, string $keyword = ''): array
+    {
+        $sql = "SELECT * FROM users";
+        $params = [];
+
+        // search filter
+        if ($keyword !== '') {
+            $sql .= " WHERE title LIKE :kw";
+            $params[':kw'] = '%' . $keyword . '%';
+        }
+
+        // paging
+        $limit = max(0, $limit);
+        $offset = max(0, $offset);
+        $sql .= " ORDER BY id DESC LIMIT {$offset}, {$limit}";
+
+        return $this->getAll($sql, $params);
+    }
+
+    // Count all users 
+    public function countUsers(): int
+    {
+        return $this->getScalar('SELECT COUNT(id) FROM users');
+    }
+
+    // Count users with keyword
+    public function countUsersByKeyword(string $keyword = ''): int
+    {
+        $sql = "SELECT COUNT(id) FROM users";
+        $params = [];
+
+        if ($keyword !== '') {
+            $sql .= " WHERE title LIKE :kw";
+            $params[':kw'] = '%' . $keyword . '%';
+        }
+
+        return $this->getScalar($sql, $params);
     }
 
     // Get user by id
@@ -32,20 +72,20 @@ final class User extends Model
         );
     }
 
-    // Get user by activation token
+    // Get user by verification token
     public function getUserByActivationToken(string $token): ?array
     {
         return $this->getOne(
-            'SELECT * FROM users WHERE active_token = :token LIMIT 1',
+            'SELECT * FROM users WHERE verification_token = :token LIMIT 1',
             [':token' => $token]
         );
     }
 
-    // Get user by forget_token
+    // Get user by reset_token
     public function getUserByForgetToken(string $token): ?array
     {
         return $this->getOne(
-            'SELECT * FROM users WHERE forget_token = :token LIMIT 1',
+            'SELECT * FROM users WHERE reset_token = :token LIMIT 1',
             [':token' => $token]
         );
     }
@@ -62,6 +102,16 @@ final class User extends Model
         return $this->update(
             'users',
             $userData,
+            'id = :id',
+            [':id' => $userId]
+        );
+    }
+
+    // Delete user by id
+    public function deleteUser(int $userId): bool
+    {
+        return $this->delete(
+            'posts',
             'id = :id',
             [':id' => $userId]
         );
