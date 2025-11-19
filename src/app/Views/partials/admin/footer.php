@@ -1,10 +1,10 @@
 <!--begin::Footer-->
 <footer class="app-footer">
     <strong>
-        &copy; <?= date('Y'); ?> VietNews CMS
+        &copy; <?= date('Y'); ?> DEV-BLOG CMS
     </strong>
     - Developed by
-    <a href="https://github.com/trgiahuy14" class="text-decoration-none">TrGiaHuy</a>
+    <a href="https://github.com/huydev14" class="text-decoration-none">huydev14</a>
 </footer>
 <!--end::Footer-->
 

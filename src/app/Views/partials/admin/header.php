@@ -1,4 +1,12 @@
-<?php $currentUser = $_SESSION['current_user'] ?>
+<?php
+
+use Core\Session;
+
+$username = Session::get('username');
+$fullname = Session::get('fullname');
+$avatar = Session::get('avatar');
+$role = Session::get('role');
+?>
 
 <!doctype html>
 <html lang="en">
@@ -6,7 +14,10 @@
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>VietNews CMS</title>
+    <title><?= $headerData['title'] ?? APP_NAME ?></title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="<?= BASE_URL ?>/assets/img/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="<?= BASE_URL ?>/assets/img/favicon-16x16.png">
     <!--begin::Primary Meta Tags-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="title" content="AdminLTE v4 | Dashboard" />
@@ -70,24 +81,22 @@
                     <!--begin::User Menu Dropdown-->
                     <li class="nav-item dropdown user-menu">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                            <?php if ($currentUser): ?>
-                                <img
-                                    src="<?= BASE_URL . $currentUser['avatar'] ?>"
-                                    class="user-image rounded-circle shadow"
-                                    alt="User Image" />
-                                <span class="d-none d-md-inline"><?= htmlspecialchars($currentUser['fullname']) ?></span>
-                            <?php endif ?>
+                            <img
+                                src="<?= PUBLIC_URL ?>/assets/img/<?= htmlspecialchars($avatar) ?>"
+                                class="user-image rounded-circle shadow"
+                                alt="User Image" />
+                            <span class="d-none d-md-inline"><?= htmlspecialchars($fullname) ?? htmlspecialchars($username) ?></span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
                             <!--begin::User Image-->
                             <li class="user-header text-bg-primary">
                                 <img
-                                    src="<?= BASE_URL . $currentUser['avatar'] ?>"
+                                    src="<?= PUBLIC_URL . '/assets/img/' . htmlspecialchars($avatar) ?>"
                                     class="rounded-circle shadow"
                                     alt="User Image" />
                                 <p>
-                                    <?= htmlspecialchars($currentUser['fullname']) ?>
-                                    <small>- Admin -</small>
+                                    @<?= htmlspecialchars($username) ?>
+                                    <small>- <?= htmlspecialchars($role) ?>-</small>
                                 </p>
                             </li>
                             <!--end::User Image-->
