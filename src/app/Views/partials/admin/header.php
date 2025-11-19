@@ -85,7 +85,7 @@ $role = Session::get('role');
                                 src="<?= PUBLIC_URL ?>/assets/img/<?= htmlspecialchars($avatar) ?>"
                                 class="user-image rounded-circle shadow"
                                 alt="User Image" />
-                            <span class="d-none d-md-inline"><?= htmlspecialchars($fullname) ?? htmlspecialchars($username) ?></span>
+                            <span class="d-none d-md-inline"><?= $fullname ? htmlspecialchars($fullname) : htmlspecialchars($username) ?></span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
                             <!--begin::User Image-->
