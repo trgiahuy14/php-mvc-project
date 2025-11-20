@@ -1,160 +1,153 @@
- <!-- Footer Start -->
- <div class="container-fluid bg-dark footer py-5">
-     <div class="container py-5">
-         <div class="pb-4 mb-4" style="border-bottom: 1px solid rgba(255, 255, 255, 0.08);">
-             <div class="row g-4">
-                 <div class="col-lg-3">
-                     <a href="#" class="d-flex flex-column flex-wrap">
-                         <p class="text-white mb-0 display-6">Newsers</p>
-                         <small class="text-light" style="letter-spacing: 11px; line-height: 0;">Newspaper</small>
-                     </a>
-                 </div>
-                 <div class="col-lg-9">
-                     <div class="d-flex position-relative rounded-pill overflow-hidden">
-                         <input class="form-control border-0 w-100 py-3 rounded-pill" type="email" placeholder="example@gmail.com">
-                         <button type="submit" class="btn btn-primary border-0 py-3 px-5 rounded-pill text-white position-absolute" style="top: 0; right: 0;">Subscribe Now</button>
-                     </div>
-                 </div>
-             </div>
-         </div>
-         <div class="row g-5">
-             <div class="col-lg-6 col-xl-3">
-                 <div class="footer-item-1">
-                     <h4 class="mb-4 text-white">Get In Touch</h4>
-                     <p class="text-secondary line-h">Address: <span class="text-white">Bhopal</span></p>
-                     <p class="text-secondary line-h">Email: <span class="text-white">demo@gmail.com</span></p>
-                     <p class="text-secondary line-h">Phone: <span class="text-white">+91 23 4567 8910</span></p>
-                     <div class="d-flex line-h">
-                         <a class="btn btn-light me-2 btn-md-square rounded-circle" href=""><i class="fab fa-twitter text-dark"></i></a>
-                         <a class="btn btn-light me-2 btn-md-square rounded-circle" href=""><i class="fab fa-facebook-f text-dark"></i></a>
-                         <a class="btn btn-light me-2 btn-md-square rounded-circle" href=""><i class="fab fa-youtube text-dark"></i></a>
-                         <a class="btn btn-light btn-md-square rounded-circle" href=""><i class="fab fa-linkedin-in text-dark"></i></a>
-                     </div>
-                 </div>
-             </div>
-             <div class="col-lg-6 col-xl-3">
-                 <div class="footer-item-2">
-                     <div class="d-flex flex-column mb-4">
-                         <h4 class="mb-4 text-white">Recent Posts</h4>
-                         <a href="#">
-                             <div class="d-flex align-items-center">
-                                 <div class="rounded-circle border border-2 border-primary overflow-hidden">
-                                     <img src="<?= PUBLIC_URL ?>/assets/img/footer-1.jpg" class="img-zoomin img-fluid rounded-circle w-100" alt="">
-                                 </div>
-                                 <div class="d-flex flex-column ps-4">
-                                     <p class="text-uppercase text-white mb-3">Life Style</p>
-                                     <a href="#" class="h6 text-white">
-                                         Get the best speak market, news.
-                                     </a>
-                                     <small class="text-white d-block"><i class="fas fa-calendar-alt me-1"></i> Dec 9, 2024</small>
-                                 </div>
-                             </div>
-                         </a>
-                     </div>
-                     <div class="d-flex flex-column">
-                         <a href="#">
-                             <div class="d-flex align-items-center">
-                                 <div class="rounded-circle border border-2 border-primary overflow-hidden">
-                                     <img src="<?= PUBLIC_URL ?>/assets/img/footer-2.jpg" class="img-zoominimg-fluid rounded-circle w-100" alt="">
-                                 </div>
-                                 <div class="d-flex flex-column ps-4">
-                                     <p class="text-uppercase text-white mb-3">Sports</p>
-                                     <a href="#" class="h6 text-white">
-                                         Get the best speak market, news.
-                                     </a>
-                                     <small class="text-white d-block"><i class="fas fa-calendar-alt me-1"></i> Dec 9, 2024</small>
-                                 </div>
-                             </div>
-                         </a>
-                     </div>
-                 </div>
-             </div>
-             <div class="col-lg-6 col-xl-3">
-                 <div class="d-flex flex-column text-start footer-item-3">
-                     <h4 class="mb-4 text-white">Categories</h4>
-                     <a class="btn-link text-white" href=""><i class="fas fa-angle-right text-white me-2"></i> Sports</a>
-                     <a class="btn-link text-white" href=""><i class="fas fa-angle-right text-white me-2"></i> Magazine</a>
-                     <a class="btn-link text-white" href=""><i class="fas fa-angle-right text-white me-2"></i> Lifestyle</a>
-                     <a class="btn-link text-white" href=""><i class="fas fa-angle-right text-white me-2"></i> Politician</a>
-                     <a class="btn-link text-white" href=""><i class="fas fa-angle-right text-white me-2"></i> Technology</a>
-                     <a class="btn-link text-white" href=""><i class="fas fa-angle-right text-white me-2"></i> Intertainment</a>
-                 </div>
-             </div>
-             <div class="col-lg-6 col-xl-3">
-                 <div class="footer-item-4">
-                     <h4 class="mb-4 text-white">Our Gallary</h4>
-                     <div class="row g-2">
-                         <div class="col-4">
-                             <div class="rounded overflow-hidden">
-                                 <img src="<?= PUBLIC_URL ?>/assets/img/footer-1.jpg" class="img-zoomin img-fluid rounded w-100" alt="">
-                             </div>
-                         </div>
-                         <div class="col-4">
-                             <div class="rounded overflow-hidden">
-                                 <img src="<?= PUBLIC_URL ?>/assets/img/footer-2.jpg" class="img-zoomin img-fluid rounded w-100" alt="">
-                             </div>
-                         </div>
-                         <div class="col-4">
-                             <div class="rounded overflow-hidden">
-                                 <img src="<?= PUBLIC_URL ?>/assets/img/footer-3.jpg" class="img-zoomin img-fluid rounded w-100" alt="">
-                             </div>
-                         </div>
-                         <div class="col-4">
-                             <div class="rounded overflow-hidden">
-                                 <img src="<?= PUBLIC_URL ?>/assets/img/footer-4.jpg" class="img-zoomin img-fluid rounded w-100" alt="">
-                             </div>
-                         </div>
-                         <div class="col-4">
-                             <div class="rounded overflow-hidden">
-                                 <img src="<?= PUBLIC_URL ?>/assets/img/footer-5.jpg" class="img-zoomin img-fluid rounded w-100" alt="">
-                             </div>
-                         </div>
-                         <div class="col-4">
-                             <div class="rounded overflow-hidden">
-                                 <img src="<?= PUBLIC_URL ?>/assets/img/footer-6.jpg" class="img-zoomin img-fluid rounded w-100" alt="">
-                             </div>
-                         </div>
-                     </div>
-                 </div>
-             </div>
-         </div>
-     </div>
- </div>
- <!-- Footer End -->
+<!-- Footer Section -->
+<footer class="bg-dark text-white pt-5 pb-4 mt-5">
+    <div class="container">
+        <div class="row">
+            <!-- About Section -->
+            <div class="col-lg-4 col-md-6 mb-4">
+                <h5 class="mb-3">
+                    <i class="fas fa-code me-2 text-primary"></i>DevBlog<span class="text-primary">.vn</span>
+                </h5>
+                <p class="text-white-50">
+                    Blog chia sẻ kiến thức lập trình, kinh nghiệm thực tế và xu hướng công nghệ mới nhất.
+                    Nơi developer Việt kết nối và cùng nhau phát triển.
+                </p>
+                <div class="social-links mt-3">
+                    <a href="#" class="btn btn-outline-primary btn-sm me-2" title="GitHub">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    <a href="#" class="btn btn-outline-primary btn-sm me-2" title="Facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" class="btn btn-outline-primary btn-sm me-2" title="Twitter">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="btn btn-outline-primary btn-sm" title="YouTube">
+                        <i class="fab fa-youtube"></i>
+                    </a>
+                </div>
+            </div>
 
+            <!-- Quick Links -->
+            <div class="col-lg-2 col-md-6 mb-4">
+                <h5 class="text-primary mb-3">Khám phá</h5>
+                <ul class="list-unstyled">
+                    <li class="mb-2">
+                        <a href="<?= BASE_URL ?>" class="text-white-50 text-decoration-none hover-link">
+                            <i class="fas fa-chevron-right me-2"></i>Trang chủ
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a href="<?= BASE_URL ?>/authors" class="text-white-50 text-decoration-none hover-link">
+                            <i class="fas fa-chevron-right me-2"></i>Tác giả
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a href="<?= BASE_URL ?>/about" class="text-white-50 text-decoration-none hover-link">
+                            <i class="fas fa-chevron-right me-2"></i>Giới thiệu
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a href="<?= BASE_URL ?>/login" class="text-white-50 text-decoration-none hover-link">
+                            <i class="fas fa-chevron-right me-2"></i>Viết bài
+                        </a>
+                    </li>
+                </ul>
+            </div>
 
- <!-- Copyright Start -->
- <div class="container-fluid copyright bg-dark py-4">
-     <div class="container">
-         <div class="row">
-             <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                 <span class="text-light"><a href="#"><i class="fas fa-copyright text-light me-2"></i>Ecliptic innovations</a>, All right reserved.</span>
-             </div>
-             <div class="col-md-6 my-auto text-center text-md-end text-white">
-                 <!--/*** This template is free as long as you keep the below author’s credit link/attribution link/backlink. ***/-->
-                 <!--/*** If you'd like to use the template without the below author’s credit link/attribution link/backlink, ***/-->
-                 <!--/*** you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". ***/-->
-                 Designed By <a class="border-bottom" href="https://www.eclipticinnovations.com/">Ecliptic innovations</a>
-             </div>
-         </div>
-     </div>
- </div>
- <!-- Copyright End -->
+            <!-- Categories -->
+            <div class="col-lg-3 col-md-6 mb-4">
+                <h5 class="text-primary mb-3">Chủ đề hot</h5>
+                <ul class="list-unstyled">
+                    <?php if (!empty($categories)): ?>
+                        <?php foreach (array_slice($categories, 0, 6) as $category): ?>
+                            <li class="mb-2">
+                                <a href="<?= BASE_URL ?>/category?id=<?= $category['id'] ?>" class="text-white-50 text-decoration-none hover-link">
+                                    <i class="fas fa-tag me-2 text-primary"></i><?= htmlspecialchars($category['name'] ?? '', ENT_QUOTES, 'UTF-8') ?>
+                                </a>
+                            </li>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <li class="text-white-50">Đang cập nhật...</li>
+                    <?php endif; ?>
+                </ul>
+            </div>
 
+            <!-- Newsletter -->
+            <div class="col-lg-3 col-md-6 mb-4">
+                <h5 class="text-primary mb-3">Newsletter</h5>
+                <p class="text-white-50 small">Đăng ký để nhận bài viết mới nhất về lập trình mỗi tuần</p>
+                <div class="input-group mb-3">
+                    <input type="email" class="form-control" placeholder="Email của bạn">
+                    <button class="btn btn-primary" type="button">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                <small class="text-white-50">
+                    <i class="fas fa-shield-alt me-1"></i>Chúng tôi tôn trọng quyền riêng tư của bạn
+                </small>
+            </div>
+        </div>
 
- <!-- Back to Top -->
- <a href="#" class="btn btn-primary border-2 border-white rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a>
+        <!-- Copyright -->
+        <div class="row mt-4 pt-3 border-top border-secondary">
+            <div class="col-md-6 text-center text-md-start">
+                <p class="mb-0 text-white-50">
+                    &copy; <?= date('Y') ?> DevBlog.vn - Made with <i class="fas fa-heart text-danger"></i> by Vietnamese Developers
+                </p>
+            </div>
+            <div class="col-md-6 text-center text-md-end">
+                <a href="#" class="text-white-50 text-decoration-none me-3 hover-link">Privacy Policy</a>
+                <a href="#" class="text-white-50 text-decoration-none me-3 hover-link">Terms of Use</a>
+                <a href="#" class="text-white-50 text-decoration-none hover-link">RSS</a>
+            </div>
+        </div>
+    </div>
+</footer>
 
+<!-- Back to Top Button -->
+<a href="#" class="btn btn-primary btn-lg back-to-top">
+    <i class="fas fa-arrow-up"></i>
+</a>
 
- <!-- JavaScript Libraries -->
- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
- <script src="<?= PUBLIC_URL ?>/assets/lib/easing/easing.min.js"></script>
- <script src="<?= PUBLIC_URL ?>/assets/lib/waypoints/waypoints.min.js"></script>
- <script src="<?= PUBLIC_URL ?>/assets/lib/owlcarousel/owl.carousel.min.js"></script>
+<style>
+    .back-to-top {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        display: none;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        text-align: center;
+        line-height: 50px;
+        z-index: 9999;
+    }
 
- <!-- Template Javascript -->
- <script src="<?= PUBLIC_URL ?>/assets/js/main.js"></script>
- </body>
+    .back-to-top:hover {
+        transform: translateY(-5px);
+    }
 
- </html>
+    footer a:hover {
+        color: var(--bs-primary) !important;
+    }
+</style>
+
+<script>
+    // Back to top button
+    const backToTop = document.querySelector('.back-to-top');
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+            backToTop.style.display = 'block';
+        } else {
+            backToTop.style.display = 'none';
+        }
+    });
+
+    backToTop.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
+</script>
