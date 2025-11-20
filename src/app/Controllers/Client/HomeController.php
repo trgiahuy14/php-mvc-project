@@ -1,26 +1,40 @@
 <?php
 
-namespace App\Controllers;
+declare(strict_types=1);
+
+namespace App\Controllers\Client;
 
 use Core\Controller;
+use App\Models\Home;
 
-class HomeController extends Controller
+final class HomeController extends Controller
 {
-    private $postModel;
+    private Home $homeModel;
 
     public function __construct()
     {
         parent::__construct();
-        // $this->postModel = new Post();
+        $this->homeModel = new Home();
     }
 
-
-    public function index()
+    public function index(): void
     {
-        // $rel = $this->postModel->getAllPosts();
+        // Get all data from Home Model
+        $latestPosts = $this->homeModel->getLatestPosts(6);
+        $featuredPosts = $this->homeModel->getFeaturedPosts(3);
+        $categories = $this->homeModel->getCategories();
+        $trendingPosts = $this->homeModel->getTrendingPosts(5);
+        $statistics = $this->homeModel->getStatistics();
+
         $data = [
-            'title' => 'test'
+            'headerData' => ['title' => 'Trang chủ - DevBlog'],
+            'latestPosts' => $latestPosts,
+            'featuredPosts' => $featuredPosts,
+            'categories' => $categories,
+            'trendingPosts' => $trendingPosts,
+            'statistics' => $statistics
         ];
-        $this->view->render('client');
+
+        $this->view->render('client/home', 'client', $data);
     }
 }

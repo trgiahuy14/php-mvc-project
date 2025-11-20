@@ -2,7 +2,7 @@
     RewriteEngine On
     
     # Set base path for rewrite (adjust based on your folder structure)
-    RewriteBase /vietnews-cms-php/public/
+    RewriteBase /DevBlog-PHP-MVC/public/
     
     # Redirect to index.php if not a file or directory
     RewriteCond %{REQUEST_FILENAME} !-f

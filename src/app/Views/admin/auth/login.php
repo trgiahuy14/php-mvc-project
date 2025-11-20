@@ -6,45 +6,78 @@ $oldData = Session::getFlash('oldData');
 $errorsArr = Session::getFlash('errors');
 ?>
 
-<form method="POST" enctype="multipart/form-data">
-    <div class="d-flex flex-row align-items-center justify-content-center justify-content-lg-start">
-        <h2 class="fw-normal mb-5 me-3">Đăng nhập hệ thống</h2>
-    </div>
+<div class="auth-header">
+    <h3 class="auth-title">Đăng nhập</h3>
+    <p class="auth-subtitle">Đăng nhập vào tài khoản của bạn để tiếp tục</p>
+</div>
 
+<form method="POST" class="auth-form" enctype="multipart/form-data">
     <!-- Email input -->
-    <div data-mdb-input-init class="form-outline mb-4">
+    <div class="form-group">
+        <label for="email" class="form-label">
+            <i class="bi bi-envelope"></i> Email
+        </label>
         <input
             name="email"
-            id="form3Example3"
+            id="email"
             type="text"
-            class="form-control form-control-lg"
-            placeholder="Địa chỉ email"
-            value="<?= !empty($oldData) ? oldData($oldData, 'phone') : null; ?>" />
+            class="form-control"
+            placeholder="Nhập địa chỉ email"
+            value="<?= !empty($oldData) ? oldData($oldData, 'email') : ''; ?>"
+            autocomplete="email"
+            required />
         <?= !empty($errorsArr) ? formError($errorsArr, 'email') : null ?>
     </div>
 
     <!-- Password input -->
-    <div data-mdb-input-init class="form-outline mb-3">
-        <input
-            name="password"
-            id="form3Example4"
-            type="password"
-            class="form-control form-control-lg"
-            placeholder="Nhập mật khẩu" />
+    <div class="form-group">
+        <label for="password" class="form-label">
+            <i class="bi bi-lock"></i> Mật khẩu
+        </label>
+        <div class="password-input-wrapper">
+            <input
+                name="password"
+                id="password"
+                type="password"
+                class="form-control"
+                placeholder="Nhập mật khẩu"
+                autocomplete="current-password"
+                required />
+            <button type="button" class="password-toggle" onclick="togglePassword('password')">
+                <i class="bi bi-eye" id="password-icon"></i>
+            </button>
+        </div>
         <?= !empty($errorsArr) ? formError($errorsArr, 'password') : null ?>
     </div>
 
-    <div class="d-flex justify-content-between align-items-center">
-
-        <a href="<?= BASE_URL ?>/forgot" class="text-body">Quên mật khẩu?</a>
+    <div class="form-options">
+        <a href="<?= BASE_URL ?>/forgot" class="forgot-link">
+            Quên mật khẩu?
+        </a>
     </div>
 
-    <div class="text-center text-lg-start mt-4 pt-2">
+    <button type="submit" class="btn btn-primary btn-auth">
+        <i class="bi bi-box-arrow-in-right"></i>
+        Đăng nhập
+    </button>
 
-        <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-lg"
-            style="padding-left: 2.5rem; padding-right: 2.5rem;">Đăng nhập</button>
-
-        <p class="small fw-bold mt-2 pt-1 mb-0">Chưa có tài khoản? <a href="<?= BASE_URL ?>/register"
-                class="link-danger">Đăng ký</a></p>
+    <div class="auth-footer-links">
+        <p>Chưa có tài khoản? <a href="<?= BASE_URL ?>/register" class="auth-link">Đăng ký ngay</a></p>
     </div>
 </form>
+
+<script>
+    function togglePassword(fieldId) {
+        const field = document.getElementById(fieldId);
+        const icon = document.getElementById(fieldId + '-icon');
+        if (field.type === 'password') {
+            field.type = 'text';
+            icon.classList.remove('bi-eye');
+            icon.classList.add('bi-eye-slash');
+        } else {
+            field.type = 'password';
+            icon.classList.remove('bi-eye-slash');
+            icon.classList.add('bi-eye');
+        }
+    }
+</script>

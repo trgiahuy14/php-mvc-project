@@ -6,27 +6,39 @@ $oldData = Session::getFlash('oldData');
 $errorsArr = Session::getFlash('errors');
 ?>
 
-<form method="POST" action="" enctype="multipart/form-data">
-    <div class="d-flex flex-row align-items-center justify-content-center justify-content-lg-start">
-        <h2 class="fw-normal mb-4 me-3">Quên mật khẩu</h2>
-    </div>
+<div class="auth-header">
+    <h3 class="auth-title">Quên mật khẩu</h3>
+    <p class="auth-subtitle">Nhập email của bạn, chúng tôi sẽ gửi link đặt lại mật khẩu</p>
+</div>
 
+<form method="POST" action="" class="auth-form" enctype="multipart/form-data">
     <!-- Email input -->
-    <div data-mdb-input-init class="form-outline mb-4">
+    <div class="form-group">
+        <label for="email" class="form-label">
+            <i class="bi bi-envelope"></i> Email
+        </label>
         <input
             name="email"
-            id="form3Example3"
-            type="text"
-            class="form-control form-control-lg"
-            placeholder="Địa chỉ email"
-            value="<?= !empty($oldData) ? oldData($oldData, 'email') : null ?>" />
+            id="email"
+            type="email"
+            class="form-control"
+            placeholder="Nhập địa chỉ email"
+            value="<?= !empty($oldData) ? oldData($oldData, 'email') : ''; ?>"
+            autocomplete="email"
+            required />
         <?= !empty($errorsArr) ? formError($errorsArr, 'email') : null ?>
     </div>
 
-    <div class="text-center text-lg-start mt-4 pt-2">
-        <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-lg"
-            style="padding-left: 2.5rem; padding-right: 2.5rem;">Gửi</button>
-        <p class="small fw-bold mt-2 pt-1 mb-0">Quay về trang <a href="<?= BASE_URL ?>/login"
-                class="link-danger">Đăng nhập</a></p>
+    <button type="submit" class="btn btn-primary btn-auth">
+        <i class="bi bi-send"></i>
+        Gửi link khôi phục
+    </button>
+
+    <div class="auth-footer-links">
+        <p>
+            <a href="<?= BASE_URL ?>/login" class="auth-link">
+                <i class="bi bi-arrow-left"></i> Quay lại đăng nhập
+            </a>
+        </p>
     </div>
 </form>

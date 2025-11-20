@@ -6,73 +6,118 @@ $oldData = Session::getFlash('oldData');
 $errorsArr = Session::getFlash('errors');
 ?>
 
-<form method="POST" action="" enctype="multipart/form-data">
-    <div class="d-flex flex-row align-items-center justify-content-center justify-content-lg-start">
-        <h2 class="fw-normal mb-5 me-3">Đăng ký tài khoản</h2>
-    </div>
-    <!-- Register form -->
-    <!-- Full name -->
-    <div data-mdb-input-init class="form-outline mb-4">
+<div class="auth-header">
+    <h3 class="auth-title">Đăng ký tài khoản</h3>
+    <p class="auth-subtitle">Tạo tài khoản mới để bắt đầu sử dụng hệ thống</p>
+</div>
+
+<form method="POST" action="" class="auth-form" enctype="multipart/form-data">
+    <!-- Username -->
+    <div class="form-group">
+        <label for="username" class="form-label">
+            <i class="bi bi-person"></i> Tên người dùng
+        </label>
         <input
-            name="fullname"
-            type="Text"
-            class="form-control form-control-lg"
-            placeholder="Họ tên"
-            value="<?= !empty($oldData) ? oldData($oldData, 'fullname') : null; ?>" />
-        <?= !empty($errorsArr) ? formError($errorsArr, 'fullname') : null ?>
+            name="username"
+            id="username"
+            type="text"
+            class="form-control"
+            placeholder="Chọn tên người dùng của bạn"
+            value="<?= !empty($oldData) ? oldData($oldData, 'username') : ''; ?>"
+            autocomplete="username"
+            required />
+        <?= !empty($errorsArr) ? formError($errorsArr, 'username') : null ?>
     </div>
 
     <!-- Email -->
-    <div data-mdb-input-init class="form-outline mb-4">
+    <div class="form-group">
+        <label for="email" class="form-label">
+            <i class="bi bi-envelope"></i> Email
+        </label>
         <input
             name="email"
-            type="text"
-            class="form-control form-control-lg"
-            placeholder="Địa chỉ email"
-            value="<?= !empty($oldData) ? oldData($oldData, 'email') : null; ?>" />
+            id="email"
+            type="email"
+            class="form-control"
+            placeholder="Nhập địa chỉ email của bạn"
+            value="<?= !empty($oldData) ? oldData($oldData, 'email') : ''; ?>"
+            autocomplete="email"
+            required />
         <?= !empty($errorsArr) ? formError($errorsArr, 'email') : null ?>
     </div>
 
-    <!-- Phone number -->
-    <div data-mdb-input-init class="form-outline mb-4">
-        <input
-            name="phone"
-            type="text"
-            placeholder="Nhập số điện thoại"
-            class="form-control form-control-lg"
-            value="<?= !empty($oldData) ? oldData($oldData, 'phone') : null; ?>" />
-        <?= !empty($errorsArr) ? formError($errorsArr, 'phone') : null ?>
-    </div>
-
-
     <!-- Password -->
-    <div data-mdb-input-init class="form-outline mb-3">
-        <input
-            name="password"
-            id="form3Example4"
-            type="password"
-            class="form-control form-control-lg"
-            placeholder="Nhập mật khẩu" />
+    <div class="form-group">
+        <label for="password" class="form-label">
+            <i class="bi bi-lock"></i> Mật khẩu
+        </label>
+        <div class="password-input-wrapper">
+            <input
+                name="password"
+                id="password"
+                type="password"
+                class="form-control"
+                placeholder="Tạo mật khẩu mạnh"
+                autocomplete="new-password"
+                required />
+            <button type="button" class="password-toggle" onclick="togglePassword('password')">
+                <i class="bi bi-eye" id="password-icon"></i>
+            </button>
+        </div>
+        <small class="form-text">Ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường và số</small>
         <?= !empty($errorsArr) ? formError($errorsArr, 'password') : null ?>
     </div>
 
     <!-- Confirm password -->
-    <div data-mdb-input-init class="form-outline mb-3">
-        <input
-            name="confirm_pass"
-            id="form3Example4"
-            type="password"
-            class="form-control form-control-lg"
-            placeholder="Nhập lại mật khẩu" />
+    <div class="form-group">
+        <label for="confirm_pass" class="form-label">
+            <i class="bi bi-lock-fill"></i> Xác nhận mật khẩu
+        </label>
+        <div class="password-input-wrapper">
+            <input
+                name="confirm_pass"
+                id="confirm_pass"
+                type="password"
+                class="form-control"
+                placeholder="Nhập lại mật khẩu"
+                autocomplete="new-password"
+                required />
+            <button type="button" class="password-toggle" onclick="togglePassword('confirm_pass')">
+                <i class="bi bi-eye" id="confirm_pass-icon"></i>
+            </button>
+        </div>
         <?= !empty($errorsArr) ? formError($errorsArr, 'confirm_pass') : null ?>
     </div>
 
-    <div class="text-center text-lg-start mt-4 pt-2">
+    <div class="form-check mb-4">
+        <input class="form-check-input" type="checkbox" id="terms" required>
+        <label class="form-check-label" for="terms">
+            Tôi đồng ý với <a href="#" class="auth-link">Điều khoản dịch vụ</a> và <a href="#" class="auth-link">Chính sách bảo mật</a>
+        </label>
+    </div>
 
-        <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-lg"
-            style="padding-left: 2.5rem; padding-right: 2.5rem;">Đăng ký</button>
+    <button type="submit" class="btn btn-primary btn-auth">
+        <i class="bi bi-person-plus"></i>
+        Đăng ký
+    </button>
 
-        <p class="small fw-bold mt-2 pt-1 mb-0">Bạn đã có tài khoản? <a href="<?= BASE_URL ?>/login"
-                class="link-danger">Đăng nhập</a></p>
+    <div class="auth-footer-links">
+        <p>Đã có tài khoản? <a href="<?= BASE_URL ?>/login" class="auth-link">Đăng nhập</a></p>
     </div>
 </form>
+
+<script>
+    function togglePassword(fieldId) {
+        const field = document.getElementById(fieldId);
+        const icon = document.getElementById(fieldId + '-icon');
+        if (field.type === 'password') {
+            field.type = 'text';
+            icon.classList.remove('bi-eye');
+            icon.classList.add('bi-eye-slash');
+        } else {
+            field.type = 'password';
+            icon.classList.remove('bi-eye-slash');
+            icon.classList.add('bi-eye');
+        }
+    }
+</script>

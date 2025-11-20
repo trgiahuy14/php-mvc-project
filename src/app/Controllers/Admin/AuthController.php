@@ -16,14 +16,12 @@ use Exception;
 final class AuthController extends Controller
 {
     private User $userModel;
-    private Token $tokenModel;
     private MailService $mailService;
 
     public function __construct()
     {
         parent::__construct();
         $this->userModel = new User();
-        $this->tokenModel = new Token();
         $this->mailService = new MailService();
     }
 
@@ -31,7 +29,7 @@ final class AuthController extends Controller
     public function showLogin(): void
     {
         $data = [
-            'title' => 'Đăng nhập'
+            'headerData' => ['title' => 'Đăng nhập - DevBlog CMS']
         ];
         $this->view->render('admin/auth/login', 'auth', $data);
     }
@@ -82,44 +80,25 @@ final class AuthController extends Controller
             redirect('/login');
         }
 
-        // Check if user is active
-        if (!isset($user['is_active']) || $user['is_active'] === 0) {
+        // Check if email is activated
+        if (!isset($user['email_verified_at']) || $user['email_verified_at'] === null) {
             Session::Flash('msg', 'Tài khoản chưa được kích hoạt');
             Session::Flash('msg_type', 'danger');
             redirect('/login');
         }
 
-        // Delete old token
-        $this->tokenModel->deleteTokensByUserId($user['id']);
+        $user = $this->userModel->getUserByEmail($email);
 
-        // Issue token & persist
-        $token = bin2hex(random_bytes(32));
-        $insertData = [
-            'token' => $token,
-            'created_at' => date('Y-m-d H:i:s'),
-            'user_id' => $user['id'],
-            'expires_at' =>  date('Y-m-d H:i:s', strtotime('+1 day')),
-        ];
+        AuthMiddleware::login($user);
 
-        $inserted = $this->tokenModel->createToken($insertData);
-
-        // Insert failed
-        if (!$inserted) {
-            Session::flash('msg', 'Lỗi hệ thống, vui lòng thử lại sau!');
-            Session::flash('msg_type', 'danger');
-            redirect('/login');
-        }
-
-        // Success
-        Session::set('token_login', $token);
         redirect('/dashboard');
     }
 
     /** Show register page */
     public function showRegister(): void
     {
-        $data = ['title' => 'Đăng ký tài khoản'];
-        $this->view->render('admin/auth/register', 'auth');
+        $data = ['headerData' => ['title' => 'Đăng ký tài khoản - DevBlog CMS']];
+        $this->view->render('admin/auth/register', 'auth', $data);
     }
 
     /** Handle register POST */
@@ -133,17 +112,26 @@ final class AuthController extends Controller
         $errors = [];
 
         // Normalize inputs
-        $fullname   = trim($input['fullname'] ?? '');
+        $username   = trim($input['username'] ?? '');
         $email      = trim($input['email'] ?? '');
-        $phone      = (string)($input['phone'] ?? '');
         $password   = (string)($input['password'] ?? '');
         $confirmPass = (string)($input['confirm_pass'] ?? '');
 
-        // Validate fullname
-        if ($fullname === '') {
-            $errors['fullname']['required'] = 'Họ tên bắt buộc phải nhập';
-        } elseif (strlen($fullname) < 5) {
-            $errors['fullname']['min'] = 'Họ tên phải lớn hơn 5 ký tự';
+        // Validate username
+        if ($username === '') {
+            $errors['username']['required'] = 'Tên đăng nhập bắt buộc phải nhập';
+        } elseif (strlen($username) < 3) {
+            $errors['username']['min'] = 'Tên đăng nhập phải lớn hơn 3 ký tự';
+        } elseif (strlen($username) > 50) {
+            $errors['username']['max'] = 'Tên đăng nhập không được vượt quá 50 ký tự';
+        } elseif (!preg_match('/^[a-zA-Z0-9_]+$/', $username)) {
+            $errors['username']['format'] = 'Tên đăng nhập chỉ được chứa chữ cái, số và dấu gạch dưới';
+        } else {
+            // Check duplicated username
+            $existingUser = $this->userModel->getUserByUsername($username);
+            if ($existingUser !== null) {
+                $errors['username']['exists'] = 'Tên đăng nhập đã được sử dụng';
+            }
         }
 
         // Validate Email
@@ -155,15 +143,8 @@ final class AuthController extends Controller
             // Check duplicated email
             $user = $this->userModel->getUserByEmail($email);
             if ($user !== null) {
-                $errors['email']['exists'] = 'Email đã tồn tại';
+                $errors['email']['exists'] = 'Email đã được sử dụng';
             }
-        }
-
-        // Validate phone
-        if ($phone === '') {
-            $errors['phone']['required'] = 'Số điện thoại bắt buộc phải nhập';
-        } elseif (!isPhone($phone)) {
-            $errors['phone']['isPhone'] = 'Số điện thoại không đúng định dạng';
         }
 
         // Validate password
@@ -186,9 +167,8 @@ final class AuthController extends Controller
             Session::Flash('msg_type', 'danger');
 
             $oldData = [
-                'fullname' => $fullname,
+                'username' => $username,
                 'email' => $email,
-                'phone' => $phone
             ];
 
             Session::Flash('oldData', $oldData);
@@ -196,17 +176,16 @@ final class AuthController extends Controller
             redirect('/register');
         }
 
-
         // Generate activation token
-        $activationToken = bin2hex(random_bytes(32));
+        $verification_token = bin2hex(random_bytes(32));
 
         $insertData = [
-            'fullname' => $fullname,
+            'username' => $username,
             'email' => $email,
-            'phone' => $phone,
-            'avatar' => "/public/assets/img/user-avt-default.jpg",
+            'avatar' => 'default-avatar.jpg',
             'password' => password_hash($input['password'], PASSWORD_DEFAULT),
-            'active_token' => $activationToken,
+            'verification_token' => $verification_token,
+            'verification_token_expires' => date('Y-m-d H:i:s', strtotime('+10 minutes')),
             'created_at' => date('Y-m-d H:i:s'),
         ];
 
@@ -219,10 +198,10 @@ final class AuthController extends Controller
         }
 
         // Send verification email
-        $activeLink = BASE_URL . '/active?token=' . $activationToken;
+        $activeLink = BASE_URL . '/active?token=' . $verification_token;
 
         try {
-            $this->mailService->sendVerificationEmail($email, $fullname, $activeLink);
+            $this->mailService->sendVerificationEmail($email, $username, $activeLink);
 
             Session::Flash('msg', 'Đăng ký thành công! Vui lòng kiểm tra email để kích hoạt tài khoản.');
             Session::Flash('msg_type', 'success');
@@ -245,13 +224,19 @@ final class AuthController extends Controller
 
         // Token missing or invalid format
         if ($token === '') {
-            $this->view->render('admin/auth/active', 'auth', ['status' => 'invalid']);
+            $this->view->render('admin/auth/active', 'auth', [
+                'headerData' => ['title' => 'Kích hoạt tài khoản - DevBlog CMS'],
+                'status' => 'invalid'
+            ]);
             return;
         }
 
         // Validate token format - to prenvent DoS
         if (!preg_match('/^[0-9a-f]{64}$/i', $token)) {
-            $this->view->render('admin/auth/active', 'auth', ['status' => 'invalid']);
+            $this->view->render('admin/auth/active', 'auth', [
+                'headerData' => ['title' => 'Kích hoạt tài khoản - DevBlog CMS'],
+                'status' => 'invalid'
+            ]);
             return;
         }
 
@@ -260,33 +245,43 @@ final class AuthController extends Controller
 
         // Token not found in db
         if (empty($user)) {
-            $this->view->render('admin/auth/active', 'auth', ['status' => 'invalid']);
+            $this->view->render('admin/auth/active', 'auth', [
+                'headerData' => ['title' => 'Kích hoạt tài khoản - DevBlog CMS'],
+                'status' => 'invalid'
+            ]);
             return;
         }
 
         // Update user (by ID)
         $dataUpdate = [
-            'is_active' => 1,
-            'active_token' => null,
-            'updated_at' => date('Y-m-d H:i:s')
+            'email_verified_at' => date('Y-m-d H:i:s'),
+            'verification_token' => null,
+            'verification_token_expires' => null
         ];
 
         $updated = $this->userModel->updateUser((int)$user['id'], $dataUpdate);
 
         // Update failed
         if (!$updated) {
-            $this->view->render('admin/auth/active', 'auth', ['status' => 'error']);
+            $this->view->render('admin/auth/active', 'auth', [
+                'headerData' => ['title' => 'Kích hoạt tài khoản - DevBlog CMS'],
+                'status' => 'error'
+            ]);
             return;
         }
 
         // Update success
-        $this->view->render('admin/auth/active', 'auth', ['status' => 'success']);
+        $this->view->render('admin/auth/active', 'auth', [
+            'headerData' => ['title' => 'Kích hoạt tài khoản - DevBlog CMS'],
+            'status' => 'success'
+        ]);
     }
 
     /** Show forgot-password page */
     public function showForgot(): void
     {
-        $this->view->render('admin/auth/forgot', 'auth');
+        $data = ['headerData' => ['title' => 'Quên mật khẩu - DevBlog CMS']];
+        $this->view->render('admin/auth/forgot', 'auth', $data);
     }
 
     /** Handle forgot-password POST */
@@ -333,8 +328,8 @@ final class AuthController extends Controller
 
         // Update forget_token into users table
         $updateData = [
-            'forget_token' => $resetToken,
-            'updated_at' => date('Y-m-d H:i:s'),
+            'reset_token' => $resetToken,
+            'reset_token_expires' => date('Y-m-d H:i:s', strtotime('+5 minutes'))
         ];
 
         $updated = $this->userModel->updateUser((int)$user['id'], $updateData);
@@ -358,7 +353,8 @@ final class AuthController extends Controller
     /** Show reset-password page */
     public function showReset(): void
     {
-        $this->view->render('admin/auth/reset', 'auth');
+        $data = ['headerData' => ['title' => 'Đặt lại mật khẩu - DevBlog CMS']];
+        $this->view->render('admin/auth/reset', 'auth', $data);
     }
 
     /** Handle reset-password POST */
@@ -429,11 +425,9 @@ final class AuthController extends Controller
         }
 
         // Validation success
-        $hashed = password_hash($password, PASSWORD_DEFAULT);
-
         $updateData = [
-            'password'     => $hashed,
-            'forget_token' => null,
+            'password'     => password_hash($password, PASSWORD_DEFAULT),
+            'reset_token' => null,
             'updated_at'   => date('Y-m-d H:i:s'),
         ];
 
@@ -458,16 +452,7 @@ final class AuthController extends Controller
     /** Handle user logout */
     public function logout(): void
     {
-        if (AuthMiddleware::isAuthenticated()) {
-            AuthMiddleware::logout();
-
-            Session::Flash('msg', 'Đăng xuất thành công');
-            Session::Flash('msg_type', 'success');
-
-            // Redirect to login page
-            redirect('/login');
-        } else {
-            redirect('/login');
-        }
+        AuthMiddleware::logout();
+        redirect('/login');
     }
 }

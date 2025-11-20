@@ -11,9 +11,9 @@
         <div style="max-width:600px; margin:auto; background:#ffffff; border-radius:10px; 
                     padding:28px; box-shadow:0 2px 8px rgba(0,0,0,0.05); border:1px solid #e5e7eb;">
 
-            <h2 style="text-align:center; color:#2563eb; margin-bottom:20px;">Kích hoạt tài khoản VietNews</h2>
+            <h2 style="text-align:center; color:#2563eb; margin-bottom:20px;">Kích hoạt tài khoản <?= APP_NAME ?></h2>
             <p style="color:#374151;">Xin chào <b> <?= $fullname ?></b>,</p>
-            <p style="color:#374151;">Cảm ơn bạn đã đăng ký tài khoản trên hệ thống <b>VietNews</b>.</p>
+            <p style="color:#374151;">Cảm ơn bạn đã đăng ký tài khoản trên hệ thống <b><?= APP_NAME ?></b>.</p>
             <p style="color:#374151;">Để hoàn tất việc đăng ký, vui lòng nhấn vào nút bên dưới để kích hoạt tài khoản của bạn:</p>
 
             <div style="text-align:center; margin:30px 0;">
@@ -26,7 +26,7 @@
 
             <br>
             <p>Trân trọng,</p>
-            <p><b>Đội ngũ VietNews</b></p>
+            <p><b>Đội ngũ <?= APP_NAME ?></b></p>
 
         </div>
 

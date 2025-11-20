@@ -14,34 +14,50 @@ final class Post extends Model
         return $this->getAll('SELECT * FROM posts ORDER BY id DESC');
     }
 
-    /** Get posts (paging + keyword) */
+    /** Get posts with author and category info (paging + keyword) */
     public function getPosts(int $limit, int $offset, string $keyword = ''): array
     {
-        $sql = "SELECT * FROM posts";
+        $sql = "SELECT 
+                    p.*,
+                    u.fullname as author_name,
+                    c.name as category_name
+                FROM posts p
+                LEFT JOIN users u ON p.author_id = u.id
+                LEFT JOIN categories c ON p.category_id = c.id";
+
         $params = [];
 
         // search filter
         if ($keyword !== '') {
-            $sql .= " WHERE title LIKE :kw";
+            $sql .= " WHERE p.title LIKE :kw";
             $params[':kw'] = '%' . $keyword . '%';
         }
 
         // paging
         $limit = max(0, $limit);
         $offset = max(0, $offset);
-        $sql .= " ORDER BY id DESC LIMIT {$offset}, {$limit}";
+        $sql .= " ORDER BY p.id DESC LIMIT {$offset}, {$limit}";
 
         return $this->getAll($sql, $params);
     }
 
-    // Get post by id
+    // Get post by id with author and category
     public function getPostById(int $postId): ?array
     {
         return $this->getOne(
-            'SELECT * FROM posts WHERE id = :id LIMIT 1',
+            'SELECT 
+                p.*,
+                u.fullname as author_name,
+                c.name as category_name
+             FROM posts p
+             LEFT JOIN users u ON p.author_id = u.id
+             LEFT JOIN categories c ON p.category_id = c.id
+             WHERE p.id = :id 
+             LIMIT 1',
             [':id' => $postId]
         );
     }
+
 
     /** Count all posts */
     public function countPosts(): int

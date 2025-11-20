@@ -13,7 +13,7 @@
 
             <h2 style="text-align:center; color:#2563eb; margin-bottom:20px;">Yêu cầu đặt lại mật khẩu</h2>
             <p style="color:#374151;">Xin chào <b><?= $fullname ?></b>,</p>
-            <p style="color:#374151;">Bạn vừa gửi yêu cầu đặt lại mật khẩu cho tài khoản trên hệ thống <b>VietNews</b>.</p>
+            <p style="color:#374151;">Bạn vừa gửi yêu cầu đặt lại mật khẩu cho tài khoản trên hệ thống <b><?= APP_NAME ?></b>.</p>
             <p style="color:#374151;">Để đặt lại mật khẩu, vui lòng nhấn vào nút bên dưới:</p>
 
             <div style="text-align:center; margin:30px 0;">
@@ -26,7 +26,7 @@
 
             <br>
             <p>Trân trọng,</p>
-            <p><b>Đội ngũ VietNews</b></p>
+            <p><b>Đội ngũ <?= APP_NAME ?></b></p>
 
         </div>
 

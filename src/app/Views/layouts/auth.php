@@ -5,17 +5,22 @@ use Core\Session;
 $msg = Session::getFlash('msg');
 $msg_type = Session::getFlash('msg_type');
 
-admin('header-auth');
+admin('header-auth', ['headerData' => $headerData]);
 ?>
 
-<section class="vh-100">
-    <div class="container-fluid h-custom">
-        <div class="row d-flex justify-content-center align-items-center h-100">
-            <div class="col-md-9 col-lg-6 col-xl-5">
-                <img src="<?= PUBLIC_URL ?>/assets/img/auth-page.jpg"
-                    class="img-fluid" alt="Sample image">
-            </div>
-            <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
+<body class="login-page">
+    <div class="login-box">
+        <!-- Logo -->
+        <div class="login-logo">
+            <a href="<?= BASE_URL ?>">
+                <i class="bi bi-code-square"></i>
+                <b>DevBlog</b> CMS
+            </a>
+        </div>
+
+        <!-- Card -->
+        <div class="card">
+            <div class="card-body login-card-body">
                 <?php
                 if (!empty($msg) && !empty($msg_type)) {
                     getMsg($msg, $msg_type);
@@ -25,7 +30,10 @@ admin('header-auth');
                 ?>
             </div>
         </div>
-    </div>
-</section>
 
-<?php admin('footer'); ?>
+        <!-- Footer -->
+        <div class="login-footer">
+            <p class="mb-1">&copy; <?= date('Y'); ?> DEV-BLOG CMS | Phiên bản 1.0.0</p>
+            <p class="footer-credits">Được phát triển bởi <a href="https://github.com/huydev14" target="_blank">huydev14</a> <a href="https://github.com/huydev14" target="_blank"><i class="bi bi-github"></i></a> <a href="https://facebook.com" target="_blank"><i class="bi bi-facebook"></i></a></p>
+        </div>
+    </div>

@@ -18,7 +18,7 @@
             </p>
 
             <p style="color:#374151 !important; margin:0 0 12px;">
-                Mật khẩu tài khoản của bạn trên hệ thống <span style="color:#374151 !important;"><b>VietNews</b></span> đã được thay đổi thành công.
+                Mật khẩu tài khoản của bạn trên hệ thống <span style="color:#374151 !important;"><b><?= APP_NAME ?></b></span> đã được thay đổi thành công.
             </p>
 
             <p style="color:#374151 !important; margin:0 0 24px;">
@@ -38,10 +38,10 @@
                 </tr>
             </table>
 
-            <p style="color:#374151 !important; margin:0 0 12px;">Cảm ơn bạn đã sử dụng hệ thống <span style="color:#374151 !important;"><b>VietNews</b></span>.</p>
+            <p style="color:#374151 !important; margin:0 0 12px;">Cảm ơn bạn đã sử dụng hệ thống <span style="color:#374151 !important;"><b><?= APP_NAME ?></b></span>.</p>
             <br>
             <p style="color:#374151 !important; margin:0 0 4px;">Trân trọng,</p>
-            <p style="color:#374151 !important; margin:0;"><b>Đội ngũ VietNews</b></p>
+            <p style="color:#374151 !important; margin:0;"><b>Đội ngũ><?= APP_NAME ?></b></p>
 
         </div>
 

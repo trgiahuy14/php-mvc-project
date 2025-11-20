@@ -6,41 +6,81 @@ $oldData = Session::getFlash('oldData');
 $errorsArr = Session::getFlash('errors');
 ?>
 
-<form method="POST" enctype="multipart/form-data">
-    <div class="d-flex flex-row align-items-center justify-content-center justify-content-lg-start">
-        <h2 class="fw-normal mb-5 me-3">Đặt lại mật khẩu</h2>
-    </div>
+<div class="auth-header">
+    <h3 class="auth-title">Đặt lại mật khẩu</h3>
+    <p class="auth-subtitle">Tạo mật khẩu mới cho tài khoản của bạn</p>
+</div>
 
+<form method="POST" class="auth-form" enctype="multipart/form-data">
     <!-- New password -->
-    <div data-mdb-input-init class="form-outline mb-3">
-        <input
-            name="password"
-            id="form3Example4"
-            type="password"
-            class="form-control form-control-lg"
-            placeholder="Nhập mật khẩu mới" />
+    <div class="form-group">
+        <label for="password" class="form-label">
+            <i class="bi bi-lock"></i> Mật khẩu mới
+        </label>
+        <div class="password-input-wrapper">
+            <input
+                name="password"
+                id="password"
+                type="password"
+                class="form-control"
+                placeholder="Nhập mật khẩu mới"
+                autocomplete="new-password"
+                required />
+            <button type="button" class="password-toggle" onclick="togglePassword('password')">
+                <i class="bi bi-eye" id="password-icon"></i>
+            </button>
+        </div>
+        <small class="form-text">Ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường và số</small>
         <?= !empty($errorsArr) ? formError($errorsArr, 'password') : null ?>
     </div>
 
     <!-- Confirm new password -->
-    <div data-mdb-input-init class="form-outline mb-3">
-        <input
-            name="confirm_pass"
-            id="form3Example4"
-            type="password"
-            class="form-control form-control-lg"
-            placeholder="Nhập lại mật khẩu mới" />
+    <div class="form-group">
+        <label for="confirm_pass" class="form-label">
+            <i class="bi bi-lock-fill"></i> Xác nhận mật khẩu
+        </label>
+        <div class="password-input-wrapper">
+            <input
+                name="confirm_pass"
+                id="confirm_pass"
+                type="password"
+                class="form-control"
+                placeholder="Nhập lại mật khẩu"
+                autocomplete="new-password"
+                required />
+            <button type="button" class="password-toggle" onclick="togglePassword('confirm_pass')">
+                <i class="bi bi-eye" id="confirm_pass-icon"></i>
+            </button>
+        </div>
         <?= !empty($errorsArr) ? formError($errorsArr, 'confirm_pass') : null ?>
     </div>
-    <div class="text-center text-lg-start mt-4 pt-2">
-        <button type="submit" data-mdb-button-init data-mdb-ripple-init
-            class="btn btn-primary btn-lg"
-            style="padding-left: 2.5rem; padding-right: 2.5rem;">Gửi
-        </button>
 
-        <p class="small fw-bold mt-2 pt-1 mb-0">Quay về trang
-            <a href="<?php echo BASE_URL ?>/login" class="link-danger">Đăng nhập</a>
+    <button type="submit" class="btn btn-primary btn-auth">
+        <i class="bi bi-check-circle"></i>
+        Cập nhật mật khẩu
+    </button>
+
+    <div class="auth-footer-links">
+        <p>
+            <a href="<?= BASE_URL ?>/login" class="auth-link">
+                <i class="bi bi-arrow-left"></i> Quay lại đăng nhập
+            </a>
         </p>
     </div>
-
 </form>
+
+<script>
+    function togglePassword(fieldId) {
+        const field = document.getElementById(fieldId);
+        const icon = document.getElementById(fieldId + '-icon');
+        if (field.type === 'password') {
+            field.type = 'text';
+            icon.classList.remove('bi-eye');
+            icon.classList.add('bi-eye-slash');
+        } else {
+            field.type = 'password';
+            icon.classList.remove('bi-eye-slash');
+            icon.classList.add('bi-eye');
+        }
+    }
+</script>

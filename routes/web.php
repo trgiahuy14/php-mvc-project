@@ -31,6 +31,17 @@ $router->post('/posts/edit', 'PostController@edit');
 
 $router->get('/posts/delete', 'PostController@delete');
 
+// Admin category management routes
+$router->get('/categories', 'CategoryController@index');
+$router->get('/categories/add', 'CategoryController@showAdd');
+
+$router->post('/categories/add', 'CategoryController@add');
+$router->get('/categories/edit', 'CategoryController@showEdit');
+
+$router->post('/categories/edit', 'CategoryController@edit');
+
+$router->get('/categories/delete', 'CategoryController@delete');
+
 // Admin user management routes
 $router->get('/users', 'UserController@index');
 

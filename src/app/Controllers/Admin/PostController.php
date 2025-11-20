@@ -7,19 +7,20 @@ namespace App\Controllers\Admin;
 use Core\Controller;
 use App\Middlewares\AuthMiddleware;
 use App\Models\Post;
+use App\Models\Category;
 use Core\Session;
 
 final class PostController extends Controller
 {
     private Post $postModel;
-    protected array $currentUser;
+    private Category $categoryModel;
 
     public function __construct()
     {
         parent::__construct();
         AuthMiddleware::requireAuth();
         $this->postModel = new Post();
-        $this->currentUser = Session::get('current_user');
+        $this->categoryModel = new Category();
     }
 
     /** 
@@ -27,12 +28,10 @@ final class PostController extends Controller
      * 
      * @return void
      */
-    public function list(): void
+    public function index(): void
     {
         // Get search keyword from query string
         $input = filterData('get');
-
-        // Get keyword
         $keyword = trim((string)($input['keyword'] ?? ''));
 
         // Pagination config
@@ -59,7 +58,7 @@ final class PostController extends Controller
 
         // Prepare view data
         $data = [
-            'title' => 'Danh sách bài viết test',
+            'headerData' => ['title' => 'Quản lý bài viết - DevBlog CMS'],
             'posts'       => $posts,
             'page'        => $page,
             'maxPage'     => $maxPage,
@@ -76,7 +75,11 @@ final class PostController extends Controller
     /** Show add-post page */
     public function showAdd()
     {
-        $data = ['title' => 'Thêm bài viết'];
+        $categories = $this->categoryModel->getAllCategories();
+        $data = [
+            'headerData' => ['title' => 'Thêm bài viết - DevBlog CMS'],
+            'categories' => $categories,
+        ];
         $this->view->render('admin/posts/add', 'admin', $data);
     }
 
@@ -93,48 +96,56 @@ final class PostController extends Controller
         // Normalize input
         $title     = trim($input['title'] ?? '');
         $content   = trim($input['content'] ?? '');
-        $tags      = trim($input['tags'] ?? '');
-        $minutes   = (int)($input['minutes_read'] ?? 0);
-        $views     = (int)($input['views'] ?? 0);
-        $comments  = (int)($input['comments'] ?? 0);
+        $category_id = (int)($input['category_id'] ?? 0);
+
 
         // --- VALIDATION ---
 
         // Validate title
         if ($title === '') {
             $errors['title']['required'] = 'Tiêu đề bắt buộc phải nhập';
-        } elseif (mb_strlen($title) < 5) {
-            $errors['title']['length'] = 'Tiêu đề phải lớn hơn 5 ký tự';
+        } elseif (mb_strlen($title) < 10) {
+            $errors['title']['length'] = 'TTiêu đề phải có ít nhất 10 ký tự';
+        } elseif (mb_strlen($title) > 255) {
+            $errors['title']['max'] = 'Tiêu đề không được vượt quá 255 ký tự';
         }
 
         // Validate content
         if ($content === '') {
             $errors['content']['required'] = 'Nội dung bắt buộc phải nhập';
+        } elseif (mb_strlen($content) < 50) {
+            $errors['content']['min'] = 'Nội dung phải có ít nhất 50 ký tự';
         }
+
+        // Validate category
+        if ($category_id <= 0) {
+            $errors['category_id']['required'] = 'Vui lòng chọn danh mục';
+        }
+
 
         // If validation fails 
         if (!empty($errors)) {
             Session::flash('msg', 'Vui lòng kiểm tra lại dữ liệu nhập vào');
             Session::flash('msg_type', 'danger');
-            Session::flash('oldData', ['title' => $title, 'content' => $content]);
+            $oldData = ['title' => $title, 'content' => $content, 'category_id' => $category_id];
+            Session::flash('oldData', $oldData);
             Session::flash('errors', $errors);
             redirect('/posts/add');
         }
 
         // --- PREPARE INSERT DATA ---
-        $dataInsert = [
+        $postData = [
             'title'        => $title,
-            'author'       => $this->currentUser['fullname'],
             'content'      => $content,
-            'tags'         => $tags,
-            'minutes_read' => $minutes,
-            'views'        => $views,
-            'comments'     => $comments,
-            'created_at'   => date('Y-m-d H:i:s')
+            'author_id' => (int)Session::get('user_id'),
+            'category_id' => $category_id,
+            'views' => 0,
+            'comment_count' => 0,
+            'created_at'   => date('Y-m-d H:i:s'),
         ];
 
         // Insert into DB
-        $inserted = $this->postModel->createPost($dataInsert);
+        $inserted = $this->postModel->createPost($postData);
 
         if (!$inserted) {
             Session::flash('msg', 'Thêm bài viết thất bại');
@@ -156,23 +167,35 @@ final class PostController extends Controller
         $postId = (int) ($input['id'] ?? 0);
 
         if ($postId <= 0) {
-            Session::flash('msg', 'ID bài viết không hợp lệ');
+            Session::flash('msg', 'ID bài viết không tồn tại');
             Session::flash('msg_type', 'danger');
             redirect('/posts');
         }
-        // Fetch existing post
-        $postData = $this->postModel->getPostById($postId);
+        // Get post data
+        $post = $this->postModel->getPostById($postId);
 
-        if (!$postData) {
+        if (!$post) {
             Session::flash('msg', 'Bài viết không tồn tại');
             Session::flash('msg_type', 'danger');
             return redirect('/posts');
         }
 
+        // Check permission
+        $currentUserId = (int)Session::get('user_id');
+        $currentUserRole = Session::get('role');
+
+        if ($currentUserRole !== 'admin' && $post['author_id'] != $currentUserId) {
+            Session::Flash('msg', 'Bạn không có quyền sửa bài viết này');
+            Session::Flash('msg_type', 'danger');
+            redirect('/posts');
+        }
+
+        // Load categories
+        $categories = $this->categoryModel->getAllCategories();
         $data = [
-            'title' => 'Chỉnh sửa bài viết',
-            'postData' => $postData,
-            'postId'   => $postId
+            'headerData' => ['title' => 'Chỉnh sửa bài viết - DevBlog CMS'],
+            'post' => $post,
+            'categories' => $categories,
         ];
         $this->view->render('admin/posts/edit', 'admin', $data);
     }
@@ -185,16 +208,14 @@ final class PostController extends Controller
         }
 
         $input = filterData();
+        $postId = (int)($input['id']);
+
         $errors = [];
 
-        // --- Normalize input ---
+        // Normalize input
         $title    = trim($input['title'] ?? '');
         $content  = trim($input['content'] ?? '');
-        $tags     = trim($input['tags'] ?? '');
-        $minutes  = isset($input['minutes_read']) ? (int)$input['minutes_read'] : 0;
-        $views    = isset($input['views']) ? (int)$input['views'] : 0;
-        $comments = isset($input['comments']) ? (int)$input['comments'] : 0;
-        $shares = isset($input['shares']) ? (int)$input['shares'] : 0;
+        $category_id = (int)($_POST['category_id'] ?? 0);
 
         // --- VALIDATION ---
 
@@ -205,9 +226,22 @@ final class PostController extends Controller
             $errors['title']['length'] = 'Tiêu đề phải lớn hơn 5 ký tự';
         }
 
-        // Validate content
+        if ($title === '') {
+            $errors['title']['required'] = 'Tiêu đề không được để trống';
+        } elseif (mb_strlen($title) < 10) {
+            $errors['title']['min'] = 'Tiêu đề phải có ít nhất 10 ký tự';
+        } elseif (mb_strlen($title) > 255) {
+            $errors['title']['max'] = 'Tiêu đề không được vượt quá 255 ký tự';
+        }
+
         if ($content === '') {
-            $errors['content']['required'] = 'Nội dung bắt buộc phải nhập';
+            $errors['content']['required'] = 'Nội dung không được để trống';
+        } elseif (mb_strlen($content) < 50) {
+            $errors['content']['min'] = 'Nội dung phải có ít nhất 50 ký tự';
+        }
+
+        if ($category_id <= 0) {
+            $errors['category_id']['required'] = 'Vui lòng chọn danh mục';
         }
 
         // If validation fails
@@ -216,24 +250,17 @@ final class PostController extends Controller
             Session::flash('msg_type', 'danger');
             Session::flash('oldData', $input);
             Session::flash('errors', $errors);
-            redirect('/posts/edit?id=' . (int)($input['id'] ?? 0));
+            redirect('/posts/edit?id=' . (int)$postId ?? 0);
         }
 
-        // --- PREPARE UPDATE DATA  ---
-        $dataUpdate = [
-            'title'        => $title,
-            'content'      => $content,
-            'tags'         => $tags,
-            'minutes_read' => $minutes,
-            'views'        => $views,
-            'comments'     => $comments,
-            'updated_at'   => date('Y-m-d H:i:s')
+        // Update data
+        $postData = [
+            'title' => $title,
+            'content' => $content,
+            'category_id' => $category_id,
         ];
 
-        // Update
-        $postId = (int)($input['id']);
-
-        $updated = $this->postModel->updatePost($postId, $dataUpdate);
+        $updated = $this->postModel->updatePost($postId, $postData);
 
         if (!$updated) {
             Session::flash('msg', 'Chỉnh sửa bài viết thất bại');
@@ -246,7 +273,7 @@ final class PostController extends Controller
         redirect('/posts');
     }
 
-    /** Handle delete post action */
+    /** Handle delete post*/
     public function delete()
     {
         // Get id from query string
@@ -255,7 +282,7 @@ final class PostController extends Controller
 
         // Validate post ID 
         if ($postId <= 0) {
-            Session::flash('msg', 'ID bài viết không hợp lệ');
+            Session::flash('msg', 'Bài viết không tồn tại');
             Session::flash('msg_type', 'danger');
             redirect('/posts');
         }
@@ -269,6 +296,16 @@ final class PostController extends Controller
             redirect('/posts');
         }
 
+        // Check permission
+        $currentUserId = (int)Session::get('user_id');
+        $currentUserRole = Session::get('role');
+
+        if ($currentUserRole !== 'admin' && $post['author_id'] != $currentUserId) {
+            Session::Flash('msg', 'Bạn không có quyền xóa bài viết này');
+            Session::Flash('msg_type', 'danger');
+            redirect('/posts');
+        }
+
         // Delete post
         $deleted = $this->postModel->deletePost($postId);
 
@@ -278,7 +315,6 @@ final class PostController extends Controller
             redirect('/posts');
         }
 
-        // Delete failed
         Session::flash('msg', 'Xóa bài viết thành công.');
         Session::flash('msg_type', 'success');
         redirect('/posts');

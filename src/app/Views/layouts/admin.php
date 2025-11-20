@@ -1,6 +1,6 @@
 <?php
 #HEADER
-admin('header');
+admin('header', ['headerData' => $headerData]);
 
 #SIDEBAR
 admin('sidebar');

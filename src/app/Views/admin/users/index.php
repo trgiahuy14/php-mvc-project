@@ -6,197 +6,375 @@ $msg = Session::getFlash('msg');
 $msg_type = Session::getFlash('msg_type');
 ?>
 
-<div class="container grid-user">
-    <div class="container-fluid">
-        <a href="<?= BASE_URL ?>/users/add" class="btn btn-success mb-3"><i class="fa-solid fa-plus"></i>Thêm mới</a>
-        <?php
-        if (!empty($msg) && !empty($msg_type)) {
-            getMsg($msg, $msg_type);
-        }
-        ?>
+<div class="container users-list">
+    <div class="d-flex justify-content-between align-items-center mt-3 mb-1">
+        <h2 class="mb-0">Danh sách người dùng</h2>
+        <a href="<?= BASE_URL ?>/users/add" class="btn btn-success">
+            <i class="fa fa-plus me-1"></i> Thêm người dùng
+        </a>
+    </div>
 
-        <form class="mb-3" method="get">
-            <div class="row">
-                <div class="col-7">
-                    <!-- Search input -->
-                    <input class="form-control" type="text" value="<?= htmlspecialchars($keyword ?? '') ?>"
-                        name="keyword" placeholder="Nhập tên hoặc email để tìm kiếm...">
+    <hr>
+
+    <?php
+    if (!empty($msg) && !empty($msg_type)) {
+        getMsg($msg, $msg_type);
+    }
+    ?>
+
+    <!-- Search form -->
+    <div class="card mb-3">
+        <div class="card-body">
+            <form action="" method="get" class="row g-3">
+                <div class="col-md-10">
+                    <input
+                        type="text"
+                        name="keyword"
+                        class="form-control"
+                        placeholder="Tìm kiếm theo username, email hoặc tên..."
+                        value="<?= htmlspecialchars($keyword ?? '') ?>">
                 </div>
-                <!-- Search button -->
-                <div class="col-2">
-                    <button class="btn btn-primary" type="submit">Tìm kiếm</button>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fa fa-search me-1"></i> Tìm kiếm
+                    </button>
                 </div>
-            </div>
-        </form>
+            </form>
+        </div>
+    </div>
 
-        <!-- Users listing table -->
-        <table class="table table-striped table-hover align-middle">
-            <thead>
-                <tr>
-                    <th style="width:60px" class="text-center">STT</th>
-                    <th style="width:240px">Người dùng</th>
-                    <th style="width:220px">Email</th>
-                    <th style="width:120px">Vai trò</th>
-                    <th style="width:120px" class="text-center">Trạng thái</th>
-                    <th style="width:100px" class="text-center">Số bài</th>
-                    <th style="width:140px" class="text-center">Ngày tạo</th>
-                    <th style="width:110px" class="text-center">Action</th>
-                </tr>
-            </thead>
+    <!-- Users table -->
+    <div class="card">
+        <div class="card-body">
+            <?php if (!empty($users)): ?>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th width="5%">STT</th>
+                                <th width="8%" class="text-center">Avatar</th>
+                                <th width="22%">Thông tin</th>
+                                <th width="12%">Username</th>
+                                <th width="10%" class="text-center">Vai trò</th>
+                                <th width="11%" class="text-center">Trạng thái</th>
+                                <th width="8%" class="text-center">Bài viết</th>
+                                <th width="12%">Đăng nhập cuối</th>
+                                <th width="12%" class="text-center">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($users as $index => $user): ?>
+                                <tr>
+                                    <td><?= $offset + $index + 1 ?></td>
+                                    <td class="text-center">
+                                        <?php
+                                        $avatarSrc = BASE_URL . '/assets/img/default-avatar.jpg';
+                                        if (!empty($user['avatar'])) {
+                                            // If avatar is just filename (e.g., 'default-avatar.jpg'), use assets/img path
+                                            if (strpos($user['avatar'], '/') === false) {
+                                                $avatarSrc = BASE_URL . '/assets/img/' . $user['avatar'];
+                                            } else {
+                                                // If avatar contains path (e.g., 'uploads/avatars/...'), use it directly
+                                                $avatarSrc = BASE_URL . '/' . $user['avatar'];
+                                            }
+                                        }
+                                        ?>
+                                        <img
+                                            src="<?= $avatarSrc ?>"
+                                            alt="Avatar"
+                                            class="rounded-circle user-avatar">
+                                    </td>
+                                    <td>
+                                        <strong class="d-block"><?= htmlspecialchars($user['fullname'] ?? '') ?></strong>
+                                        <small class="text-muted">
+                                            <i class="fa fa-envelope me-1"></i>
+                                            <?= htmlspecialchars($user['email'] ?? '') ?>
+                                        </small>
+                                    </td>
+                                    <td>
+                                        <code class="bg-light px-2 py-1 rounded">
+                                            <?= htmlspecialchars($user['username'] ?? '') ?>
+                                        </code>
+                                    </td>
+                                    <td class="text-center">
+                                        <?php
+                                        $roleColors = [
+                                            'admin' => 'danger',
+                                            'editor' => 'warning',
+                                            'author' => 'info'
+                                        ];
+                                        $color = $roleColors[$user['role']] ?? 'secondary';
+                                        ?>
+                                        <span class="badge bg-<?= $color ?>">
+                                            <?= ucfirst($user['role']) ?>
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <?php if ($user['status'] == 'active'): ?>
+                                            <span class="badge bg-success">Hoạt động</span>
+                                        <?php else: ?>
+                                            <span class="badge bg-secondary">Không hoạt động</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-info text-dark">
+                                            <?= $user['post_count'] ?? 0 ?>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <?php if (!empty($user['last_login_at'])): ?>
+                                            <small class="text-muted">
+                                                <i class="fa fa-clock me-1"></i>
+                                                <?= date('d/m/Y H:i', strtotime($user['last_login_at'])) ?>
+                                            </small>
+                                        <?php else: ?>
+                                            <small class="text-muted fst-italic">Chưa đăng nhập</small>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <a href="<?= BASE_URL ?>/users/view?id=<?= $user['id'] ?>"
+                                                class="btn btn-info"
+                                                title="Xem chi tiết">
+                                                <i class="fa fa-eye"></i>
+                                            </a>
+                                            <a href="<?= BASE_URL ?>/users/edit?id=<?= $user['id'] ?>"
+                                                class="btn btn-warning"
+                                                title="Sửa">
+                                                <i class="fa fa-edit"></i>
+                                            </a>
+                                            <?php
+                                            $currentUserId = Session::get('user')['id'] ?? null;
+                                            if ($currentUserId && $user['id'] != $currentUserId):
+                                            ?>
+                                                <a href="<?= BASE_URL ?>/users/delete?id=<?= $user['id'] ?>"
+                                                    class="btn btn-danger btn-delete"
+                                                    title="Xóa"
+                                                    data-username="<?= htmlspecialchars($user['username']) ?>"
+                                                    data-fullname="<?= htmlspecialchars($user['fullname']) ?>">
+                                                    <i class="fa fa-trash"></i>
+                                                </a>
+                                            <?php elseif ($currentUserId && $user['id'] == $currentUserId): ?>
+                                                <button class="btn btn-secondary" disabled title="Không thể xóa chính mình">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
+                                            <?php else: ?>
+                                                <a href="<?= BASE_URL ?>/users/delete?id=<?= $user['id'] ?>"
+                                                    class="btn btn-danger btn-delete"
+                                                    title="Xóa"
+                                                    data-username="<?= htmlspecialchars($user['username']) ?>"
+                                                    data-fullname="<?= htmlspecialchars($user['fullname']) ?>">
+                                                    <i class="fa fa-trash"></i>
+                                                </a>
+                                            <?php endif; ?>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
 
-            <tbody>
-                <!-- If no data exists -->
-                <?php if (empty($users)): ?>
-                    <tr>
-                        <td colspan="8" class="text-center">Không có người dùng nào.</td>
-                    </tr>
+                <!-- Pagination info -->
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <div class="text-muted">
+                        Hiển thị <?= count($users) ?> / <?= $total ?> người dùng
+                    </div>
 
-                    <!-- Show data -->
-                <?php else: ?>
-                    <?php $count = $offset + 1;
-                    foreach ($users as $item): ?>
-                        <tr>
-                            <th class="text-center" scope="row"><?= $count++ ?></th>
-
-                            <!-- User (Avatar + Name) -->
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <img src="<?= htmlspecialchars($item['avatar'] ?? '/assets/images/default-avatar.png') ?>"
-                                        alt="Avatar"
-                                        class="rounded-circle me-2"
-                                        style="width: 36px; height: 36px; object-fit: cover;">
-                                    <div>
-                                        <a href="<?= BASE_URL ?>/users/edit?id=<?= $item['id'] ?>"
-                                            class="link-dark text-decoration-none fw-semibold">
-                                            <?= htmlspecialchars($item['fullname'] ?? $item['username']) ?>
+                    <!-- Pagination links -->
+                    <?php if ($maxPage > 1): ?>
+                        <nav>
+                            <ul class="pagination pagination-sm mb-0">
+                                <!-- Previous button -->
+                                <?php if ($page > 1): ?>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=<?= $page - 1 ?><?= $queryString ?>">
+                                            <i class="fa fa-chevron-left"></i>
                                         </a>
-                                        <div class="text-muted small">@<?= htmlspecialchars($item['username']) ?></div>
-                                    </div>
-                                </div>
-                            </td>
-
-                            <!-- Email -->
-                            <td class="text-truncate" style="max-width:200px"
-                                title="<?= htmlspecialchars($item['email']) ?>">
-                                <?= htmlspecialchars($item['email']) ?>
-                                <?php if (!empty($item['email_verified_at'])): ?>
-                                    <i class="fa-solid fa-circle-check text-success" title="Email đã xác thực"></i>
-                                <?php endif; ?>
-                            </td>
-
-                            <!-- Role -->
-                            <td>
-                                <?php if ($item['role'] === 'admin'): ?>
-                                    <span class="badge bg-danger">Quản trị viên</span>
+                                    </li>
                                 <?php else: ?>
-                                    <span class="badge bg-primary">Người viết bài</span>
+                                    <li class="page-item disabled">
+                                        <span class="page-link"><i class="fa fa-chevron-left"></i></span>
+                                    </li>
                                 <?php endif; ?>
-                            </td>
 
-                            <!-- Status -->
-                            <td class="text-center">
+                                <!-- Page numbers -->
                                 <?php
-                                $statusColors = [
-                                    'active' => 'success',
-                                    'inactive' => 'secondary',
-                                    'banned' => 'danger'
-                                ];
-                                $statusNames = [
-                                    'active' => 'Hoạt động',
-                                    'inactive' => 'Tạm ngưng',
-                                    'banned' => 'Bị khóa'
-                                ];
-                                $status = $item['status'] ?? 'active';
-                                $statusColor = $statusColors[$status] ?? 'secondary';
-                                $statusName = $statusNames[$status] ?? ucfirst($status);
-                                ?>
-                                <span class="badge bg-<?= $statusColor ?>"><?= $statusName ?></span>
-                            </td>
+                                $start = max(1, $page - 2);
+                                $end = min($maxPage, $page + 2);
 
-                            <!-- Post count -->
-                            <td class="text-center">
-                                <?php if (!empty($item['post_count']) && $item['post_count'] > 0): ?>
-                                    <a href="<?= BASE_URL ?>/posts?author_id=<?= $item['id'] ?>"
-                                        class="link-primary text-decoration-none">
-                                        <?= shortNumber($item['post_count']) ?>
-                                    </a>
-                                <?php else: ?>
-                                    <span class="text-muted">0</span>
+                                if ($start > 1): ?>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=1<?= $queryString ?>">1</a>
+                                    </li>
+                                    <?php if ($start > 2): ?>
+                                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                                    <?php endif; ?>
                                 <?php endif; ?>
-                            </td>
 
-                            <!-- Created date -->
-                            <td class="text-center text-nowrap"><?= date('d-m-Y H:i', strtotime($item['created_at'])) ?></td>
+                                <?php for ($i = $start; $i <= $end; $i++): ?>
+                                    <li class="page-item <?= $i == $page ? 'active' : '' ?>">
+                                        <a class="page-link" href="?page=<?= $i ?><?= $queryString ?>">
+                                            <?= $i ?>
+                                        </a>
+                                    </li>
+                                <?php endfor; ?>
 
-                            <!-- Actions -->
-                            <td class="text-center">
-                                <a href="<?= BASE_URL ?>/users/edit?id=<?= $item['id'] ?>"
-                                    class="btn btn-warning btn-sm">
-                                    <i class="fa fa-edit"></i>
-                                </a>
-                                <?php if ($item['id'] != $currentUser['id']): ?>
-                                    <a href="<?= BASE_URL ?>/users/delete?id=<?= $item['id'] ?>"
-                                        class="btn btn-danger btn-sm"
-                                        onclick="return confirm('Bạn có chắc chắn muốn xoá người dùng này không?')">
-                                        <i class="fa fa-trash"></i>
-                                    </a>
-                                <?php else: ?>
-                                    <button class="btn btn-danger btn-sm" disabled title="Không thể xóa chính mình">
-                                        <i class="fa fa-trash"></i>
-                                    </button>
+                                <?php if ($end < $maxPage): ?>
+                                    <?php if ($end < $maxPage - 1): ?>
+                                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                                    <?php endif; ?>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=<?= $maxPage ?><?= $queryString ?>">
+                                            <?= $maxPage ?>
+                                        </a>
+                                    </li>
                                 <?php endif; ?>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </tbody>
-        </table>
 
-
-        <!-- Pagination -->
-        <?php
-        $window = 2;
-        $start = max(1, $page - $window);
-        $end = min($maxPage, $page + $window);
-        ?>
-
-        <nav aria-label="Page navigation example">
-            <ul class="pagination">
-
-                <!-- Prev -->
-                <li class="page-item <?= $page <= 1 ? 'disabled' : '' ?>">
-                    <a class="page-link" href="?page=<?= max(1, $page - 1) ?><?= $queryString ?>">Trước</a>
-                </li>
-
-                <!-- First -->
-                <?php if ($start > 1): ?>
-                    <li class="page-item"><a class="page-link" href="?page=1<?= $queryString ?>">1</a></li>
-                    <?php if ($start > 2): ?>
-                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                                <!-- Next button -->
+                                <?php if ($page < $maxPage): ?>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=<?= $page + 1 ?><?= $queryString ?>">
+                                            <i class="fa fa-chevron-right"></i>
+                                        </a>
+                                    </li>
+                                <?php else: ?>
+                                    <li class="page-item disabled">
+                                        <span class="page-link"><i class="fa fa-chevron-right"></i></span>
+                                    </li>
+                                <?php endif; ?>
+                            </ul>
+                        </nav>
                     <?php endif; ?>
-                <?php endif; ?>
+                </div>
 
-                <!-- Pages -->
-                <?php for ($i = $start; $i <= $end; $i++): ?>
-                    <li class="page-item <?= ($page == $i) ? 'active' : '' ?>">
-                        <a class="page-link" href="?page=<?= $i ?><?= $queryString ?>"><?= $i ?></a>
-                    </li>
-                <?php endfor; ?>
-
-                <!-- Last -->
-                <?php if ($end < $maxPage): ?>
-                    <?php if ($end < $maxPage - 1): ?>
-                        <li class="page-item disabled"><span class="page-link">...</span></li>
+            <?php else: ?>
+                <div class="alert alert-info text-center mb-0">
+                    <i class="fa fa-info-circle me-2"></i>
+                    <?php if (!empty($keyword)): ?>
+                        Không tìm thấy người dùng nào phù hợp với từ khóa "<?= htmlspecialchars($keyword) ?>"
+                    <?php else: ?>
+                        Chưa có người dùng nào. Hãy thêm người dùng mới!
                     <?php endif; ?>
-                    <li class="page-item"><a class="page-link" href="?page=<?= $maxPage ?><?= $queryString ?>"><?= $maxPage ?></a></li>
-                <?php endif; ?>
-
-                <!-- Next -->
-                <li class="page-item <?= $page >= $maxPage ? 'disabled' : '' ?>">
-                    <a class="page-link" href="?page=<?= min($maxPage, $page + 1) ?><?= $queryString ?>">Sau</a>
-                </li>
-            </ul>
-        </nav>
-        <!-- End Pagination -->
+                </div>
+            <?php endif; ?>
+        </div>
     </div>
 </div>
+
+<script>
+    // Confirm delete
+    document.querySelectorAll('.btn-delete').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            const username = this.getAttribute('data-username');
+            const fullname = this.getAttribute('data-fullname');
+            if (!confirm(`Bạn có chắc chắn muốn xóa người dùng "${fullname}" (@${username})?\n\nHành động này không thể hoàn tác!`)) {
+                e.preventDefault();
+            }
+        });
+    });
+</script>
+
+<style>
+    .users-list .user-avatar {
+        width: 45px;
+        height: 45px;
+        object-fit: cover;
+        border: 2px solid #e9ecef;
+    }
+
+    .users-list .table th {
+        font-weight: 600;
+        color: #495057;
+        background-color: #f8f9fa;
+        border-bottom: 2px solid #dee2e6;
+    }
+
+    .users-list .btn-group-sm .btn {
+        padding: 0.25rem 0.5rem;
+    }
+
+    .users-list .badge {
+        font-size: 0.8rem;
+        padding: 0.35em 0.65em;
+        font-weight: 500;
+    }
+
+    /* Modern Pagination Styling */
+    .users-list .pagination {
+        margin-bottom: 0;
+        gap: 0.25rem;
+    }
+
+    .users-list .page-item {
+        margin: 0 2px;
+    }
+
+    .users-list .page-link {
+        color: #495057;
+        border: 1px solid #dee2e6;
+        border-radius: 0.375rem;
+        padding: 0.4rem 0.75rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        min-width: 38px;
+        text-align: center;
+    }
+
+    .users-list .page-link:hover {
+        background-color: #f8f9fa;
+        border-color: #adb5bd;
+        color: #212529;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    }
+
+    .users-list .page-item.active .page-link {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+        color: #fff;
+        box-shadow: 0 2px 8px rgba(13, 110, 253, 0.3);
+    }
+
+    .users-list .page-item.disabled .page-link {
+        background-color: #f8f9fa;
+        border-color: #dee2e6;
+        color: #6c757d;
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
+    .users-list .pagination .page-link i {
+        font-size: 0.875rem;
+    }
+
+    .users-list .page-item.active .page-link {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+    }
+
+    .users-list code {
+        font-size: 0.875rem;
+        color: #d63384;
+    }
+
+    .users-list tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+
+    .users-list .btn-info {
+        color: #fff;
+        background-color: #0dcaf0;
+        border-color: #0dcaf0;
+    }
+
+    .users-list .btn-info:hover {
+        background-color: #0aa8cc;
+        border-color: #0aa8cc;
+    }
+
+    .users-list .card {
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        border: 1px solid #dee2e6;
+    }
+</style>

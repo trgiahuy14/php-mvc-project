@@ -22,7 +22,7 @@ final class User extends Model
 
         // search filter
         if ($keyword !== '') {
-            $sql .= " WHERE title LIKE :kw";
+            $sql .= " WHERE fullname LIKE :kw";
             $params[':kw'] = '%' . $keyword . '%';
         }
 
@@ -47,7 +47,7 @@ final class User extends Model
         $params = [];
 
         if ($keyword !== '') {
-            $sql .= " WHERE title LIKE :kw";
+            $sql .= " WHERE fullname LIKE :kw";
             $params[':kw'] = '%' . $keyword . '%';
         }
 
@@ -63,12 +63,21 @@ final class User extends Model
         );
     }
 
-    // Get user by email
+    // Get user by Email
+    public function getUserByUsername(string $username): ?array
+    {
+        return $this->getOne(
+            'SELECT * FROM users WHERE username = :username LIMIT 1',
+            ['username' => $username]
+        );
+    }
+
+    // Get user by Email
     public function getUserByEmail(string $email): ?array
     {
         return $this->getOne(
             'SELECT * FROM users WHERE email = :email LIMIT 1',
-            [':email' => $email]
+            ['email' => $email]
         );
     }
 

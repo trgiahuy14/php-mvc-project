@@ -1,6 +1,6 @@
 {
-    "name": "trgiahuy/vietnews-cms-php",
-    "description": "News Manager PHP MVC",
+    "name": "trgiahuy/devblog-PHP-MVC",
+    "description": "PHP based blog manager",
     "type": "project",
     "license": "MIT",
     "autoload": {

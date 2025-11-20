@@ -7,19 +7,21 @@ namespace App\Controllers\Admin;
 use Core\Controller;
 use App\Middlewares\AuthMiddleware;
 use App\Models\User;
+use App\Services\FileUploadService;
 use Core\Session;
 
 final class UserController extends Controller
 {
     private User $userModel;
     protected array $currentUser;
+    private FileUploadService $uploadService;
 
     public function __construct()
     {
         parent::__construct();
         AuthMiddleware::requireAuth();
         $this->userModel = new User();
-        $this->currentUser = Session::get('current_user');
+        $this->uploadService = new FileUploadService();
     }
 
     /** 
@@ -59,9 +61,8 @@ final class UserController extends Controller
 
         // Prepare view data
         $data = [
-            'title' => 'Danh sách người dùng',
+            'headerData' => ['title' => 'Quản lý người dùng - DevBlog CMS'],
             'users'       => $users,
-            'currentUser' => $this->currentUser,
             'page'        => $page,
             'maxPage'     => $maxPage,
             'keyword'     => $keyword,
@@ -77,7 +78,7 @@ final class UserController extends Controller
     /** Show add-user page */
     public function showAdd()
     {
-        $data = ['title' => 'Thêm người dùng'];
+        $data = ['headerData' => ['title' => 'Chỉnh sửa người dùng - DevBlog CMS']];
         $this->view->render('admin/users/add', 'admin', $data);
     }
 
@@ -162,17 +163,17 @@ final class UserController extends Controller
             redirect('/users');
         }
         // Fetch existing post
-        $postData = $this->userModel->getUserById($userId);
+        $userData = $this->userModel->getUserById($userId);
 
-        if (!$postData) {
-            Session::flash('msg', 'người dùng không tồn tại');
+        if (!$userData) {
+            Session::flash('msg', 'Người dùng không tồn tại');
             Session::flash('msg_type', 'danger');
             return redirect('/users');
         }
 
         $data = [
-            'title' => 'Chỉnh sửa người dùng',
-            'postData' => $postData,
+            'headerData' => ['title' => 'Cập nhật người dùng - DevBlog CMS'],
+            'userData' => $userData,
             'userId'   => $userId
         ];
         $this->view->render('admin/users/edit', 'admin', $data);
@@ -185,56 +186,145 @@ final class UserController extends Controller
             return;
         }
 
-        $input = filterData();
+        $input = filterData('post');
         $errors = [];
 
+        $userId = (int) ($input['id'] ?? 0);
+
         // --- Normalize input ---
-        $title    = trim($input['title'] ?? '');
-        $content  = trim($input['content'] ?? '');
-        $tags     = trim($input['tags'] ?? '');
-        $minutes  = isset($input['minutes_read']) ? (int)$input['minutes_read'] : 0;
-        $views    = isset($input['views']) ? (int)$input['views'] : 0;
-        $comments = isset($input['comments']) ? (int)$input['comments'] : 0;
-        $shares = isset($input['shares']) ? (int)$input['shares'] : 0;
+        $username = trim($input['username'] ?? '');
+        $email   = trim($input['email'] ?? '');
+        $fullname   = trim($input['fullname'] ?? '');
+        $phone = trim($input['phone'] ?? '');
+        $role = $input['role'] ?? '';
+        $status = $input['status'] ?? '';
+        $bio = trim($input['bio'] ?? '');
+        $password = $input['password'] ?? '';
+        $password_confirm = trim($input['password_confirm'] ?? '');
 
         // --- VALIDATION ---
 
-        // Validate title
-        if ($title === '') {
-            $errors['title']['required'] = 'Tiêu đề bắt buộc phải nhập';
-        } elseif (mb_strlen($title) < 5) {
-            $errors['title']['length'] = 'Tiêu đề phải lớn hơn 5 ký tự';
+        // Validate username
+        if ($username === '') {
+            $errors['username']['required'] = 'Username không được để trống';
+        } elseif (strlen($username) < 3) {
+            $errors['username']['min'] = 'Username phải có ít nhất 3 ký tự';
+        } else {
+            // Check duplicate username (exclude current user)
+            $existingUser = $this->userModel->getUserByUsername($username);
+            if ($existingUser && $existingUser['id'] != $userId) {
+                $errors['username']['unique'] = 'Username đã tồn tại';
+            }
         }
 
-        // Validate content
-        if ($content === '') {
-            $errors['content']['required'] = 'Nội dung bắt buộc phải nhập';
+        // Validate email
+        if ($email === '') {
+            $errors['email']['required'] = 'Email không được để trống';
+        } elseif (!validateEmail($email)) {
+            $errors['email']['format'] = 'Email không hợp lệ';
+        } else {
+            // Check duplicate email (exclude current user)
+            $existingUser = $this->userModel->getUserByEmail($email);
+            if ($existingUser && $existingUser['id'] != $userId) {
+                $errors['email']['unique'] = 'Email đã tồn tại';
+            }
         }
 
-        // If validation fails
+        // Validate fullname
+        if ($fullname !== '') {
+            if (strlen($fullname) < 2) {
+                $errors['fullname']['min'] = 'Họ tên phải có ít nhất 2 ký tự';
+            } elseif (strlen($fullname) > 100) {
+                $errors['fullname']['max'] = 'Họ tên không được vượt quá 100 ký tự';
+            } elseif (!preg_match('/^[\p{L}\s]+$/u', $fullname)) {
+                $errors['fullname']['format'] = 'Họ tên chỉ được chứa chữ cái và khoảng trắng';
+            }
+        }
+
+        // Validate phone
+        if ($phone !== '') {
+            $phoneClean = preg_replace('/[\s\-\(\)]/', '', $phone);
+            if (!preg_match('/^[0-9+]{10,15}$/', $phoneClean)) {
+                $errors['phone']['format'] = 'Số điện thoại không hợp lệ (10-15 số)';
+            } elseif (strlen($phone) > 20) {
+                $errors['phone']['max'] = 'Số điện thoại không được vượt quá 20 ký tự';
+            }
+        }
+
+        // Validate role
+        if (empty($role)) {
+            $errors['role']['required'] = 'Vui lòng chọn vai trò';
+        } elseif (!in_array($role, ['admin', 'editor', 'author'])) {
+            $errors['role']['invalid'] = 'Vai trò không hợp lệ';
+        }
+
+        // Validate status
+        if (empty($status)) {
+            $errors['status']['required'] = 'Vui lòng chọn trạng thái';
+        } elseif (!in_array($status, ['active', 'inactive', 'banned'])) {
+            $errors['status']['invalid'] = 'Trạng thái không hợp lệ';
+        }
+
+        // Validate bio
+        if ($bio !== '' && strlen($bio) > 500) {
+            $errors['bio']['max'] = 'Giới thiệu không được vượt quá 500 ký tự';
+        }
+
+        // Validate password if provided
+        if ($password !== '') {
+            if (strlen($password) < 6) {
+                $errors['password']['min'] = 'Mật khẩu phải có ít nhất 6 ký tự';
+            } elseif (strlen($password) > 255) {
+                $errors['password']['max'] = 'Mật khẩu không được vượt quá 255 ký tự';
+            } elseif ($password_confirm === '') {
+                $errors['password_confirm']['required'] = 'Vui lòng xác nhận mật khẩu';
+            } elseif ($password !== $password_confirm) {
+                $errors['password_confirm']['mismatch'] = 'Mật khẩu xác nhận không khớp';
+            }
+        }
+
+        // If validation failed
         if (!empty($errors)) {
             Session::flash('msg', 'Vui lòng kiểm tra lại dữ liệu nhập vào');
             Session::flash('msg_type', 'danger');
             Session::flash('oldData', $input);
             Session::flash('errors', $errors);
-            redirect('/users/edit?id=' . (int)($input['id'] ?? 0));
+            redirect('/users/edit?id=' . $userId);
         }
 
-        // --- PREPARE UPDATE DATA  ---
-        $dataUpdate = [
-            'title'        => $title,
-            'content'      => $content,
-            'tags'         => $tags,
-            'minutes_read' => $minutes,
-            'views'        => $views,
-            'comments'     => $comments,
-            'updated_at'   => date('Y-m-d H:i:s')
+        // Prepare update data
+        $updateData = [
+            'username' => $username,
+            'email' => $email,
+            'fullname' => $fullname,
+            'phone' => $phone,
+            'role' => $role,
+            'status' => $status,
+            'bio' => $bio ?? '',
         ];
 
-        // Update
-        $userId = (int)($input['id']);
+        // Add password if provided
+        if ($password !== '') {
+            $updateData['password'] = password_hash($password, PASSWORD_BCRYPT);
+        }
 
-        $updated = $this->userModel->updateUser($userId, $dataUpdate);
+        // Handle avatar upload
+        $userData = $this->userModel->getUserById($userId);
+
+        if (!empty($_FILES['avatar']['name'])) {
+            $result = $this->uploadService->uploadAvatar(
+                $_FILES['avatar'],
+                $userData['avatar'] // old file path
+            );
+
+            if ($result['success']) {
+                $updateData['avatar'] = $result['path'];
+            } else {
+                $errors['avatar'] = $result['error'];
+            }
+        }
+
+        $updated = $this->userModel->updateUser($userId, $updateData);
 
         if (!$updated) {
             Session::flash('msg', 'Chỉnh sửa người dùng thất bại');
@@ -270,7 +360,12 @@ final class UserController extends Controller
             redirect('/users');
         }
 
-        // Delete post
+        // Delete avatar file
+        if (!empty($user['avatar'])) {
+            $this->uploadService->deleteFile($user['avatar']);
+        }
+
+        // Delete user from database
         $deleted = $this->userModel->deleteUser($userId);
 
         if (!$deleted) {

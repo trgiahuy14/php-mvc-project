@@ -9,3 +9,15 @@
 # Disable directory browsing
 
 Options -Indexes
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # 1. Nếu request đã chứa "/public/" thì dừng lại, không sửa gì cả
+    RewriteCond %{REQUEST_URI} /public/
+    RewriteRule ^ - [L]
+
+    # 2. Các trường hợp còn lại thì chuyển hướng vào thư mục public/
+    RewriteRule ^((?!public/).*)$ public/$1 [L,NC]
+
+</IfModule>
