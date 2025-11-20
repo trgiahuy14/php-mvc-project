@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Background -->
+  <rect width="64" height="64" rx="12" fill="#007bff"/>
+  
+  <!-- Code brackets -->
+  <g fill="#ffffff" stroke="none">
+    <!-- Left bracket < -->
+    <path d="M 28 20 L 18 32 L 28 44" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    
+    <!-- Right bracket > -->
+    <path d="M 36 20 L 46 32 L 36 44" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    
+    <!-- Slash / -->
+    <line x1="30" y1="45" x2="34" y2="19" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round"/>
+  </g>
+</svg>
