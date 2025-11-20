@@ -4,13 +4,13 @@
  * Global Helper Functions
  */
 
-/** 
- * Inclue layout helpers 
- */
+
+// Require layout helpers 
 function layout($layoutName, $role = 'client', $data = [])
 {
     $path = dirname(__DIR__) . "/app/Views/partials/{$role}/" . $layoutName . '.php';
     if (file_exists($path)) {
+        extract($data);
         require_once $path;
     } else {
         die('Layout file not found: ' . $path);
@@ -45,14 +45,14 @@ function isGet(): bool
  */
 function filterData($method = '')
 {
-    $out    = [];
+    $data    = [];
     $method = strtolower((string)$method);
 
     // GET
     if (($method === '' || $method === 'get') && !empty($_GET)) {
         foreach ($_GET as $key => $value) {
             $key = strip_tags($key);
-            $out[$key] = is_array($value)
+            $data[$key] = is_array($value)
                 ? filter_input(INPUT_GET, $key, FILTER_SANITIZE_SPECIAL_CHARS, FILTER_REQUIRE_ARRAY) // lọc từng phần tử trong mảng
                 : filter_input(INPUT_GET, $key, FILTER_SANITIZE_SPECIAL_CHARS); // lọc giá trị đơn
         }
@@ -62,13 +62,12 @@ function filterData($method = '')
     if (($method === '' || $method === 'post') && !empty($_POST)) {
         foreach ($_POST as $key => $value) {
             $key = strip_tags($key);
-            $out[$key] = is_array($value)
+            $data[$key] = is_array($value)
                 ? filter_input(INPUT_POST, $key, FILTER_SANITIZE_SPECIAL_CHARS, FILTER_REQUIRE_ARRAY) // lọc từng phần tử trong mảng
                 : filter_input(INPUT_POST, $key, FILTER_SANITIZE_SPECIAL_CHARS); // lọc giá trị đơn
         }
     }
-
-    return $out;
+    return $data;
 }
 
 /** 
