@@ -1,239 +1,217 @@
-# 🗞️ VietNews CMS PHP
+# 📝 DevBlog CMS
 
-A modern, lightweight MVC framework for News content management system (CMS) built with pure PHP.
+A modern blog management system built with PHP MVC architecture, featuring a comprehensive admin panel with full CRUD operations for users, posts, and categories management.
 
-![PHP Version](https://img.shields.io/badge/PHP-%3E%3D7.4-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
+![PHP](https://img.shields.io/badge/PHP-8.2%2B-blue) ![License](https://img.shields.io/badge/license-MIT-green)
 ![Status](https://img.shields.io/badge/status-active-success)
 
-## 📋 Table of Contents
+## 📸 Screenshots
 
-- [Features](#-features)
-- [Requirements](#-requirements)
-- [Installation](#-installation)
-- [Configuration](#-configuration)
-- [Project Structure](#-project-structure)
-- [Security](#-security)
-- [Development](#-development)
-- [Author](#-author)
+### 🎛️ Admin Panel
+
+<table>
+  <tr>
+    <td width="50%">
+      <img src=".github/images/dashboard.png" alt="Dashboard"/>
+      <p align="center"><b>Dashboard</b></p>
+    </td>
+    <td width="50%">
+      <img src=".github/images/posts.png" alt="Posts Management"/>
+      <p align="center"><b>Posts Management</b></p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <img src=".github/images/users.png" alt="Users Management"/>
+      <p align="center"><b>Users Management</b></p>
+    </td>
+    <td width="50%">
+      <img src=".github/images/user-edit.png" alt="User Editing"/>
+      <p align="center"><b>User Editing</b></p>
+    </td>
+  </tr>
+</table>
+
+### 🌐 Client Pages
+
+<table>
+  <tr>
+    <td width="50%">
+      <img src=".github/images/home.png" alt="Homepage"/>
+      <p align="center"><b>Homepage</b></p>
+    </td>
+    <td width="50%">
+      <img src=".github/images/post-detail.png" alt="Post Detail"/>
+      <p align="center"><b>Post Detail</b></p>
+    </td>
+  </tr>
+</table>
 
 ## ✨ Features
 
-- ✅ **MVC Architecture** - Clean separation of concerns
-- ✅ **Composer Integration** - Modern dependency management with PSR-4 autoloading
-- ✅ **Environment Configuration** - Secure `.env` based configuration
-- ✅ **Email Service** - PHPMailer integration with HTML templates
-- ✅ **Database Abstraction** - PDO-based database layer with singleton pattern
-- ✅ **Routing System** - Simple and flexible routing
-- ✅ **Template Engine** - Clean view rendering system
-- ✅ **Security** - CSRF protection, password hashing, prepared statements
+### 🔐 Authentication & Authorization
+
+- Session-based authentication (login/logout)
+- User registration with email verification
+- Role-based access control (Admin, Editor, Author)
+
+### 📊 Content Management
+
+- **Posts**: Full CRUD operations with search, filter, and pagination
+- **Categories**: Manage blog categories with post count tracking
+- **Users**: User management with role and status control
+- Form validation for all inputs
+- Image upload support for user avatars and post thumbnails
+
+### 🛡️ Security
+
+- PDO prepared statements (SQL injection prevention)
+- XSS and CSRF protection
+- Bcrypt password hashing
+- Secure file upload validation
+
+### 🎨 User Interface
+
+- Responsive admin panel (AdminLTE 4)
+- Clean and modern client-facing blog
+- Mobile-friendly design
+
+## 🛠 Tech Stack
+
+**Backend:** PHP 8.2+, MySQL 8.0, PDO, Composer (PSR-4 autoload), PHP-DotEnv, PHPMailer  
+**Frontend:** AdminLTE 4, Bootstrap 5.3, Font Awesome
 
 ## 📦 Requirements
 
-- **PHP** >= 7.4
-- **MySQL** >= 5.7 or **MariaDB** >= 10.2
-- **Composer** (for dependency management)
-- **Apache** or **Nginx** web server
-- **mod_rewrite** enabled (for Apache)
+- PHP >= 8.2
+- MySQL >= 8.0 or MariaDB >= 10.4
+- Composer
+- Apache/Nginx with mod_rewrite enabled
+- XAMPP/WAMP/MAMP
 
 ## 🚀 Installation
 
-### 1. Clone the repository
+### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/trgiahuy14/vietnews-cms-php.git
-cd vietnews-cms-php
+git clone https://github.com/trgiahuy14/devblog-cms-php.git
+cd devblog-cms-php
 ```
 
-### 2. Install dependencies
+### 2. Install Dependencies
 
 ```bash
 composer install
 ```
 
-### 3. Configure environment
+### 3. Configure Environment
+
+Copy the example environment file and edit it:
 
 ```bash
-# Copy .env.example to .env
+ # Copy .env.example to .env
 cp .env.example .env
-
-# Edit .env with your configuration
-nano .env
 ```
 
-**Required configurations:**
+Update the following settings in `.env`:
 
 ```env
-# Database credentials
+# Database Configuration
 DB_HOST=localhost
-DB_NAME=php_mvc_db
+DB_NAME=devblog_db
 DB_USER=root
 DB_PASS=your_password
 
 # Application URL
-BASE_URL=http://localhost/vietnews-cms-php
+BASE_URL=http://localhost/devblog-cms-php
+APP_BASE_PATH=/devblog-cms-php
 
-# Mail settings (for email features)
+# Mail Configuration (for email features)
 MAIL_HOST=smtp.gmail.com
 MAIL_USER=your-email@gmail.com
 MAIL_PASS=your-app-password
 ```
 
-### 4. Import database
+**📧 Gmail Setup (Optional):**
 
-```bash
-mysql -u root -p < database/php_mvc_db.sql
-```
-
-Or import via phpMyAdmin:
-
-1. Open phpMyAdmin
-2. Create database `php_mvc_db`
-3. Import file `database/php_mvc_db.sql`
-
-### 5. Configure web server
-
-### Quick Start (No Configuration Needed)
-
-1. Make sure Apache is running in XAMPP
-2. Access: `http://localhost/vietnews-cms-php/`
-
-That's it! The `.htaccess` files handle everything automatically.
-
-## ⚙️ Configuration
-
-### Environment Variables
-
-All configuration is done through the `.env` file:
-
-| Variable    | Description       | Example                           |
-| ----------- | ----------------- | --------------------------------- |
-| `APP_NAME`  | Application name  | VietNews CMS                      |
-| `APP_ENV`   | Environment       | local/production                  |
-| `APP_DEBUG` | Debug mode        | true/false                        |
-| `DB_HOST`   | Database host     | localhost                         |
-| `DB_PORT`   | Database port     | 3306                              |
-| `DB_NAME`   | Database name     | php_mvc_db                        |
-| `DB_USER`   | Database username | root                              |
-| `DB_PASS`   | Database password |                                   |
-| `BASE_URL`  | Application URL   | http://localhost/vietnews-cms-php |
-| `MAIL_HOST` | SMTP host         | smtp.gmail.com                    |
-| `MAIL_PORT` | SMTP port         | 465                               |
-| `MAIL_USER` | Email address     | your@gmail.com                    |
-| `MAIL_PASS` | Email password    | your-app-password                 |
-
-### Gmail Configuration
-
-To use Gmail for sending emails:
+If you want to enable email features:
 
 1. Enable 2-factor authentication on your Gmail account
 2. Generate an App Password: https://myaccount.google.com/apppasswords
-3. Use the generated password in `MAIL_PASS`
+3. Use the generated 16-character password in `MAIL_PASS`
+
+### 4. Setup Database
+
+**Option A: Using MySQL CLI**
+
+```bash
+mysql -u root -p < database/devblog_db.sql
+```
+
+**Option B: Using phpMyAdmin**
+
+1. Open phpMyAdmin
+2. Create a new database named `devblog_db`
+3. Import the file `database/devblog_db.sql`
+
+### 5. Access the Application
+
+1. Make sure Apache is running in XAMPP/WAMP
+2. Open your browser and navigate to: `http://localhost/devblog-cms-php/`
+3. Login with the default admin account:
+
+### Default Accounts
+
+The system comes with pre-configured test accounts:
+
+| Role   | Email              | Password | Description        |
+| ------ | ------------------ | -------- | ------------------ |
+| Admin  | admin@devblog.com  | 123456   | Full system access |
+| Editor | editor@devblog.com | 123456   | Content management |
+| Author | huydev@gmail.com   | 123456   | Post creation      |
 
 ## 📁 Project Structure
 
 ```
-vietnews-cms-php/
-├── 📁 database/              # Database files
-│   └── migrations/           # SQL migration files
-│
-├── 📁 public/                # Web root (document root)
-│   ├── index.php             # Application entry point
-│   ├── .htaccess             # Apache rewrite rules
-│   └── assets/               # Static files (CSS, JS, images)
-│
-├── 📁 routes/                # Route definitions
-│   └── web.php               # Web routes
-│
-├── 📁 src/                   # Application source code
-│   ├── 📁 app/               # Application layer
-│   │   ├── Controllers/      # Controllers (handle HTTP requests)
-│   │   ├── Models/           # Models (database entities)
-│   │   ├── Views/            # View templates
-│   │   │   ├── layouts/      # Layout templates
-│   │   │   └── emails/       # Email templates
-│   │   └── Services/         # Business logic services
-│   │       └── MailService.php
-│   │
-│   ├── 📁 Core/              # Framework core
-│   │   ├── Controller.php    # Base controller
-│   │   ├── Model.php         # Base model
-│   │   ├── Router.php        # Router
-│   │   ├── View.php          # View renderer
-│   │   ├── Database.php      # Database connection
-│   │   └── session.php       # Session
-│   │
-│   ├── 📁 configs/           # Configuration files
-│   │   └── app.php           # Application config
-│   │
-│   └── 📁 helpers/           # Helper functions
-│       └── functions.php     # Global helpers
-│
-├── 📁 storage/               # Storage directory
-│   ├── logs/                 # Application logs
-│   ├── cache/                # Cache files
-│   └── uploads/              # User uploads
-│
-├── 📁 vendor/                # Composer dependencies (auto-generated)
-│
-├── .env                      # Environment config
-├── .env.example              # Environment template
-├── .gitignore                # Git ignore rules
-├── composer.json             # Composer dependencies
-└── README.md                 # This file
+devblog-cms-php/
+├── database/           # SQL file testing dump
+├── public/             # index.php, assets, .htaccess
+├── routes/             # Route definition
+├── src/
+│   ├── app/
+│   │   ├── Controllers/   # Admin & Client controllers
+│   │   ├── Models/        # Database entities
+│   │   ├── Views/         # Templates (layouts, emails)
+│   │   ├── Middlewares/   # Authentication guard
+│   │   └── Services/      # Mail Service, File Upload Service
+│   ├── Core/              # Core files (Router, Controller, Model, View, Database)
+│   ├── configs/           # Configuration file
+│   └── helpers/           # Helper functions
+├── vendor/                # Composer dependencies
+├── .env                   # Environment config
 ```
-
-## 🔐 Security
-
-- ✅ Environment variables for sensitive data
-- ✅ Password hashing with `password_hash()`
-- ✅ SQL injection prevention with prepared statements
-- ✅ CSRF token protection
-- ✅ XSS prevention with `htmlspecialchars()`
-- ✅ `.htaccess` protection for sensitive directories
 
 ## 🛠️ Development
 
 ### Debug Mode
 
-Enable debug mode in `.env`:
+Enable detailed error messages in `.env`:
 
 ```env
 APP_DEBUG=true
 ```
 
-### Logging
+## 📝 License
 
-Application logs are stored in `storage/logs/`:
-
-- `storage/logs/app.log` - Application logs
-- `storage/logs/mail.log` - Email logs
-- `storage/logs/error.log` - PHP errors
-
-### Testing
-
-```bash
-# Test database connection
-php test-database.php
-
-# Test email functionality
-php test-mail.php
-```
+This project is licensed under the MIT License.
 
 ## 👤 Author
 
 **Tran Gia Huy**
 
-- Email: giahuy-codes@gmail.com
-- GitHub: [@huy-codes](https://github.com/huy-codes)
-
-## 🙏 Acknowledgments
-
-- [PHPMailer](https://github.com/PHPMailer/PHPMailer) - Email sending library
-- [PHP-DotEnv](https://github.com/vlucas/phpdotenv) - Environment variable loader
-
-- Inspired by Laravel and other modern PHP frameworks
+- GitHub: [@huydev14](https://github.com/huydev14)
+- Email: huydev14@gmail.com
 
 ---
 
-Made with ❤️ by Tran Gia Huy
+<p align="center">Made with ❤️ by Tran Gia Huy</p>
