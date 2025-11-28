@@ -34,7 +34,12 @@
             <div class="col-lg-8">
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="position-relative">
-                        <img src="<?= BASE_URL ?>/assets/img/code-banner.jpg" class="card-img-top" alt="Featured" style="height: 400px; object-fit: cover;">
+                        <?php 
+                            $thumbnailUrl = !empty($mainPost['thumbnail']) 
+                                ? PUBLIC_URL . '/uploads/' . htmlspecialchars($mainPost['thumbnail'], ENT_QUOTES, 'UTF-8')
+                                : PUBLIC_URL . '/assets/img/code-banner.jpg';
+                        ?>
+                        <img src="<?= $thumbnailUrl ?>" class="card-img-top" alt="Featured" style="height: 400px; object-fit: cover;">
                         <div class="position-absolute top-0 start-0 m-3">
                             <span class="badge bg-danger px-3 py-2"><i class="fas fa-star me-1"></i>BÀI VIẾT NỔI BẬT</span>
                         </div>
@@ -124,7 +129,12 @@
                 <div class="col-lg-4 col-md-6">
                     <article class="card h-100 border-0 shadow-sm hover-lift">
                         <div class="position-relative">
-                            <img src="<?= BASE_URL ?>/assets/img/code-bg.jpg"
+                            <?php 
+                                $postThumbnail = !empty($post['thumbnail']) 
+                                    ? PUBLIC_URL . '/uploads/' . htmlspecialchars($post['thumbnail'], ENT_QUOTES, 'UTF-8')
+                                    : PUBLIC_URL . '/assets/img/code-banner.jpg';
+                            ?>
+                            <img src="<?= $postThumbnail ?>"
                                 class="card-img-top"
                                 alt="<?= htmlspecialchars($post['title'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
                                 style="height: 200px; object-fit: cover;">

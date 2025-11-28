@@ -45,8 +45,12 @@ class Router
 
         [$controller, $func] = explode('@', $action, 2);
 
-        // choose controller folder
-        $namespace = ($controller === 'HomeController')
+        // Define public routes that use Client controllers
+        $publicRoutes = ['/', '/post', '/category', '/search'];
+
+        // choose controller folder based on URL
+        // If URL is in public routes, use Client namespace, otherwise Admin
+        $namespace = in_array($url, $publicRoutes)
             ? 'App\\Controllers\\Client\\'
             : 'App\\Controllers\\Admin\\';
 
