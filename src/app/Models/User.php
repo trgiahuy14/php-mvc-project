@@ -11,7 +11,7 @@ final class User extends Model
     // Get all posts (no paging)
     public function getAllUsers(): array
     {
-        return $this->getAll('SELECT * FROM users ORDER BY id DESC');
+        return $this->getAll('SELECT * FROM users ORDER BY id ASC');
     }
 
     // Get posts (paging + keyword)
@@ -29,7 +29,7 @@ final class User extends Model
         // paging
         $limit = max(0, $limit);
         $offset = max(0, $offset);
-        $sql .= " ORDER BY id DESC LIMIT {$offset}, {$limit}";
+        $sql .= " ORDER BY id ASC LIMIT {$offset}, {$limit}";
 
         return $this->getAll($sql, $params);
     }

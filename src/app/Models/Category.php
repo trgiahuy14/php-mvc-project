@@ -11,7 +11,7 @@ final class Category extends Model
     /** Get all category (no paging) */
     public function getAllCategories(): array
     {
-        return $this->getAll('SELECT * FROM categories ORDER BY id DESC');
+        return $this->getAll('SELECT * FROM categories ORDER BY id ASC');
     }
 
     /** Get categories (paging + keyword) */
@@ -29,7 +29,7 @@ final class Category extends Model
         // paging
         $limit = max(0, $limit);
         $offset = max(0, $offset);
-        $sql .= " ORDER BY id DESC LIMIT {$offset}, {$limit}";
+        $sql .= " ORDER BY id ASC LIMIT {$offset}, {$limit}";
 
         return $this->getAll($sql, $params);
     }
