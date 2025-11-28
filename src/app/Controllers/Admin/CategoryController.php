@@ -6,6 +6,7 @@ namespace App\Controllers\Admin;
 
 use Core\Controller;
 use App\Middlewares\AuthMiddleware;
+use App\Middlewares\RoleMiddleware;
 use App\Models\Category;
 use Core\Session;
 
@@ -18,8 +19,11 @@ final class CategoryController extends Controller
     {
         parent::__construct();
         AuthMiddleware::requireAuth();
+        
+        // Admin and Editor can manage categories
+        RoleMiddleware::requireEditor();
+        
         $this->categoryModel = new Category();
-
         $this->userData = AuthMiddleware::userData();
     }
 

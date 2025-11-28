@@ -165,3 +165,62 @@ function cleanQuery(string $removeKey): string
     $qs = http_build_query($_GET);
     return $qs === '' ? '' : '&' . $qs;
 }
+
+/** 
+ * Role & Permission Helpers
+ * 
+ */
+
+/** Check if user has permission */
+function can(string $permission): bool
+{
+    return \App\Middlewares\RoleMiddleware::hasPermission($permission);
+}
+
+/** Check if user has any of the permissions */
+function canAny(array $permissions): bool
+{
+    return \App\Middlewares\RoleMiddleware::hasAnyPermission($permissions);
+}
+
+/** Check if user has all permissions */
+function canAll(array $permissions): bool
+{
+    return \App\Middlewares\RoleMiddleware::hasAllPermissions($permissions);
+}
+
+/** Check if user is admin */
+function isAdmin(): bool
+{
+    return \App\Middlewares\RoleMiddleware::isAdmin();
+}
+
+/** Check if user is editor */
+function isEditor(): bool
+{
+    return \App\Middlewares\RoleMiddleware::isEditor();
+}
+
+/** Check if user is author */
+function isAuthor(): bool
+{
+    return \App\Middlewares\RoleMiddleware::isAuthor();
+}
+
+/** Get current user role */
+function userRole(): ?string
+{
+    return \Core\Session::get('role');
+}
+
+/** Check if user can edit resource */
+function canEdit(int $resourceOwnerId): bool
+{
+    return \App\Middlewares\RoleMiddleware::canEdit($resourceOwnerId);
+}
+
+/** Check if user can delete resource */
+function canDelete(int $resourceOwnerId = null): bool
+{
+    return \App\Middlewares\RoleMiddleware::canDelete($resourceOwnerId);
+}

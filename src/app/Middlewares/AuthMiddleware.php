@@ -9,9 +9,7 @@ use Core\Session;
 
 class AuthMiddleware
 {
-    /**
-     * Require user to be logged in
-     */
+    /** Require user to be logged in */
     public static function requireAuth(): bool
     {
         if (!isset($_SESSION['user_id'])) {
@@ -23,9 +21,7 @@ class AuthMiddleware
         return true;
     }
 
-    /**
-     * Set user sessions after login successful
-     */
+    /** Set user sessions after login successful */
     public static function login(array $user): void
     {
         Session::set('user_id', $user['id']);
@@ -34,33 +30,31 @@ class AuthMiddleware
         Session::set('role', $user['role']);
     }
 
-    /**
-     * Get current user ID
-     */
-    public static function userId(): ?int
-    {
-        return Session::get('user_id');
-    }
-
-    /**
-     * Get current user data
-     */
+    /** Get current user data from database */
     public static function userData(): ?array
     {
-        if (!Session::get('user_id')) {
+        $userId = Session::get('user_id');
+
+        if (!$userId) {
             return null;
         }
 
         $userModel = new User();
-        return $userModel->getUserById(self::userId());
+        return $userModel->getUserById($userId);
     }
 
-    /**
-     * Logout and destroy session
-     */
+    /** Logout and destroy session */
     public static function logout(): void
     {
         self::requireAuth();
         session_destroy();
+    }
+
+    /** Redirect if already authenticated */
+    public static function redirectIfAuthenticated(string $redirectTo = '/admin/dashboard'): void
+    {
+        if (isset($_SESSION['user_id'])) {
+            redirect($redirectTo);
+        }
     }
 }

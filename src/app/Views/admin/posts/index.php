@@ -109,17 +109,21 @@ $msg_type = Session::getFlash('msg_type');
                                                 title="Xem chi tiết">
                                                 <i class="fa fa-eye"></i>
                                             </a>
+                                            <?php if (canEdit($post['author_id'])): ?>
                                             <a href="<?= BASE_URL ?>/posts/edit?id=<?= $post['id'] ?>"
                                                 class="btn btn-warning"
                                                 title="Sửa">
                                                 <i class="fa fa-edit"></i>
                                             </a>
+                                            <?php endif; ?>
+                                            <?php if (canDelete($post['author_id'])): ?>
                                             <a href="<?= BASE_URL ?>/posts/delete?id=<?= $post['id'] ?>"
                                                 class="btn btn-danger btn-delete"
                                                 title="Xóa"
                                                 data-title="<?= htmlspecialchars($post['title']) ?>">
                                                 <i class="fa fa-trash"></i>
                                             </a>
+                                            <?php endif; ?>
                                         </div>
                                     </td>
                                 </tr>

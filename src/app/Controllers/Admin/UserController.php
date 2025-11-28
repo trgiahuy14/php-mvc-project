@@ -6,6 +6,7 @@ namespace App\Controllers\Admin;
 
 use Core\Controller;
 use App\Middlewares\AuthMiddleware;
+use App\Middlewares\RoleMiddleware;
 use App\Models\User;
 use App\Services\FileUploadService;
 use Core\Session;
@@ -20,6 +21,10 @@ final class UserController extends Controller
     {
         parent::__construct();
         AuthMiddleware::requireAuth();
+        
+        // Only admin can manage users
+        RoleMiddleware::requireAdmin();
+        
         $this->userModel = new User();
         $this->uploadService = new FileUploadService();
     }

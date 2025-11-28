@@ -6,6 +6,7 @@ namespace App\Controllers\Admin;
 
 use Core\Controller;
 use App\Middlewares\AuthMiddleware;
+use App\Middlewares\RoleMiddleware;
 use App\Models\Post;
 use App\Models\Category;
 use Core\Session;
@@ -180,13 +181,10 @@ final class PostController extends Controller
             return redirect('/posts');
         }
 
-        // Check permission
-        $currentUserId = (int)Session::get('user_id');
-        $currentUserRole = Session::get('role');
-
-        if ($currentUserRole !== 'admin' && $post['author_id'] != $currentUserId) {
-            Session::Flash('msg', 'Bạn không có quyền sửa bài viết này');
-            Session::Flash('msg_type', 'danger');
+        // Check permission: Admin, Editor, or post owner can edit
+        if (!RoleMiddleware::canEdit($post['author_id'])) {
+            Session::flash('msg', 'Bạn không có quyền sửa bài viết này');
+            Session::flash('msg_type', 'danger');
             redirect('/posts');
         }
 
@@ -209,6 +207,21 @@ final class PostController extends Controller
 
         $input = filterData();
         $postId = (int)($input['id']);
+
+        // Check if post exists
+        $post = $this->postModel->getPostById($postId);
+        if (!$post) {
+            Session::flash('msg', 'Bài viết không tồn tại');
+            Session::flash('msg_type', 'danger');
+            redirect('/posts');
+        }
+
+        // Check permission: Admin, Editor, or post owner can edit
+        if (!RoleMiddleware::canEdit($post['author_id'])) {
+            Session::flash('msg', 'Bạn không có quyền sửa bài viết này');
+            Session::flash('msg_type', 'danger');
+            redirect('/posts');
+        }
 
         $errors = [];
 
@@ -296,13 +309,10 @@ final class PostController extends Controller
             redirect('/posts');
         }
 
-        // Check permission
-        $currentUserId = (int)Session::get('user_id');
-        $currentUserRole = Session::get('role');
-
-        if ($currentUserRole !== 'admin' && $post['author_id'] != $currentUserId) {
-            Session::Flash('msg', 'Bạn không có quyền xóa bài viết này');
-            Session::Flash('msg_type', 'danger');
+        // Check permission: Only admin, editor, user who owns the post can delete
+        if (!RoleMiddleware::canDelete($post['author_id'])) {
+            Session::flash('msg', 'Bạn không có quyền xóa bài viết này');
+            Session::flash('msg_type', 'danger');
             redirect('/posts');
         }
 

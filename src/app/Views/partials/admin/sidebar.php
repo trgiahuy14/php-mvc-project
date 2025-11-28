@@ -56,7 +56,8 @@
                     </ul>
                 </li>
 
-                <!-- Quản lý danh mục -->
+                <!-- Quản lý danh mục (Admin & Editor) -->
+                <?php if (can('categories.view')): ?>
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon bi bi-folder"></i>
@@ -72,16 +73,20 @@
                                 <p>Danh sách danh mục</p>
                             </a>
                         </li>
+                        <?php if (can('categories.create')): ?>
                         <li class="nav-item">
                             <a href="<?= BASE_URL ?>/categories/add" class="nav-link">
                                 <i class="nav-icon bi bi-plus-circle"></i>
                                 <p>Tạo mới danh mục</p>
                             </a>
                         </li>
+                        <?php endif; ?>
                     </ul>
                 </li>
+                <?php endif; ?>
 
-                <!-- Quản lý bình luận -->
+                <!-- Quản lý bình luận (Admin & Editor) -->
+                <?php if (can('comments.view')): ?>
                 <li class="nav-item">
                     <a href="<?= BASE_URL ?>/comments" class="nav-link">
                         <i class="nav-icon bi bi-chat-left-text"></i>
@@ -91,10 +96,12 @@
                         </p>
                     </a>
                 </li>
+                <?php endif; ?>
 
                 <li class="nav-header">QUẢN TRỊ HỆ THỐNG</li>
 
-                <!-- Quản lý người dùng -->
+                <!-- Quản lý người dùng (Chỉ Admin) -->
+                <?php if (can('users.view')): ?>
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon bi bi-people"></i>
@@ -110,22 +117,27 @@
                                 <p>Danh sách người dùng</p>
                             </a>
                         </li>
+                        <?php if (can('users.create')): ?>
                         <li class="nav-item">
                             <a href="<?= BASE_URL ?>/users/add" class="nav-link">
                                 <i class="nav-icon bi bi-plus-circle"></i>
                                 <p>Tạo mới người dùng</p>
                             </a>
                         </li>
+                        <?php endif; ?>
                     </ul>
                 </li>
+                <?php endif; ?>
 
-                <!-- Cài đặt -->
+                <!-- Cài đặt (Chỉ Admin) -->
+                <?php if (can('settings.view')): ?>
                 <li class="nav-item">
                     <a href="<?= BASE_URL ?>/settings" class="nav-link">
                         <i class="nav-icon bi bi-gear"></i>
                         <p>Cài đặt</p>
                     </a>
                 </li>
+                <?php endif; ?>
 
             </ul>
             <!--end::Sidebar Menu-->
